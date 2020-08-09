@@ -1,6 +1,6 @@
 syntax on
 
-"set guicursor=
+set guicursor=
 "set guicursor+=n-v-c:blinkon0
 set relativenumber
 set nohlsearch
@@ -40,6 +40,7 @@ Plug 'preservim/nerdcommenter'
 Plug 'vim-utils/vim-man'
 Plug 'mbbill/undotree'
 Plug 'kien/ctrlp.vim'
+Plug 'machakann/vim-highlightedyank'
 
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
