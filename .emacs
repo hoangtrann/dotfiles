@@ -14,7 +14,7 @@
 (add-to-list 'package-archives melpa t)
 (add-to-list 'package-archives gnu t)
 (add-to-list 'package-archives org-elpa t)
-(package-initialize)
+;; (package-initialize)
 
 (defun packages-install (&rest packages)
   (message "running packages-install")
@@ -54,11 +54,12 @@
 (setq ring-bell-function 'ignore)
 (setq auto-window-vscroll nil)
 (setq inhibit-compacting-font-caches t)
-(setq font-lock-maximum-decoration nil)
-(setq-default indicate-empty-lines t)
-(progn
-  (define-fringe-bitmap 'tilde [0 0 0 113 219 142 0 0] nil nil 'center)
-  (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde))
+(setq byte-compile-warnings '(cl-functions))
+
+;; (setq-default indicate-empty-lines t)
+;; (progn
+;;   (define-fringe-bitmap 'tilde [0 0 0 113 219 142 0 0] nil nil 'center)
+;;   (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde))
 
 ;; Cursor
 (blink-cursor-mode 0)
@@ -92,12 +93,12 @@
 
 (setq dired-listing-switches "-aBhl  --group-directories-first")
 
-(use-package fill-column-indicator
-  :ensure t
-  :config
-  (setq fci-rule-column 88)
-  (add-hook 'python-mode-hook #'fci-mode)
-  (add-hook 'prog-mode-hook #'fci-mode))
+;; (use-package fill-column-indicator
+;;   :ensure t
+;;   :config
+;;   (setq fci-rule-column 88)
+;;   (add-hook 'python-mode-hook #'fci-mode)
+;;   (add-hook 'prog-mode-hook #'fci-mode))
 
 (show-paren-mode)
 ;; (setq org-startup-truncated nil)
@@ -105,9 +106,8 @@
 ;;               display-line-numbers-current-absolute t
 ;;               display-line-numbers-width 2
 ;;               display-line-numbers-widen t)
-(add-hook 'text-mode-hook #'display-line-numbers-mode)
-(add-hook 'prog-mode-hook #'display-line-numbers-mode)
-;; (global-display-line-numbers-mode)
+
+(global-display-line-numbers-mode)
 ;; (setq display-line-numbers-type "relative")
 
 (global-set-key (kbd "C-S-l") 'display-line-numbers-mode)
@@ -146,6 +146,7 @@
 
 ;; (autoload 'View-scroll-half-page-forward "view")
 ;; (autoload 'View-scroll-half-page-backward "view")
+
 ;; (global-set-key (kbd "C-v") 'View-scroll-half-page-forward)
 ;; (global-set-key (kbd "M-v") 'View-scroll-half-page-backward)
 
@@ -282,12 +283,10 @@ kill it (unless it's modified)."
   :config
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t)
-  (load-theme 'doom-dracula t)
+  (load-theme 'doom-palenight t)
   (doom-themes-org-config)
-  ;; (doom-themes-treemacs-config)
   (doom-themes-visual-bell-config)
-  (doom-themes-neotree-config)
-  )
+  (doom-themes-neotree-config))
 
 ;; ;; To nyan or not nyan
 ;; (use-package nyan-mode
@@ -301,18 +300,23 @@ kill it (unless it's modified)."
   :hook
   (after-init . doom-modeline-mode)
   :config
-  (setq inhibit-compacting-font-caches t)
-  (setq doom-modeline-height 25)
-  (setq doom-modeline-bar-width 3)
+  ;; (setq doom-modeline-height 25)
+  ;; (setq doom-modeline-bar-width 3)
+  (setq doom-modeline-window-width-limit fill-column)
   (setq doom-modeline-project-detection 'project)
-  (setq doom-modeline-buffer-file-name-style 'file-name)
+  (setq doom-modeline-buffer-file-name-style 'relative-to-project)
+  (setq doom-modeline-icon (display-graphic-p))
   (setq find-file-visit-truename t)
   (setq doom-modeline-major-mode-icon t)
-  (setq doom-modeline-buffer-modification-icon t)
+  ;; (setq doom-modeline-buffer-modification-icon t)
   (setq doom-modeline-buffer-state-icon t)
+  (setq doom-modeline-indent-info t)
+  (setq doom-modeline-checker-simple-format t)
+  (setq doom-modeline-vcs-max-length 12)
+  (setq doom-modeline-env-version t)
+  (setq doom-modeline-env-enable-python t)
   (setq doom-modeline-minor-modes nil)
-  (setq doom-modeline-indent-info nil)
-  (setq doom-modeline-env-enable-python nil))
+  )
 
 (use-package minions
   :ensure t
@@ -328,8 +332,8 @@ kill it (unless it's modified)."
 ;; ;;                     :family "Monaco"
 ;; ;;                     :height 105)
 
-(set-face-attribute 'default nil :font "Fira Code Retina-14")
-(set-frame-font "Fira Code Retina-14" nil t)
+(set-face-attribute 'default nil :font "Mononoki Nerd Font-15")
+(set-frame-font "Mononoki Nerd Font-15" nil t)
 
 ;; (setq-default python-indent-guess-indent-offset-verbose nil)
 (setq-default py-python-command "python3")
@@ -342,8 +346,8 @@ kill it (unless it's modified)."
   (add-hook 'after-init-hook #'global-flycheck-mode))
 
 ;; ;; Diminish modes
-(use-package diminish
-  :ensure t)
+;; (use-package diminish
+;;   :ensure t)
 
 ;; (use-package moody
 ;;   :ensure t
@@ -352,8 +356,8 @@ kill it (unless it's modified)."
 ;;   (moody-replace-mode-line-buffer-identification)
 ;;   (moody-replace-vc-mode))
 
-(use-package ag
-  :ensure t)
+;; (use-package ag
+;;   :ensure t)
 
 (use-package rg
   :ensure t
@@ -373,9 +377,9 @@ kill it (unless it's modified)."
 (use-package company
   :ensure t
   :config
-  (setq company-idle-delay 0.2)
+  (setq company-idle-delay 0.3)
   (setq company-global-modes '(not org-mode markdown-mode))
-  (setq company-minimum-prefix-length 2)
+  (setq company-minimum-prefix-length 3)
   (add-hook 'after-init-hook 'global-company-mode)
   )
 
@@ -419,7 +423,7 @@ kill it (unless it's modified)."
   (advice-add 'python-mode :before 'elpy-enable)
   :config
   (elpy-enable)
-  (setq eldoc-idle-delay 0.5)
+  (setq eldoc-idle-delay 1)
   (setq elpy-rpc-python-command "python3")
   (add-hook 'elpy-mode-hook (lambda ()
                               (highlight-indentation-mode -1)
@@ -570,10 +574,10 @@ kill it (unless it's modified)."
   :config
   (global-hungry-delete-mode))
 
-;; (use-package expand-region
-;;   :ensure t
-;;   :config
-;;   (global-set-key (kbd "C-q") 'er/expand-region))
+(use-package expand-region
+  :ensure t
+  :config
+  (global-set-key (kbd "C-q") 'er/expand-region))
 
 ;; (setq save-interprogram-paste-before-kill t)
 
@@ -666,7 +670,7 @@ kill it (unless it's modified)."
   ;; (setq tide-format-options '(:indentSize 2 :tabSize 2 :insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces nil :placeOpenBraceOnNewLineForFunctions nil :placeOpenBraceOnNewLineForControlBlocks nil))
   )
 
-(setq company-tooltip-align-annotations t)
+;; (setq company-tooltip-align-annotations t)
 
 ;; ;; formats the buffer before saving
 (add-hook 'before-save-hook 'tide-format-before-save)
@@ -752,7 +756,7 @@ kill it (unless it's modified)."
   :ensure t
   :config
   (global-set-key [remap kill-ring-save] #'easy-kill)
-  ;; (global-set-key [remap mark-sexp] #'easy-mark)
+  (global-set-key [remap mark-sexp] #'easy-mark)
   )
 
 (use-package hideshow
@@ -849,10 +853,10 @@ kill it (unless it's modified)."
 
 (global-set-key (kbd "C-c n") 'iwb)
 
-(use-package hl-todo
-  :ensure t
-  :config
-  (global-hl-todo-mode))
+;; (use-package hl-todo
+;;   :ensure t
+;;   :config
+;;   (global-hl-todo-mode))
 
 (use-package markdown-mode
   :ensure t
@@ -868,8 +872,8 @@ kill it (unless it's modified)."
   (global-undo-tree-mode)
   :bind (("C-x /" . undo-tree-visualize)))
 
-(use-package s
-  :ensure t)
+;; (use-package s
+;;   :ensure t)
 
 ;; (use-package hydra
 ;;   :ensure t)
@@ -1108,9 +1112,11 @@ kill it (unless it's modified)."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(all-the-icons-ivy-buffer-commands (quote (ivy-switch-buffer-other-window ivy-switch-buffer)))
  '(package-selected-packages
    (quote
-    (fill-column-indicator yasnippet-snippets xclip which-key web-mode use-package undo-tree try tide smartparens rust-mode rg restclient rainbow-delimiters pyimpsort posframe org-bullets nord-theme neotree multiple-cursors minions markdown-mode magit js2-mode hungry-delete hl-todo emmet-mode elpy easy-kill doom-themes doom-modeline dired-collapse diminish csv-mode counsel-projectile carbon-now-sh bm beacon all-the-icons-ivy all-the-icons-dired ag ace-window))))
+    (expand-region fill-column-indicator yasnippet-snippets xclip which-key web-mode use-package undo-tree try tide smartparens rust-mode rg restclient rainbow-delimiters pyimpsort posframe org-bullets nord-theme neotree multiple-cursors minions markdown-mode magit js2-mode hungry-delete hl-todo emmet-mode elpy easy-kill doom-themes doom-modeline dired-collapse diminish csv-mode counsel-projectile carbon-now-sh bm beacon all-the-icons-ivy all-the-icons-dired ag ace-window)))
+ '(tramp-verbose 6))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
