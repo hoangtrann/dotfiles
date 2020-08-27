@@ -75,7 +75,7 @@
 ;; (add-hook 'prog-mode-hook 'visual-line-mode)
 
 ;; (global-visual-line-mode t)
-(global-hl-line-mode +1)
+;; (global-hl-line-mode +1)
 ;; (setq jit-lock-defer-time 0)
 ;; (setq fast-but-imprecise-scrolling t)
 
@@ -91,7 +91,7 @@
 (setq frame-title-format '("Emacs"))
 (setq column-number-mode t)
 
-(setq dired-listing-switches "-aBhl  --group-directories-first")
+(setq dired-listing-switches "-laGh1v --group-directories-first")
 
 ;; (use-package fill-column-indicator
 ;;   :ensure t
@@ -107,7 +107,12 @@
 ;;               display-line-numbers-width 2
 ;;               display-line-numbers-widen t)
 
-(global-display-line-numbers-mode)
+;; (global-display-line-numbers-mode)
+;; (add-hook 'prog-mode-hook 'hl-line-mode)
+;; (add-hook 'prog-mode-hook 'turn-on-visual-line-mode)
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(add-hook 'prog-mode-hook 'visual-line-mode)
+
 ;; (setq display-line-numbers-type "relative")
 
 (global-set-key (kbd "C-S-l") 'display-line-numbers-mode)
@@ -116,6 +121,7 @@
 (global-set-key (kbd "C-q") 'kill-this-buffer)
 (global-set-key (kbd "C-S-f") 'rg)
 (global-set-key (kbd "C-S-k") 'kill-whole-line)
+(global-set-key (kbd "C-<tab>") 'mode-line-other-buffer)
 
 ;; ;; Never use tabs, use spaces instead
 (setq-default indent-tabs-mode nil)
@@ -150,13 +156,20 @@
 ;; (global-set-key (kbd "C-v") 'View-scroll-half-page-forward)
 ;; (global-set-key (kbd "M-v") 'View-scroll-half-page-backward)
 
+(defun kill-current-line (&optional n)
+  (interactive "p")
+  (save-excursion
+    (beginning-of-line)
+    (let ((kill-whole-line t))
+      (kill-line n))))
 (defun kill-line-or-region ()
   "Kill region if active only or kill line normally."
   (interactive)
   (if (region-active-p)
       (call-interactively 'kill-region)
     (call-interactively 'kill-line)))
-(global-set-key (kbd "C-k") 'kill-line-or-region)
+
+(global-set-key (kbd "C-k") 'kill-current-line)
 
 (define-key ctl-x-map (kbd "C-b") '(lambda (&optional arg)
                                      (interactive "P")
@@ -332,8 +345,8 @@ kill it (unless it's modified)."
 ;; ;;                     :family "Monaco"
 ;; ;;                     :height 105)
 
-(set-face-attribute 'default nil :font "Mononoki Nerd Font-15")
-(set-frame-font "Mononoki Nerd Font-15" nil t)
+(set-face-attribute 'default nil :font "Mononoki Nerd Font-16")
+(set-frame-font "Mononoki Nerd Font-16" nil t)
 
 ;; (setq-default python-indent-guess-indent-offset-verbose nil)
 (setq-default py-python-command "python3")
@@ -457,6 +470,7 @@ kill it (unless it's modified)."
   (setq ivy-use-virtual-buffers t)
   (setq enable-recursive-minibuffers t)
   (setq ivy-display-style 'fancy)
+  (setq ivy-use-selectable-prompt t)
   (setq swiper-action-recenter t)
   (global-set-key (kbd "C-s") 'swiper-isearch)
   (global-set-key (kbd "C-r") 'swiper-isearch)
@@ -610,46 +624,40 @@ kill it (unless it's modified)."
 ;; (define-key ctl-x-map "n" #'narrow-or-widen-dwim)
 
 ;; ;; Web - Mode
+
 (use-package web-mode
-  :ensure t
-)
-;; (use-package web-mode
-;;   :ensure t
-;;   :config
+ :ensure t
+ :config
 
-  ;; (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
-  ;; (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
-  ;; (add-to-list 'auto-mode-alist '("\\.jsp\\'" . web-mode))
-  ;; (add-to-list 'auto-mode-alist '("\\.jsx$" . web-mode))
-  ;; (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-  ;; (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-  ;; (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-  ;; (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-  ;; (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-  ;; (add-to-list 'auto-mode-alist '("\\.xml?\\'" . web-mode))
+ (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+ (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+ (add-to-list 'auto-mode-alist '("\\.jsp\\'" . web-mode))
+ (add-to-list 'auto-mode-alist '("\\.jsx$" . web-mode))
+ (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+ (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+ (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+ (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+ (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+ (add-to-list 'auto-mode-alist '("\\.xml?\\'" . web-mode))
 
-  ;; (defun my-web-mode-hook ()
-  ;;   (setq web-mode-enable-auto-closing t)
-  ;;   (setq web-mode-enable-auto-quoting t)
-  ;;   (setq web-mode-css-indent-offset 4)
-  ;;   (setq web-mode-code-indent-offset 4)
-  ;;   (setq web-mode-markup-indent-offset 4)
-  ;;   (setq web-mode-enable-current-element-highlight t)
-  ;;   (setq web-mode-enable-current-column-highlight nil))
+ (defun my-web-mode-hook ()
+   (setq web-mode-enable-auto-closing t)
+   (setq web-mode-enable-auto-quoting t)
+   (setq web-mode-css-indent-offset 4)
+   (setq web-mode-code-indent-offset 4)
+   (setq web-mode-markup-indent-offset 4)
+   (setq web-mode-enable-current-element-highlight t)
+         (setq web-mode-enable-current-column-highlight nil))
 
-  ;; (add-hook 'web-mode-hook  'my-web-mode-hook)
-  ;; (add-hook 'web-mode-hook 'whitespace-turn-off)
-  ;; (eval-after-load "web-mode"
-  ;;   '(setq web-mode-enable-auto-expanding t))
-  ;; )
+   (add-hook 'web-mode-hook  'my-web-mode-hook)
+   (add-hook 'web-mode-hook 'whitespace-turn-off)
+   (eval-after-load "web-mode" '(setq web-mode-enable-auto-expanding t)))
 
-;; for better jsx syntax-highlighting in web-mode
-;; - courtesy of Patrick @halbtuerke
-;; (defadvice web-mode-highlight-part (around tweak-jsx activate)
-;;   (if (equal web-mode-content-type "jsx")
-;;       (let ((web-mode-enable-part-face nil))
-;;         ad-do-it)
-;;     ad-do-it))
+ ;; for better jsx syntax-highlighting in web-mode
+ ;; - courtesy of Patrick @halbtuerke
+(defadvice web-mode-highlight-part (around tweak-jsx activate)
+  (if (equal web-mode-content-type "jsx")
+      (let ((web-mode-enable-part-face nil)) ad-do-it) ad-do-it))
 
 (use-package tide
   :ensure t
@@ -756,8 +764,7 @@ kill it (unless it's modified)."
   :ensure t
   :config
   (global-set-key [remap kill-ring-save] #'easy-kill)
-  (global-set-key [remap mark-sexp] #'easy-mark)
-  )
+  (global-set-key [remap mark-sexp] #'easy-mark))
 
 (use-package hideshow
   :ensure t
@@ -1060,8 +1067,8 @@ kill it (unless it's modified)."
 (add-hook 'before-save-hook 'whitespace-cleanup)
 (setq mode-require-final-newline t)
 
-;; ;; (setq explicit-shell-file-name "/bin/bash")
-(setq explicit-shell-file-name "/bin/zsh")
+(setq explicit-shell-file-name "/bin/bash")
+;; (setq explicit-shell-file-name "/bin/zsh")
 
 ;; ;; Resize windows
 (global-set-key (kbd "C-s-<left>") 'shrink-window-horizontally)
@@ -1112,10 +1119,9 @@ kill it (unless it's modified)."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(all-the-icons-ivy-buffer-commands (quote (ivy-switch-buffer-other-window ivy-switch-buffer)))
+ '(all-the-icons-ivy-buffer-commands '(ivy-switch-buffer-other-window ivy-switch-buffer))
  '(package-selected-packages
-   (quote
-    (expand-region fill-column-indicator yasnippet-snippets xclip which-key web-mode use-package undo-tree try tide smartparens rust-mode rg restclient rainbow-delimiters pyimpsort posframe org-bullets nord-theme neotree multiple-cursors minions markdown-mode magit js2-mode hungry-delete hl-todo emmet-mode elpy easy-kill doom-themes doom-modeline dired-collapse diminish csv-mode counsel-projectile carbon-now-sh bm beacon all-the-icons-ivy all-the-icons-dired ag ace-window)))
+   '(expand-region fill-column-indicator yasnippet-snippets xclip which-key web-mode use-package undo-tree try tide smartparens rust-mode rg restclient rainbow-delimiters pyimpsort posframe org-bullets nord-theme neotree multiple-cursors minions markdown-mode magit js2-mode hungry-delete hl-todo emmet-mode elpy easy-kill doom-themes doom-modeline dired-collapse diminish csv-mode counsel-projectile carbon-now-sh bm beacon all-the-icons-ivy all-the-icons-dired ag ace-window))
  '(tramp-verbose 6))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
