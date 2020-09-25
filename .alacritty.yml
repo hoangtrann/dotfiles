@@ -99,7 +99,7 @@ font:
     #   - (macOS) Menlo
     #   - (Linux/BSD) monospace
     #   - (Windows) Consolas
-    family: Source Code Pro
+    family: Monaco
 
     # The `style` can be specified to pick a specific face.
     #style: Regular
@@ -110,7 +110,7 @@ font:
     #
     # If the bold family is not specified, it will fall back to the
     # value specified for the normal font.
-    family: Source Code Pro
+    family: Monaco
 
     # The `style` can be specified to pick a specific face.
     #style: Bold
@@ -121,7 +121,7 @@ font:
     #
     # If the italic family is not specified, it will fall back to the
     # value specified for the normal font.
-    family: Source Code Pro
+    family: Monaco
 
     # The `style` can be specified to pick a specific face.
     #style: Italic
@@ -132,13 +132,13 @@ font:
     #
     # If the bold italic family is not specified, it will fall back to the
     # value specified for the normal font.
-    family: Source Code Pro
+    family: Monaco
 
     # The `style` can be specified to pick a specific face.
     #style: Bold Italic
 
   # Point size
-  size: 15.0
+  size: 11.0
 
   # Offset is the extra space around each character. `offset.y` can be thought of
   # as modifying the line spacing, and `offset.x` as modifying the letter spacing.
@@ -267,36 +267,158 @@ font:
   #
   #indexed_colors: []
 
-# Colors (Gruvbox dark)
+# Base16 Material Palenight 256 - alacritty color config
+# Nate Peterson
 colors:
-  # Default colors
   primary:
-    # hard contrast: background = '#1d2021'
-    background: '#282828'
-    # soft contrast: background = '#32302f'
-    foreground: '#ebdbb2'
+    background: '0x292d3e'
+    foreground: '0x959dcb'
 
-  # Normal colors
+  cursor:
+    text: '0x292d3e'
+    cursor: '0x959dcb'
+
   normal:
-    black:   '#282828'
-    red:     '#cc241d'
-    green:   '#98971a'
-    yellow:  '#d79921'
-    blue:    '#458588'
-    magenta: '#b16286'
-    cyan:    '#689d6a'
-    white:   '#a89984'
+    black:   '0x292d3e'
+    red:     '0xf07178'
+    green:   '0xc3e88d'
+    yellow:  '0xffcb6b'
+    blue:    '0x82aaff'
+    magenta: '0xc792ea'
+    cyan:    '0x89ddff'
+    white:   '0x959dcb'
 
-  # Bright colors
   bright:
-    black:   '#928374'
-    red:     '#fb4934'
-    green:   '#b8bb26'
-    yellow:  '#fabd2f'
-    blue:    '#83a598'
-    magenta: '#d3869b'
-    cyan:    '#8ec07c'
-    white:   '#ebdbb2'
+    black:   '0x676e95'
+    red:     '0xf07178'
+    green:   '0xc3e88d'
+    yellow:  '0xffcb6b'
+    blue:    '0x82aaff'
+    magenta: '0xc792ea'
+    cyan:    '0x89ddff'
+    white:   '0xffffff'
+
+  indexed_colors:
+    - { index: 16, color: '0xf78c6c' }
+    - { index: 17, color: '0xff5370' }
+    - { index: 18, color: '0x444267' }
+    - { index: 19, color: '0x32374d' }
+    - { index: 20, color: '0x8796b0' }
+    - { index: 21, color: '0x959dcb' }
+
+# Colors (Gruvbox dark)
+#colors:
+  #primary:
+     #hard contrast: background = '0x1d2021'
+    #background: '0x282828'
+     #soft contrast: background = '0x32302f'
+    #foreground: '0xebdbb2'
+  #normal:
+    #black:   '0x282828'
+    #red:     '0xcc241d'
+    #green:   '0x98971a'
+    #yellow:  '0xd79921'
+    #blue:    '0x458588'
+    #magenta: '0xb16286'
+    #cyan:    '0x689d6a'
+    #white:   '0xa89984'
+  #bright:
+    #black:   '0x928374'
+    #red:     '0xfb4934'
+    #green:   '0xb8bb26'
+    #yellow:  '0xfabd2f'
+    #blue:    '0x83a598'
+    #magenta: '0xd3869b'
+    #cyan:    '0x8ec07c'
+    #white:   '0xebdbb2'
+
+# Nord
+#colors:
+  #primary:
+    #background: '#2e3440'
+    #foreground: '#d8dee9'
+    #dim_foreground: '#a5abb6'
+  #cursor:
+    #text: '#2e3440'
+    #cursor: '#d8dee9'
+  #vi_mode_cursor:
+    #text: '#2e3440'
+    #cursor: '#d8dee9'
+  #selection:
+    #text: CellForeground
+    #background: '#4c566a'
+  #search:
+    #matches:
+      #foreground: CellBackground
+      #background: '#88c0d0'
+    #bar:
+      #background: '#434c5e'
+      #foreground: '#d8dee9'
+  #normal:
+    #black: '#3b4252'
+    #red: '#bf616a'
+    #green: '#a3be8c'
+    #yellow: '#ebcb8b'
+    #blue: '#81a1c1'
+    #magenta: '#b48ead'
+    #cyan: '#88c0d0'
+    #white: '#e5e9f0'
+  #bright:
+    #black: '#4c566a'
+    #red: '#bf616a'
+    #green: '#a3be8c'
+    #yellow: '#ebcb8b'
+    #blue: '#81a1c1'
+    #magenta: '#b48ead'
+    #cyan: '#8fbcbb'
+    #white: '#eceff4'
+  #dim:
+    #black: '#373e4d'
+    #red: '#94545d'
+    #green: '#809575'
+    #yellow: '#b29e75'
+    #blue: '#68809a'
+    #magenta: '#8c738c'
+    #cyan: '#6d96a5'
+    #white: '#aeb3bb'
+
+# Onedark
+#colors:
+    #primary:
+        #background: '0x1e2127'
+        #foreground: '0xabb2bf'
+        #bright_foreground: '0xe6efff'
+#
+    #normal:
+        #black:   '0x1e2127'
+        #red:     '0xe06c75'
+        #green:   '0x98c379'
+        #yellow:  '0xd19a66'
+        #blue:    '0x61afef'
+        #magenta: '0xc678dd'
+        #cyan:    '0x56b6c2'
+        #white:   '0x828791'
+#
+    #bright:
+        #black:   '0x5c6370'
+        #red:     '0xe06c75'
+        #green:   '0x98c379'
+        #yellow:  '0xd19a66'
+        #blue:    '0x61afef'
+        #magenta: '0xc678dd'
+        #cyan:    '0x56b6c2'
+        #white:   '0xe6efff'
+#
+    #dim:
+        #black:   '0x1e2127'
+        #red:     '0xe06c75'
+        #green:   '0x98c379'
+        #yellow:  '0xd19a66'
+        #blue:    '0x61afef'
+        #magenta: '0xc678dd'
+        #cyan:    '0x56b6c2'
+        #white:   '0x828791'
+
 
 # Bell
 #
