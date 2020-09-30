@@ -99,7 +99,7 @@ font:
     #   - (macOS) Menlo
     #   - (Linux/BSD) monospace
     #   - (Windows) Consolas
-    family: Monaco
+    family: Input Mono
 
     # The `style` can be specified to pick a specific face.
     #style: Regular
@@ -110,7 +110,7 @@ font:
     #
     # If the bold family is not specified, it will fall back to the
     # value specified for the normal font.
-    family: Monaco
+    family: Input Mono
 
     # The `style` can be specified to pick a specific face.
     #style: Bold
@@ -121,7 +121,7 @@ font:
     #
     # If the italic family is not specified, it will fall back to the
     # value specified for the normal font.
-    family: Monaco
+    family: Input Mono
 
     # The `style` can be specified to pick a specific face.
     #style: Italic
@@ -132,26 +132,26 @@ font:
     #
     # If the bold italic family is not specified, it will fall back to the
     # value specified for the normal font.
-    family: Monaco
+    family: Input Mono
 
     # The `style` can be specified to pick a specific face.
     #style: Bold Italic
 
   # Point size
-  size: 11.0
+  size: 14.0
 
   # Offset is the extra space around each character. `offset.y` can be thought of
   # as modifying the line spacing, and `offset.x` as modifying the letter spacing.
-  #offset:
-  #  x: 0
-  #  y: 0
+  offset:
+    x: 0
+    y: 0
 
   # Glyph offset determines the locations of the glyphs within their cells with
   # the default being at the bottom. Increasing `x` moves the glyph to the right,
   # increasing `y` moves the glyph upward.
   #glyph_offset:
-  #  x: 0
-  #  y: 0
+    #x: 0
+    #y: 1
 
   # Thin stroke font rendering (macOS only)
   #
@@ -305,7 +305,7 @@ colors:
     - { index: 19, color: '0x32374d' }
     - { index: 20, color: '0x8796b0' }
     - { index: 21, color: '0x959dcb' }
-
+#
 # Colors (Gruvbox dark)
 #colors:
   #primary:
@@ -382,42 +382,31 @@ colors:
     #cyan: '#6d96a5'
     #white: '#aeb3bb'
 
-# Onedark
+# Colors (One Dark)
 #colors:
-    #primary:
-        #background: '0x1e2127'
-        #foreground: '0xabb2bf'
-        #bright_foreground: '0xe6efff'
+  #primary:
+    #background: '0x282c34'
+    #foreground: '0xabb2bf'
 #
-    #normal:
-        #black:   '0x1e2127'
-        #red:     '0xe06c75'
-        #green:   '0x98c379'
-        #yellow:  '0xd19a66'
-        #blue:    '0x61afef'
-        #magenta: '0xc678dd'
-        #cyan:    '0x56b6c2'
-        #white:   '0x828791'
+  #normal:
+    #black:   '0x131613'
+    #red:     '0xe06c75'
+    #green:   '0x98c379'
+    #yellow:  '0xd19a66'
+    #blue:    '0x61afef'
+    #magenta: '0xc678dd'
+    #cyan:    '0x56b6c2'
+    #white:   '0xabb2bf'
 #
-    #bright:
-        #black:   '0x5c6370'
-        #red:     '0xe06c75'
-        #green:   '0x98c379'
-        #yellow:  '0xd19a66'
-        #blue:    '0x61afef'
-        #magenta: '0xc678dd'
-        #cyan:    '0x56b6c2'
-        #white:   '0xe6efff'
-#
-    #dim:
-        #black:   '0x1e2127'
-        #red:     '0xe06c75'
-        #green:   '0x98c379'
-        #yellow:  '0xd19a66'
-        #blue:    '0x61afef'
-        #magenta: '0xc678dd'
-        #cyan:    '0x56b6c2'
-        #white:   '0x828791'
+  #bright:
+    #black:   '0x5c6370'
+    #red:     '0xe06c75'
+    #green:   '0x98c379'
+    #yellow:  '0xd19a66'
+    #blue:    '0x61afef'
+    #magenta: '0xc678dd'
+    #cyan:    '0x56b6c2'
+    #white:   '0xffffff'
 
 
 # Bell

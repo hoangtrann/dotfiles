@@ -224,6 +224,7 @@ kill it (unless it's modified)."
   (progn
     (setq aw-scope 'global) ;; was frame
     (ace-window-display-mode)
+    (setq aw-background nil)
     (global-set-key (kbd "C-x O") 'other-frame)
     (global-set-key [remap other-window] 'ace-window)
     (custom-set-faces
@@ -298,7 +299,7 @@ kill it (unless it's modified)."
   (setq doom-themes-enable-bold nil
         doom-themes-enable-italic t)
   ;; (load-theme 'doom-gruvbox t)
-  (load-theme 'doom-gruvbox t)
+  (load-theme 'doom-one t)
   (doom-themes-org-config)
   (doom-themes-visual-bell-config)
   (doom-themes-neotree-config)
@@ -316,11 +317,11 @@ kill it (unless it's modified)."
 ;;   (nyan-mode)
 ;;   (nyan-start-animation))
 
-(use-package fill-column-indicator
-  :ensure t
-  :config
-  (setq-default fci-rule-column 80)
-  (add-hook 'prog-mode-hook 'fci-mode))
+;; (use-package fill-column-indicator
+;;   :ensure t
+;;   :config
+;;   (setq-default fci-rule-column 80)
+;;   (add-hook 'prog-mode-hook 'fci-mode))
 
 (use-package doom-modeline
   :ensure t
@@ -451,10 +452,10 @@ kill it (unless it's modified)."
   (advice-add 'python-mode :before 'elpy-enable)
   :config
   (elpy-enable)
-  ;; (setq eldoc-idle-delay 1)
+  (setq eldoc-idle-delay 0.5)
   (setq elpy-rpc-python-command "python3")
   (add-hook 'elpy-mode-hook (lambda ()
-                              (highlight-indentation-mode 1)
+                              (highlight-indentation-mode -1)
                               (flycheck-mode)
                               (setq python-check-command "flake8")))
   (when (require 'flycheck nil t)
@@ -466,6 +467,7 @@ kill it (unless it's modified)."
         'elpy-black-fix-code))
   )
 
+(remove-hook 'find-file-hooks 'vc-refresh-state)
 ;; ;; Magit - Magic
 (use-package magit
   :ensure t
