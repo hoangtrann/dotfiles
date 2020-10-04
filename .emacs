@@ -1,4 +1,4 @@
-;;; -*- mode: lisp -*-
+;; -*- mode: lisp -*-
 
 (require 'package)
 
@@ -52,7 +52,7 @@
 (setq ring-bell-function 'ignore)
 (setq auto-window-vscroll nil)
 (setq byte-compile-warnings '(cl-functions))
-(show-paren-mode)
+;; (show-paren-mode)
 
 ;; Make scheme less colorful
 (setq inhibit-compacting-font-caches t)
@@ -89,8 +89,8 @@
 (setq column-number-mode t)
 
 (setq dired-listing-switches "-laGh1v --group-directories-first")
-(add-hook 'prog-mode-hook 'display-line-numbers-mode)
-(add-hook 'prog-mode-hook 'visual-line-mode)
+;; (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+;; (add-hook 'prog-mode-hook 'visual-line-mode)
 
 (global-set-key (kbd "C-S-l") 'display-line-numbers-mode)
 (global-set-key (kbd "<f5>") 'revert-buffer)
@@ -299,7 +299,7 @@ kill it (unless it's modified)."
   (setq doom-themes-enable-bold nil
         doom-themes-enable-italic t)
   ;; (load-theme 'doom-gruvbox t)
-  (load-theme 'doom-one t)
+  (load-theme 'doom-palenight t)
   (doom-themes-org-config)
   (doom-themes-visual-bell-config)
   (doom-themes-neotree-config)
@@ -332,13 +332,13 @@ kill it (unless it's modified)."
   (setq doom-modeline-bar-width 3)
   (setq doom-modeline-window-width-limit fill-column)
   (setq doom-modeline-project-detection 'project)
-  (setq doom-modeline-buffer-file-name-style 'buffer-name)
+  (setq doom-modeline-buffer-file-name-style 'auto)
   (setq find-file-visit-truename t)
   (setq doom-modeline-icon (display-graphic-p))
   (setq doom-modeline-major-mode-icon t)
   (setq doom-modeline-buffer-modification-icon t)
   (setq doom-modeline-buffer-state-icon t)
-  (setq doom-modeline-indent-info t)
+  (setq doom-modeline-indent-info nil)
   (setq doom-modeline-checker-simple-format t)
   (setq doom-modeline-vcs-max-length 12)
   (setq doom-modeline-env-version t)
@@ -361,8 +361,8 @@ kill it (unless it's modified)."
 ;; ;;                     :height 105)
 
 ;; (set-face-attribute 'default nil :font "Mononoki Nerd Font-16")
-(set-face-attribute 'default nil :font "Monaco Nerd Font-13")
-(set-frame-font "Monaco Nerd Font-13" nil t)
+(set-face-attribute 'default nil :font "Hack-14")
+(set-frame-font "Hack-14" nil t)
 
 ;; (set-face-bold-p 'bold nil)
 
@@ -454,6 +454,7 @@ kill it (unless it's modified)."
   (elpy-enable)
   (setq eldoc-idle-delay 0.5)
   (setq elpy-rpc-python-command "python3")
+  (setq elpy-rpc-backend "jedi")
   (add-hook 'elpy-mode-hook (lambda ()
                               (highlight-indentation-mode -1)
                               (flycheck-mode)
@@ -464,8 +465,7 @@ kill it (unless it's modified)."
   (define-key elpy-refactor-map (kbd "f")
   (cons (format "%sormat code"
                 (propertize "f" 'face 'bold))
-        'elpy-black-fix-code))
-  )
+        'elpy-black-fix-code)))
 
 (remove-hook 'find-file-hooks 'vc-refresh-state)
 ;; ;; Magit - Magic
@@ -488,6 +488,7 @@ kill it (unless it's modified)."
          ("C-x C-h" . counsel-minibuffer-history)
          ("C-x C-l" . counsel-find-library)
          ("C-x C-r" . counsel-recentf)
+         ("C-r" . counsel-minibuffer-history)
          ("C-x C-u" . counsel-unicode-char)
          ("C-x C-v" . counsel-set-variable))
   :config (counsel-mode)
@@ -626,10 +627,16 @@ kill it (unless it's modified)."
 
 (use-package swiper
   :after ivy
-  :bind (("C-s" . swiper-isearch)
-         :map swiper-map
-         ("M-%" . swiper-query-replace)))
+  :bind (("C-s" . swiper)
+         :map swiper-map ("M-%" . swiper-query-replace))
+  :config
+  (setq ivy-display-style 'fancy))
 
+(defun bjm-swiper-recenter (&rest args)
+  "recenter display after swiper"
+  (recenter)
+  )
+(advice-add 'swiper :after #'bjm-swiper-recenter)
 
 (use-package all-the-icons-dired
   :ensure t
@@ -916,42 +923,52 @@ kill it (unless it's modified)."
   (global-set-key [remap kill-ring-save] #'easy-kill)
   (global-set-key [remap mark-sexp] #'easy-mark))
 
-(use-package hideshow
+(use-package origami
   :ensure t
-  :bind (("C-M->" . my-toggle-hideshow-all)
-         ("C-M-<" . hs-hide-level)
-         ("C-;" . hs-toggle-hiding)
-         ;; ([C-tab] . hs-toggle-hiding)
-         )
   :config
-  ;; Hide the comments too when you do a 'hs-hide-all'
-  (setq hs-hide-comments nil)
-  ;; Set whether isearch opens folded comments, code, or both
-  ;; where x is code, comments, t (both), or nil (neither)
-  (setq hs-isearch-open t)
-  ;; Add more here
-
-  (setq hs-set-up-overlay
-        (defun my-display-code-line-counts (ov)
-          (when (eq 'code (overlay-get ov 'hs))
-            (overlay-put ov 'display
-                         (propertize
-                          (format " ... <%d>"
-                                  (count-lines (overlay-start ov)
-                                               (overlay-end ov)))
-                          'face 'font-lock-type-face)))))
-
-  (defvar my-hs-hide nil "Current state of hideshow for toggling all.")
-       ;;;###autoload
-  (defun my-toggle-hideshow-all () "Toggle hideshow all."
-         (interactive)
-         (setq my-hs-hide (not my-hs-hide))
-         (if my-hs-hide
-             (hs-hide-all)
-           (hs-show-all)))
-
-  (add-hook 'prog-mode-hook #'hs-minor-mode)
+  (add-hook 'prog-mode-hook #'origami-mode)
+  (define-key origami-mode-map (kbd "C-c f a") 'origami-toggle-all-nodes)
+  ;; http://stackoverflow.com/questions/916797/emacs-global-set-key-to-c-tab
+  (define-key origami-mode-map (kbd "<C-tab>") 'origami-recursively-toggle-node)
   )
+
+
+;; (use-package hideshow
+;;   :ensure t
+;;   :bind (("C-M->" . my-toggle-hideshow-all)
+;;          ("C-M-<" . hs-hide-level)
+;;          ("C-;" . hs-toggle-hiding)
+;;          ;; ([C-tab] . hs-toggle-hiding)
+;;          )
+;;   :config
+;;   ;; Hide the comments too when you do a 'hs-hide-all'
+;;   (setq hs-hide-comments nil)
+;;   ;; Set whether isearch opens folded comments, code, or both
+;;   ;; where x is code, comments, t (both), or nil (neither)
+;;   (setq hs-isearch-open t)
+;;   ;; Add more here
+
+;;   (setq hs-set-up-overlay
+;;         (defun my-display-code-line-counts (ov)
+;;           (when (eq 'code (overlay-get ov 'hs))
+;;             (overlay-put ov 'display
+;;                          (propertize
+;;                           (format " ... <%d>"
+;;                                   (count-lines (overlay-start ov)
+;;                                                (overlay-end ov)))
+;;                           'face 'font-lock-type-face)))))
+
+;;   (defvar my-hs-hide nil "Current state of hideshow for toggling all.")
+;;        ;;;###autoload
+;;   (defun my-toggle-hideshow-all () "Toggle hideshow all."
+;;          (interactive)
+;;          (setq my-hs-hide (not my-hs-hide))
+;;          (if my-hs-hide
+;;              (hs-hide-all)
+;;            (hs-show-all)))
+
+;;   (add-hook 'prog-mode-hook #'hs-minor-mode)
+;;   )
 
 (use-package sgml-mode
   :ensure t)
@@ -1064,14 +1081,19 @@ kill it (unless it's modified)."
               ))
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 
-(use-package smartparens
-  :ensure t
-  :config
-  (smartparens-global-mode)
-  ;; (add-hook 'web-mode-hook #'turn-on-smartparens-mode t)
-  )
+;; (use-package smartparens
+;;   :ensure t
+;;   :config
+;;   (smartparens-global-mode)
+;;   )
 
 ;; ;; (add-hook 'before-save-hook #'gofmt-before-save)
+
+(use-package beacon
+  :ensure t
+  :config
+  (beacon-mode 1)
+  (setq beacon-size 25))
 
 ;; ;; REST Support
 (use-package restclient
@@ -1270,8 +1292,8 @@ kill it (unless it's modified)."
  ;; If there is more than one, they won't work right.
  '(all-the-icons-ivy-buffer-commands '(ivy-switch-buffer-other-window ivy-switch-buffer))
  '(package-selected-packages
-   '(prettier py-isort ivy-rich ivy-filthy-rich quelpa-use-package quelpa dired+ dashboard expand-region fill-column-indicator yasnippet-snippets xclip which-key web-mode use-package undo-tree try tide smartparens rust-mode rg restclient rainbow-delimiters pyimpsort posframe org-bullets nord-theme neotree multiple-cursors minions markdown-mode magit js2-mode hungry-delete hl-todo emmet-mode elpy easy-kill doom-themes doom-modeline dired-collapse diminish csv-mode counsel-projectile carbon-now-sh bm beacon all-the-icons-ivy all-the-icons-dired ag ace-window))
- '(tramp-verbose 6))
+   '(origami zen-mode prettier py-isort ivy-rich ivy-filthy-rich quelpa-use-package quelpa dired+ dashboard expand-region fill-column-indicator yasnippet-snippets xclip which-key web-mode use-package undo-tree try tide smartparens rust-mode rg restclient rainbow-delimiters pyimpsort posframe org-bullets nord-theme neotree multiple-cursors minions markdown-mode magit js2-mode hungry-delete hl-todo emmet-mode elpy easy-kill doom-themes doom-modeline dired-collapse diminish csv-mode counsel-projectile carbon-now-sh bm beacon all-the-icons-ivy all-the-icons-dired ag ace-window))
+ '(tramp-verbose 6 t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
