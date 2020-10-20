@@ -71,10 +71,13 @@
 (transient-mark-mode 1)
 
 ;; Use highlight on curent line
-(global-hl-line-mode +1)
+;; (global-hl-line-mode +1)
+;; (when window-system
+;;   (global-hl-line-mode))
 (global-visual-line-mode t)
-(setq jit-lock-defer-time 0)
+(setq jit-lock-defer-time nil)
 (setq fast-but-imprecise-scrolling t)
+;; (setq font-lock-maximum-decoration 3)
 
 ;; Disable backups and auto-saves
 (setq make-backup-files nil)
@@ -89,7 +92,7 @@
 (setq column-number-mode t)
 
 (setq dired-listing-switches "-laGh1v --group-directories-first")
-;; (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
 ;; (add-hook 'prog-mode-hook 'visual-line-mode)
 
 (global-set-key (kbd "C-S-l") 'display-line-numbers-mode)
@@ -293,18 +296,6 @@ kill it (unless it's modified)."
   (setq treemacs-header-function #'treemacs-projectile-create-header)
   )
 
-(use-package doom-themes
-  :ensure t
-  :config
-  (setq doom-themes-enable-bold nil
-        doom-themes-enable-italic t)
-  ;; (load-theme 'doom-gruvbox t)
-  (load-theme 'doom-palenight t)
-  (doom-themes-org-config)
-  (doom-themes-visual-bell-config)
-  (doom-themes-neotree-config)
-  )
-
 ;; (use-package nord-theme
 ;;   :ensure t
 ;;   :config
@@ -361,8 +352,15 @@ kill it (unless it's modified)."
 ;; ;;                     :height 105)
 
 ;; (set-face-attribute 'default nil :font "Mononoki Nerd Font-16")
-(set-face-attribute 'default nil :font "Hack-14")
-(set-frame-font "Hack-14" nil t)
+(set-face-attribute 'default nil :font "Monaco" :height 150 :weight 'normal :width 'normal)
+;; (set-frame-font "Roboto Mono-14" nil t)
+
+ ;; (setq initial-frame-alist '(
+ ;;   (font . "Roboto Mono-14")
+ ;; ))
+ ;; (setq default-frame-alist '(
+ ;;   (font . "Roboto Mono-14")
+ ;; ))
 
 ;; (set-face-bold-p 'bold nil)
 
@@ -627,7 +625,7 @@ kill it (unless it's modified)."
 
 (use-package swiper
   :after ivy
-  :bind (("C-s" . swiper)
+  :bind (("C-s" . swiper-isearch)
          :map swiper-map ("M-%" . swiper-query-replace))
   :config
   (setq ivy-display-style 'fancy))
@@ -663,6 +661,22 @@ kill it (unless it's modified)."
 ;; ;;  '((move counsel-projectile-switch-project-action-vc 1)
 ;; ;;    (setkey counsel-projectile-switch-project-action-vc "o")
 ;; ;;    (setkey counsel-projectile-switch-project-action " ")))
+
+;; (use-package dracula-theme
+;;   :ensure t
+;;   :config
+;;   (load-theme 'dracula t))
+
+(use-package doom-themes
+  :ensure t
+  :config
+  (setq doom-themes-enable-bold t
+        doom-themes-enable-italic t)
+  (load-theme 'doom-dracula t)
+  (doom-themes-org-config)
+  (doom-themes-visual-bell-config)
+  (doom-themes-neotree-config)
+  )
 
 (use-package projectile
   :ensure t
@@ -1225,8 +1239,11 @@ kill it (unless it's modified)."
 (add-hook 'before-save-hook 'whitespace-cleanup)
 (setq mode-require-final-newline t)
 
-(setq explicit-shell-file-name "/bin/bash")
-;; (setq explicit-shell-file-name "/bin/zsh")
+;; (setq explicit-shell-file-name "/bin/bash")
+(setq explicit-shell-file-name "/bin/zsh")
+
+(use-package vterm
+  :ensure t)
 
 ;; ;; Resize windows
 (global-set-key (kbd "C-s-<left>") 'shrink-window-horizontally)
@@ -1237,7 +1254,6 @@ kill it (unless it's modified)."
 (use-package page-break-lines
   :ensure t)
 
-
 (use-package dashboard
   :ensure t
   :config
@@ -1245,7 +1261,7 @@ kill it (unless it's modified)."
 
   (turn-on-page-break-lines-mode)
 
-  (setq dashboard-banner-logo-title "Hey there sexy!")
+  ;; (setq dashboard-banner-logo-title "Hey there sexy!")
   (setq dashboard-startup-banner 3)
   (setq dashboard-center-content t)
   (setq dashboard-show-shortcuts nil)
@@ -1276,14 +1292,6 @@ kill it (unless it's modified)."
   (let ((default-directory "/ssh:user@host:"))
     (shell)))
 
-;; ;; ################################################
-
-;; ;; Display time
-;; (setq display-time-24hr-format t)
-;; (setq display-time-format "%H:%M - %d %B %Y")
-;; (setq display-time-format "%H:%M")
-;; (display-time-mode 1)
-
 (customize-set-variable 'tramp-verbose 6 "Enable remote command traces")
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -1292,8 +1300,8 @@ kill it (unless it's modified)."
  ;; If there is more than one, they won't work right.
  '(all-the-icons-ivy-buffer-commands '(ivy-switch-buffer-other-window ivy-switch-buffer))
  '(package-selected-packages
-   '(origami zen-mode prettier py-isort ivy-rich ivy-filthy-rich quelpa-use-package quelpa dired+ dashboard expand-region fill-column-indicator yasnippet-snippets xclip which-key web-mode use-package undo-tree try tide smartparens rust-mode rg restclient rainbow-delimiters pyimpsort posframe org-bullets nord-theme neotree multiple-cursors minions markdown-mode magit js2-mode hungry-delete hl-todo emmet-mode elpy easy-kill doom-themes doom-modeline dired-collapse diminish csv-mode counsel-projectile carbon-now-sh bm beacon all-the-icons-ivy all-the-icons-dired ag ace-window))
- '(tramp-verbose 6 t))
+   '(vterm dracula-theme origami zen-mode prettier py-isort ivy-rich ivy-filthy-rich quelpa-use-package quelpa dired+ dashboard expand-region fill-column-indicator yasnippet-snippets xclip which-key web-mode use-package undo-tree try tide smartparens rust-mode rg restclient rainbow-delimiters pyimpsort posframe org-bullets nord-theme neotree multiple-cursors minions markdown-mode magit js2-mode hungry-delete hl-todo emmet-mode elpy easy-kill doom-themes doom-modeline dired-collapse diminish csv-mode counsel-projectile carbon-now-sh bm beacon all-the-icons-ivy all-the-icons-dired ag ace-window))
+ '(tramp-verbose 6))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

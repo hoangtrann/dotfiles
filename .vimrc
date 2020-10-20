@@ -1,6 +1,6 @@
 set guicursor=
 set relativenumber
-"set cursorline
+set cursorline
 set noerrorbells
 set tabstop=4 softtabstop=4
 set shiftwidth=4
@@ -15,6 +15,8 @@ set incsearch
 set clipboard=unnamed
 set cmdheight=2
 set colorcolumn=80
+set completeopt-=preview
+"set nohlsearch
 highlight ColorColumn ctermbg=0 guibg=lightgrey
 
 filetype on
@@ -30,7 +32,6 @@ autocmd InsertEnter,InsertLeave * set cul!
 call plug#begin('~/.config/nvim/plugged')
 
 Plug 'morhetz/gruvbox'
-Plug 'joshdick/onedark.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'jremmen/vim-ripgrep'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -43,8 +44,8 @@ Plug 'mbbill/undotree'
 Plug 'machakann/vim-highlightedyank'
 Plug 'drewtempelmeyer/palenight.vim'
 Plug 'kaicataldo/material.vim', { 'branch': 'main' }
-"Plug 'ap/vim-buftabline'
-Plug 'airblade/vim-gitgutter'
+Plug 'ap/vim-buftabline'
+"Plug 'airblade/vim-gitgutter'
 Plug 'lepture/vim-jinja'
 Plug 'pangloss/vim-javascript'
 Plug 'vim-airline/vim-airline'
@@ -58,6 +59,9 @@ Plug 'preservim/nerdtree'
 Plug 'ycm-core/YouCompleteMe'
 Plug 'mattn/emmet-vim'
 Plug 'sheerun/vim-polyglot'
+"Plug 'ctrlpvim/ctrlp.vim'
+Plug 'dracula/vim', { 'name': 'dracula' }
+Plug 'qpkorr/vim-bufkill'
 
 call plug#end()
 
@@ -83,9 +87,8 @@ if (has("termguicolors"))
   set termguicolors
 endif
 "let g:material_theme_style = 'palenight'
-"let g:onedark_termcolors=256
 set background=dark
-colorscheme palenight
+colorscheme dracula
 
 if executable('rg')
     let g:rg_derive_root = 'true'
@@ -159,17 +162,41 @@ set foldlevel=99
 map <leader>t :TagbarToggle<CR>
 
 " Fzf
-"nnoremap <leader><leader> :GFiles<CR>
+nnoremap <leader><leader> :GFiles<CR>
 nnoremap <leader>fi       :Files<CR>
 nnoremap <leader>C        :Colors<CR>
 "nnoremap <leader><CR>     :Buffers<CR>
-"nnoremap <leader>fl       :Lines<CR>
+nnoremap <Leader>b :Buffers<cr>
+nnoremap <leader>fl       :Lines<CR>
 nnoremap <leader>ag       :Ag! <C-R><C-W><CR>
 nnoremap <leader>m        :History<CR>
-nnoremap \ :Rg<CR>
-nnoremap <C-T> :Files<cr>
-nnoremap <Leader>b :Buffers<cr>
+nnoremap \ :Rg <CR>
+"nnoremap <C-T> :Files<cr>
 nnoremap <Leader>s :BLines<cr>
+
+" Find files like Projects Files
+" Run FZF based on the cwd & git detection
+" 1. Runs :Files, If cwd is not a git repository
+" 2. Runs :GitFiles <cwd> If root is a git repository
+fun! FzfOmniFiles()
+  " Throws v:shell_error if is not a git directory
+  let git_status = system('git status')
+  if v:shell_error != 0
+    :Files
+  else
+    " Reference examples which made this happen:
+    " https://github.com/junegunn/fzf.vim/blob/master/doc/fzf-vim.txt#L209
+    " https://github.com/junegunn/fzf.vim/blob/master/doc/fzf-vim.txt#L290
+    " --exclude-standard - Respect gitignore
+    " --others - Show untracked git files
+    " dir: getcwd() - Shows file names relative to cwd
+    let git_files_cmd = ":GitFiles --exclude-standard --cached --others"
+    call fzf#vim#gitfiles('--exclude-standard --cached --others', {'dir': getcwd()})
+  endif
+endfun
+" }}}
+
+nnoremap <silent> <C-p> :call FzfOmniFiles()<CR>
 
 " Call flake8 on save buffer
 autocmd BufWritePost *.py call flake8#Flake8()
@@ -185,10 +212,10 @@ nnoremap <F9> :Black<CR>
 let NERDTreeIgnore = ['\.pyc$', '__pycache__']
 let NERDTreeMinimalUI = 1
 let g:nerdtree_open = 0
-"map <leader>n :NERDTreeToggle<CR>
+map <leader>n :NERDTreeToggle<CR>
 set autochdir
 let NERDTreeChDirMode=2
-nnoremap <leader>n :NERDTree .<CR>
+"nnoremap <leader>n :NERDTree .<CR>
 "function NERDTreeToggle()
     "NERDTreeTabsToggle
     "if g:nerdtree_open == 1
@@ -223,10 +250,9 @@ endfunction
 
 inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
 
-"let g:airline_theme='onedark'
-let g:airline_theme = "palenight"
-let g:airline#extensions#branch#enabled = 1
+let g:airline#extensions#branch#enabled = 0
 let g:airline#extensions#hunks#enabled = 0
+let g:airline#extensions#tabline#fnamemod = ':t'
 
 if !exists('g:airline_symbols')
   let g:airline_symbols = {}
@@ -259,3 +285,17 @@ let g:airline_symbols.whitespace = 'Ξ'
 let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = ''
+
+function! s:black_reinstall()
+  " if using vim-plug: make sure the black plugin is loaded
+  call plug#load('black')
+  echom "BlackReinstall: Removing Black's virtualenv in ".g:black_virtualenv.'.'
+  echom repeat('=', 72)
+  python3 import os, shutil, vim; shutil.rmtree(os.path.expanduser(vim.eval("g:black_virtualenv")))
+  BlackUpgrade
+  echom repeat('=', 72)
+  " again, the :PlugUpdate recommendation applies if using vim-plug
+  echom 'BlackReinstall: If the issue persists, run :PlugUpdate black and retry reinstalling.'
+endfunction
+
+command! BlackReinstall :call s:black_reinstall()

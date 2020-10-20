@@ -138,7 +138,7 @@ font:
     #style: Bold Italic
 
   # Point size
-  size: 14.0
+  size: 15.0
 
   # Offset is the extra space around each character. `offset.y` can be thought of
   # as modifying the line spacing, and `offset.x` as modifying the letter spacing.
@@ -269,43 +269,43 @@ font:
 
 # Base16 Material Palenight 256 - alacritty color config
 # Nate Peterson
-colors:
-  primary:
-    background: '0x292d3e'
-    foreground: '0x959dcb'
-
-  cursor:
-    text: '0x292d3e'
-    cursor: '0x959dcb'
-
-  normal:
-    black:   '0x292d3e'
-    red:     '0xf07178'
-    green:   '0xc3e88d'
-    yellow:  '0xffcb6b'
-    blue:    '0x82aaff'
-    magenta: '0xc792ea'
-    cyan:    '0x89ddff'
-    white:   '0x959dcb'
-
-  bright:
-    black:   '0x676e95'
-    red:     '0xf07178'
-    green:   '0xc3e88d'
-    yellow:  '0xffcb6b'
-    blue:    '0x82aaff'
-    magenta: '0xc792ea'
-    cyan:    '0x89ddff'
-    white:   '0xffffff'
-
-  indexed_colors:
-    - { index: 16, color: '0xf78c6c' }
-    - { index: 17, color: '0xff5370' }
-    - { index: 18, color: '0x444267' }
-    - { index: 19, color: '0x32374d' }
-    - { index: 20, color: '0x8796b0' }
-    - { index: 21, color: '0x959dcb' }
+#colors:
+  #primary:
+    #background: '0x292d3e'
+    #foreground: '0x959dcb'
 #
+  #cursor:
+    #text: '0x292d3e'
+    #cursor: '0x959dcb'
+#
+  #normal:
+    #black:   '0x292d3e'
+    #red:     '0xf07178'
+    #green:   '0xc3e88d'
+    #yellow:  '0xffcb6b'
+    #blue:    '0x82aaff'
+    #magenta: '0xc792ea'
+    #cyan:    '0x89ddff'
+    #white:   '0x959dcb'
+#
+  #bright:
+    #black:   '0x676e95'
+    #red:     '0xf07178'
+    #green:   '0xc3e88d'
+    #yellow:  '0xffcb6b'
+    #blue:    '0x82aaff'
+    #magenta: '0xc792ea'
+    #cyan:    '0x89ddff'
+    #white:   '0xffffff'
+#
+  #indexed_colors:
+    #- { index: 16, color: '0xf78c6c' }
+    #- { index: 17, color: '0xff5370' }
+    #- { index: 18, color: '0x444267' }
+    #- { index: 19, color: '0x32374d' }
+    #- { index: 20, color: '0x8796b0' }
+    #- { index: 21, color: '0x959dcb' }
+
 # Colors (Gruvbox dark)
 #colors:
   #primary:
@@ -408,6 +408,54 @@ colors:
     #cyan:    '0x56b6c2'
     #white:   '0xffffff'
 
+# Colors (Dracula)
+colors:
+  primary:
+    background: '0x282a36'
+    foreground: '0xf8f8f2'
+  cursor:
+    text: '0x44475a'
+    cursor: '0xf8f8f2'
+  selection:
+    text: '0xf8f8f2'
+  normal:
+    black:   '0x000000'
+    red:     '0xff5555'
+    green:   '0x50fa7b'
+    yellow:  '0xf1fa8c'
+    blue:    '0xbd93f9'
+    magenta: '0xff79c6'
+    cyan:    '0x8be9fd'
+    white:   '0xbfbfbf'
+
+  bright:
+    black:   '0x4d4d4d'
+    red:     '0xff6e67'
+    green:   '0x5af78e'
+    yellow:  '0xf4f99d'
+    blue:    '0xcaa9fa'
+    magenta: '0xff92d0'
+    cyan:    '0x9aedfe'
+    white:   '0xe6e6e6'
+  dim:
+    black:   '0x14151b'
+    red:     '0xff2222'
+    green:   '0x1ef956'
+    yellow:  '0xebf85b'
+    blue:    '0x4d5b86'
+    magenta: '0xff46b0'
+    cyan:    '0x59dffc'
+    white:   '0xe6e6d1'
+
+  # Indexed Colors
+  #
+  # The indexed colors include all colors from 16 to 256.
+  # When these are not set, they're filled with sensible defaults.
+  #
+  # Example:
+  #   `- { index: 16, color: '0xff00ff' }`
+  #
+  #indexed_colors: []
 
 # Bell
 #
