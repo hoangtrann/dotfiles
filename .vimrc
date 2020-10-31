@@ -15,8 +15,6 @@ set incsearch
 set clipboard=unnamed
 set cmdheight=2
 set colorcolumn=80
-set completeopt-=preview
-"set nohlsearch
 highlight ColorColumn ctermbg=0 guibg=lightgrey
 
 filetype on
@@ -26,48 +24,31 @@ syntax on
 au! FileType python setl nosmartindent
 
 autocmd BufWritePre * :%s/\s\+$//e
-autocmd InsertEnter,InsertLeave * set cul!
 
 "call plug#begin('~/.vim/plugged')
 call plug#begin('~/.config/nvim/plugged')
 
-Plug 'morhetz/gruvbox'
-Plug 'tpope/vim-fugitive'
-Plug 'jremmen/vim-ripgrep'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug 'jreybert/vimagit'
-Plug 'majutsushi/tagbar'
 Plug 'preservim/nerdcommenter'
-Plug 'vim-utils/vim-man'
-Plug 'mbbill/undotree'
-Plug 'machakann/vim-highlightedyank'
 Plug 'drewtempelmeyer/palenight.vim'
-Plug 'kaicataldo/material.vim', { 'branch': 'main' }
-Plug 'ap/vim-buftabline'
-"Plug 'airblade/vim-gitgutter'
-Plug 'lepture/vim-jinja'
 Plug 'pangloss/vim-javascript'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug '/home/mpaulson/personal/vim-be-good'
 Plug 'nvie/vim-flake8'
-Plug 'vim-scripts/indentpython.vim'
+"Plug 'vim-scripts/indentpython.vim'
 Plug 'psf/black', { 'branch': 'stable' }
 Plug 'fisadev/vim-isort'
 Plug 'preservim/nerdtree'
-Plug 'ycm-core/YouCompleteMe'
-Plug 'mattn/emmet-vim'
+"Plug 'ycm-core/YouCompleteMe'
+"Plug 'mattn/emmet-vim'
 Plug 'sheerun/vim-polyglot'
-"Plug 'ctrlpvim/ctrlp.vim'
-Plug 'dracula/vim', { 'name': 'dracula' }
-Plug 'qpkorr/vim-bufkill'
-
+"Plug 'michaeljsmith/vim-indent-object'
 call plug#end()
 
-"if !has('nvim')
-  "set ttymouse=xterm2
-"endif
+if !has('nvim')
+  set ttymouse=xterm2
+endif
 
 " always show the status bar
 set laststatus=2
@@ -77,24 +58,26 @@ set fileformat=unix
 set encoding=utf-8
 set fileencoding=utf-8
 
-" --- The Greatest plugin of all time.  I am not bias
-let g:vim_be_good_floating = 1
-
 if (has("nvim"))
+  "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
   let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 endif
+
+"For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
+"Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
+" < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
 if (has("termguicolors"))
   set termguicolors
 endif
 "let g:material_theme_style = 'palenight'
 set background=dark
-colorscheme dracula
+colorscheme palenight
 
-if executable('rg')
-    let g:rg_derive_root = 'true'
-endif
+"if executable('rg')
+    "let g:rg_derive_root = 'true'
+"endif
 
-let g:ycm_python_binary_path = '/usr/bin/python3'
+"let g:ycm_python_binary_path = '/usr/bin/python3'
 
 let mapleader = ","
 let g:netrw_browse_split = 2
@@ -103,19 +86,19 @@ let g:netrw_winsize = 25
 let g:palenight_terminal_italics=1
 let g:ctrlp_use_caching = 0
 
-nmap <leader>h :wincmd h<CR>
-nmap <leader>j :wincmd j<CR>
-nmap <leader>k :wincmd k<CR>
-nmap <leader>l :wincmd l<CR>
-nmap <leader>u :UndotreeShow<CR>
-nmap <leader>pv :wincmd v<bar> :Ex <bar> :vertical resize 30<CR>
-nmap <Leader>rg :Rg<SPACE>
-nmap <Leader>+ :vertical resize +5<CR>
-nmap <Leader>- :vertical resize -5<CR>
+nnoremap <leader>h :wincmd h<CR>
+nnoremap <leader>j :wincmd j<CR>
+nnoremap <leader>k :wincmd k<CR>
+nnoremap <leader>l :wincmd l<CR>
+nnoremap <leader>u :UndotreeShow<CR>
+nnoremap <leader>pv :wincmd v<bar> :Ex <bar> :vertical resize 30<CR>
+nnoremap <Leader>rg :Rg<SPACE>
+nnoremap <Leader>+ :vertical resize +5<CR>
+nnoremap <Leader>- :vertical resize -5<CR>
 
 " Split window
-"nmap ss :split<Return><C-w>w
-"nmap sv :vsplit<Return><C-w>w
+nmap ss :split<Return><C-w>w
+nmap sv :vsplit<Return><C-w>w
 
 " move through split windows
 nmap <leader><Up> :wincmd k<CR>
@@ -163,74 +146,39 @@ map <leader>t :TagbarToggle<CR>
 
 " Fzf
 nnoremap <leader><leader> :GFiles<CR>
-nnoremap <leader>fi       :Files<CR>
-nnoremap <leader>C        :Colors<CR>
-"nnoremap <leader><CR>     :Buffers<CR>
+nnoremap <leader>fi :Files<CR>
+nnoremap <leader>C :Colors<CR>
 nnoremap <Leader>b :Buffers<cr>
-nnoremap <leader>fl       :Lines<CR>
-nnoremap <leader>ag       :Ag! <C-R><C-W><CR>
-nnoremap <leader>m        :History<CR>
-nnoremap \ :Rg <CR>
-"nnoremap <C-T> :Files<cr>
 nnoremap <Leader>s :BLines<cr>
-
-" Find files like Projects Files
-" Run FZF based on the cwd & git detection
-" 1. Runs :Files, If cwd is not a git repository
-" 2. Runs :GitFiles <cwd> If root is a git repository
-fun! FzfOmniFiles()
-  " Throws v:shell_error if is not a git directory
-  let git_status = system('git status')
-  if v:shell_error != 0
-    :Files
-  else
-    " Reference examples which made this happen:
-    " https://github.com/junegunn/fzf.vim/blob/master/doc/fzf-vim.txt#L209
-    " https://github.com/junegunn/fzf.vim/blob/master/doc/fzf-vim.txt#L290
-    " --exclude-standard - Respect gitignore
-    " --others - Show untracked git files
-    " dir: getcwd() - Shows file names relative to cwd
-    let git_files_cmd = ":GitFiles --exclude-standard --cached --others"
-    call fzf#vim#gitfiles('--exclude-standard --cached --others', {'dir': getcwd()})
-  endif
-endfun
-" }}}
-
-nnoremap <silent> <C-p> :call FzfOmniFiles()<CR>
+"nnoremap <leader><CR> :Buffers<CR>
+"nnoremap <leader>fl :Lines<CR>
+nnoremap <leader>ag :Ag! <C-R><C-W><CR>
+nnoremap <leader>m :History<CR>
+nnoremap \ :Rg<CR>
+nnoremap <C-T> :Files<cr>
 
 " Call flake8 on save buffer
 autocmd BufWritePost *.py call flake8#Flake8()
 autocmd FileType python cnoreabbrev <expr> q winnr("$") > 1 && getcmdtype() == ":" && getcmdline() == 'q' ? 'ccl <BAR> q' : 'q'
+let g:flake8_show_in_gutter = 1
+let g:syntastic_python_flake8_config_file='.flake8'
 
 " restore place in file from previous session
 autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
 nnoremap <F9> :Black<CR>
-
+let g:black_linelength = 80
 " Configure NerdTree
 " file browser
 let NERDTreeIgnore = ['\.pyc$', '__pycache__']
 let NERDTreeMinimalUI = 1
 let g:nerdtree_open = 0
 map <leader>n :NERDTreeToggle<CR>
-set autochdir
-let NERDTreeChDirMode=2
-"nnoremap <leader>n :NERDTree .<CR>
-"function NERDTreeToggle()
-    "NERDTreeTabsToggle
-    "if g:nerdtree_open == 1
-        "let g:nerdtree_open = 0
-    "else
-        "let g:nerdtree_open = 1
-        "wincmd p
-    "endif
-"endfunction
 
 let g:NERDCommentEmptyLines = 1
 
 " Split line with Ctrl J
-nnoremap <NL> i<CR><ESC>
-
+"nnoremap <NL> i<CR><ESC>
 
 noremap <Leader>y "*y
 noremap <Leader>p "*p
@@ -251,8 +199,6 @@ endfunction
 inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
 
 let g:airline#extensions#branch#enabled = 0
-let g:airline#extensions#hunks#enabled = 0
-let g:airline#extensions#tabline#fnamemod = ':t'
 
 if !exists('g:airline_symbols')
   let g:airline_symbols = {}
@@ -285,17 +231,3 @@ let g:airline_symbols.whitespace = 'Ξ'
 let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = ''
-
-function! s:black_reinstall()
-  " if using vim-plug: make sure the black plugin is loaded
-  call plug#load('black')
-  echom "BlackReinstall: Removing Black's virtualenv in ".g:black_virtualenv.'.'
-  echom repeat('=', 72)
-  python3 import os, shutil, vim; shutil.rmtree(os.path.expanduser(vim.eval("g:black_virtualenv")))
-  BlackUpgrade
-  echom repeat('=', 72)
-  " again, the :PlugUpdate recommendation applies if using vim-plug
-  echom 'BlackReinstall: If the issue persists, run :PlugUpdate black and retry reinstalling.'
-endfunction
-
-command! BlackReinstall :call s:black_reinstall()
