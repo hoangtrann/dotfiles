@@ -7,14 +7,15 @@
 (defvar gnu '("gnu" . "http://elpa.gnu.org/packages/"))
 (defvar melpa '("melpa" . "https://melpa.org/packages/"))
 (defvar melpa-stable '("melpa-stable" . "https://stable.melpa.org/packages/"))
+(defvar ublt '("ublt" . "https://elpa.ubolonton.org/packages/"))
 (defvar org-elpa '("org" . "http://orgmode.org/elpa/"))
 
 (setq package-archives nil)
 (add-to-list 'package-archives melpa-stable t)
 (add-to-list 'package-archives melpa t)
 (add-to-list 'package-archives gnu t)
+(add-to-list 'package-archives ublt t)
 (add-to-list 'package-archives org-elpa t)
-;; (package-initialize)
 
 (defun packages-install (&rest packages)
   (message "running packages-install")
@@ -52,16 +53,24 @@
 (setq ring-bell-function 'ignore)
 (setq auto-window-vscroll nil)
 (setq byte-compile-warnings '(cl-functions))
-;; (show-paren-mode)
+
+;; Show paren mode
+(show-paren-mode)
+
+(use-package smartparens
+  :ensure t
+  :config
+  (smartparens-global-mode)
+  )
 
 ;; Make scheme less colorful
-(setq inhibit-compacting-font-caches t)
+;; (setq inhibit-compacting-font-caches t)
 
 ;; Display blank line like vim
-;; (setq-default indicate-empty-lines t)
-;; (progn
-;;   (define-fringe-bitmap 'tilde [0 0 0 113 219 142 0 0] nil nil 'center)
-;;   (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde))
+(setq-default indicate-empty-lines t)
+(progn
+  (define-fringe-bitmap 'tilde [0 0 0 113 219 142 0 0] nil nil 'center)
+  (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde))
 
 ;; Cursor
 (blink-cursor-mode 0)
@@ -74,7 +83,7 @@
 ;; (global-hl-line-mode +1)
 ;; (when window-system
 ;;   (global-hl-line-mode))
-(global-visual-line-mode t)
+;; (global-visual-line-mode t)
 (setq jit-lock-defer-time nil)
 (setq fast-but-imprecise-scrolling t)
 ;; (setq font-lock-maximum-decoration 3)
@@ -87,7 +96,7 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ;; Treat camelCase as sepecrate words
-;; (global-subword-mode 1)
+(global-subword-mode 1)
 (setq frame-title-format '("Emacs"))
 (setq column-number-mode t)
 
@@ -217,7 +226,7 @@ kill it (unless it's modified)."
   :config
   (which-key-mode)
   (which-key-mode t)
-  (setq which-key-idle-delay 0.5)
+  (setq which-key-idle-delay 0.3)
   (setq which-key-idle-secondary-delay 0.3))
 
 ;; ;; Ace windows
@@ -253,48 +262,59 @@ kill it (unless it's modified)."
           (lambda ()
             (define-key dired-mode-map "o" 'find-file-ace-window)))
 
-;; (use-package neotree
+(use-package neotree
+  :ensure t
+  :bind (("C-c f t" . neotree-toggle)
+         ([f8] . neotree-toggle))
+  :config (setq neo-window-width 32
+                neo-create-file-auto-open t
+                neo-banner-message nil
+                neo-show-updir-line nil
+                neo-mode-line-type 'neotree
+                neo-smart-open t
+                neo-dont-be-alone t
+                neo-persist-show nil
+                neo-show-hidden-files t
+                neo-auto-indent-point t)
+  (define-key neotree-mode-map (kbd "i") #'neotree-enter-horizontal-split)
+  (define-key neotree-mode-map (kbd "I") #'neotree-enter-vertical-split))
+
+;; (use-package treemacs
+;;   :ensure t
+;;   :defer t
+;;   :init
+;;   (with-eval-after-load 'winum
+;;     (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
+;;   :config
+;;   (progn
+;;     (setq treemacs-follow-after-init          t
+;;           treemacs-width                      35
+;;           treemacs-indentation                2
+;;           treemacs-git-integration            t
+;;           treemacs-collapse-dirs              3
+;;           treemacs-silent-refresh             nil
+;;           treemacs-change-root-without-asking nil
+;;           treemacs-sorting                    'alphabetic-desc
+;;           treemacs-show-hidden-files          t
+;;           treemacs-never-persist              nil
+;;           treemacs-is-never-other-window      nil
+;;           treemacs-goto-tag-strategy          'refetch-index)
+
+;;     (treemacs-follow-mode t)
+;;     (treemacs-filewatch-mode t))
+;;   :bind
+;;   (:map global-map
+;;         ([f8]        . treemacs-projectile-toggle)
+;;         ("M-0"       . treemacs-select-window)
+;;         ("C-c 1"     . treemacs-delete-other-windows)
+;;         ))
+
+;; (use-package treemacs-projectile
+;;   :defer t
 ;;   :ensure t
 ;;   :config
-;;   (global-set-key [f8] 'neotree-toggle))
-
-(use-package treemacs
-  :ensure t
-  :defer t
-  :init
-  (with-eval-after-load 'winum
-    (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
-  :config
-  (progn
-    (setq treemacs-follow-after-init          t
-          treemacs-width                      35
-          treemacs-indentation                2
-          treemacs-git-integration            t
-          treemacs-collapse-dirs              3
-          treemacs-silent-refresh             nil
-          treemacs-change-root-without-asking nil
-          treemacs-sorting                    'alphabetic-desc
-          treemacs-show-hidden-files          t
-          treemacs-never-persist              nil
-          treemacs-is-never-other-window      nil
-          treemacs-goto-tag-strategy          'refetch-index)
-
-    (treemacs-follow-mode t)
-    (treemacs-filewatch-mode t))
-  :bind
-  (:map global-map
-        ([f8]        . treemacs-projectile-toggle)
-        ;; ([f9]        . treemacs-projectile-toggle)
-        ("M-0"       . treemacs-select-window)
-        ("C-c 1"     . treemacs-delete-other-windows)
-        ))
-
-(use-package treemacs-projectile
-  :defer t
-  :ensure t
-  :config
-  (setq treemacs-header-function #'treemacs-projectile-create-header)
-  )
+;;   (setq treemacs-header-function #'treemacs-projectile-create-header)
+;;   )
 
 ;; (use-package nord-theme
 ;;   :ensure t
@@ -312,7 +332,7 @@ kill it (unless it's modified)."
 ;;   :ensure t
 ;;   :config
 ;;   (setq-default fci-rule-column 80)
-;;   (add-hook 'prog-mode-hook 'fci-mode))
+;;   (add-hook 'python-mode-hook 'fci-mode))
 
 (use-package doom-modeline
   :ensure t
@@ -342,27 +362,8 @@ kill it (unless it's modified)."
   :config
   (minions-mode 1))
 
-;; ;; List of recently used families:
-;; ;; DejaVu Sans Mono
-;; ;; Hack
-;; ;; Monaco
-;; ;; Fantasque Sans Mono
-;; ;; (set-face-attribute 'default nil
-;; ;;                     :family "Monaco"
-;; ;;                     :height 105)
-
-;; (set-face-attribute 'default nil :font "Mononoki Nerd Font-16")
-(set-face-attribute 'default nil :font "Monaco" :height 150 :weight 'normal :width 'normal)
-;; (set-frame-font "Roboto Mono-14" nil t)
-
- ;; (setq initial-frame-alist '(
- ;;   (font . "Roboto Mono-14")
- ;; ))
- ;; (setq default-frame-alist '(
- ;;   (font . "Roboto Mono-14")
- ;; ))
-
-;; (set-face-bold-p 'bold nil)
+;; (set-face-attribute 'default nil :family "Input" :height 140 :weight 'normal)
+(set-face-font 'default "Input-13")
 
 (setq-default python-indent-guess-indent-offset-verbose nil)
 (setq-default py-python-command "python3")
@@ -381,6 +382,12 @@ kill it (unless it's modified)."
 
 (use-package diminish
   :ensure t)
+
+;; (use-package evil
+;;   :ensure t
+;;   :config
+;;   (evil-mode 1)
+;;   )
 
 ;; (use-package moody
 ;;   :ensure t
@@ -410,11 +417,10 @@ kill it (unless it's modified)."
 (use-package company
   :ensure t
   :config
-  (setq company-idle-delay 0.3)
+  (setq company-idle-delay 0.1)
   (setq company-global-modes '(not org-mode markdown-mode))
   (setq company-minimum-prefix-length 3)
-  (add-hook 'after-init-hook 'global-company-mode)
-  )
+  (add-hook 'after-init-hook 'global-company-mode))
 
 (use-package js2-mode
   :ensure t
@@ -427,6 +433,12 @@ kill it (unless it's modified)."
               (flycheck-mode t)
               (when (executable-find "eslint")
                 (flycheck-select-checker 'javascript-eslint)))))
+
+(use-package company-jedi
+  :ensure t
+  :config
+  (add-hook 'python-mode-hook (defun python-mode-hook ()
+                                (add-to-list 'company-backends 'company-jedi))))
 
 ;; (use-package company-tern
 ;;   :ensure t
@@ -450,9 +462,8 @@ kill it (unless it's modified)."
   (advice-add 'python-mode :before 'elpy-enable)
   :config
   (elpy-enable)
-  (setq eldoc-idle-delay 0.5)
+  (setq eldoc-idle-delay 0.3)
   (setq elpy-rpc-python-command "python3")
-  (setq elpy-rpc-backend "jedi")
   (add-hook 'elpy-mode-hook (lambda ()
                               (highlight-indentation-mode -1)
                               (flycheck-mode)
@@ -464,6 +475,13 @@ kill it (unless it's modified)."
   (cons (format "%sormat code"
                 (propertize "f" 'face 'bold))
         'elpy-black-fix-code)))
+
+(use-package blacken
+  :ensure t)
+
+(use-package python-black
+  :ensure t
+  :after python)
 
 (remove-hook 'find-file-hooks 'vc-refresh-state)
 ;; ;; Magit - Magic
@@ -628,13 +646,15 @@ kill it (unless it's modified)."
   :bind (("C-s" . swiper-isearch)
          :map swiper-map ("M-%" . swiper-query-replace))
   :config
-  (setq ivy-display-style 'fancy))
+  (setq ivy-display-style 'fancy)
+  (setq swiper-use-visual-line nil)
+  (setq swiper-use-visual-line-p (lambda (a) nil)))
 
-(defun bjm-swiper-recenter (&rest args)
-  "recenter display after swiper"
-  (recenter)
-  )
-(advice-add 'swiper :after #'bjm-swiper-recenter)
+;; (defun bjm-swiper-recenter (&rest args)
+;;   "recenter display after swiper"
+;;   (recenter)
+;;   )
+;; (advice-add 'swiper :after #'bjm-swiper-recenter)
 
 (use-package all-the-icons-dired
   :ensure t
@@ -667,12 +687,22 @@ kill it (unless it's modified)."
 ;;   :config
 ;;   (load-theme 'dracula t))
 
+(use-package tree-sitter
+  :ensure t
+  :config
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+(use-package tree-sitter-langs
+  :ensure t)
+
+
 (use-package doom-themes
   :ensure t
   :config
-  (setq doom-themes-enable-bold t
+  (setq doom-themes-enable-bold nil
         doom-themes-enable-italic t)
-  (load-theme 'doom-dracula t)
+  (load-theme 'doom-gruvbox t)
   (doom-themes-org-config)
   (doom-themes-visual-bell-config)
   (doom-themes-neotree-config)
@@ -839,8 +869,6 @@ kill it (unless it's modified)."
   (tide-hl-identifier-mode +1)
   (company-mode +1))
 
-;; (setq company-tooltip-align-annotations t)
-
 ;; ;; formats the buffer before saving
 (add-hook 'before-save-hook 'tide-format-before-save)
 (add-hook 'typescript-mode-hook #'setup-tide-mode)
@@ -941,9 +969,9 @@ kill it (unless it's modified)."
   :ensure t
   :config
   (add-hook 'prog-mode-hook #'origami-mode)
-  (define-key origami-mode-map (kbd "C-c f a") 'origami-toggle-all-nodes)
+  ;; (define-key origami-mode-map (kbd "C-c f a") 'origami-toggle-all-nodes)
   ;; http://stackoverflow.com/questions/916797/emacs-global-set-key-to-c-tab
-  (define-key origami-mode-map (kbd "<C-tab>") 'origami-recursively-toggle-node)
+  (define-key origami-mode-map (kbd "C-;") 'origami-recursively-toggle-node)
   )
 
 
@@ -1060,8 +1088,11 @@ kill it (unless it's modified)."
   (global-undo-tree-mode)
   :bind (("C-x /" . undo-tree-visualize)))
 
-;; (use-package s
-;;   :ensure t)
+(use-package posframe
+  :ensure t)
+
+(use-package s
+  :ensure t)
 
 ;; (use-package hydra
 ;;   :ensure t)
@@ -1095,19 +1126,7 @@ kill it (unless it's modified)."
               ))
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 
-;; (use-package smartparens
-;;   :ensure t
-;;   :config
-;;   (smartparens-global-mode)
-;;   )
-
 ;; ;; (add-hook 'before-save-hook #'gofmt-before-save)
-
-(use-package beacon
-  :ensure t
-  :config
-  (beacon-mode 1)
-  (setq beacon-size 25))
 
 ;; ;; REST Support
 (use-package restclient
@@ -1300,8 +1319,8 @@ kill it (unless it's modified)."
  ;; If there is more than one, they won't work right.
  '(all-the-icons-ivy-buffer-commands '(ivy-switch-buffer-other-window ivy-switch-buffer))
  '(package-selected-packages
-   '(vterm dracula-theme origami zen-mode prettier py-isort ivy-rich ivy-filthy-rich quelpa-use-package quelpa dired+ dashboard expand-region fill-column-indicator yasnippet-snippets xclip which-key web-mode use-package undo-tree try tide smartparens rust-mode rg restclient rainbow-delimiters pyimpsort posframe org-bullets nord-theme neotree multiple-cursors minions markdown-mode magit js2-mode hungry-delete hl-todo emmet-mode elpy easy-kill doom-themes doom-modeline dired-collapse diminish csv-mode counsel-projectile carbon-now-sh bm beacon all-the-icons-ivy all-the-icons-dired ag ace-window))
- '(tramp-verbose 6))
+   '(python-black blacken company-jedi mic-paren tree-sitter tree-sitter-langs evil vterm dracula-theme origami zen-mode prettier py-isort ivy-rich ivy-filthy-rich quelpa-use-package quelpa dired+ dashboard expand-region fill-column-indicator yasnippet-snippets xclip which-key web-mode use-package undo-tree try tide smartparens rust-mode rg restclient rainbow-delimiters pyimpsort posframe org-bullets nord-theme neotree multiple-cursors minions markdown-mode magit js2-mode hungry-delete hl-todo emmet-mode elpy easy-kill doom-themes doom-modeline dired-collapse diminish csv-mode counsel-projectile carbon-now-sh bm all-the-icons-ivy all-the-icons-dired ag ace-window))
+ '(tramp-verbose 6 t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
