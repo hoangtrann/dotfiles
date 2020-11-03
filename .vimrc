@@ -25,25 +25,38 @@ au! FileType python setl nosmartindent
 
 autocmd BufWritePre * :%s/\s\+$//e
 
-"call plug#begin('~/.vim/plugged')
 call plug#begin('~/.config/nvim/plugged')
 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug 'preservim/nerdcommenter'
+Plug 'tomtom/tcomment_vim'
+Plug 'mg979/vim-visual-multi'
+Plug 'tpope/vim-fugitive'
+Plug 'rbong/vim-flog'
+Plug 'vim-scripts/git-time-lapse'
+Plug 'kristijanhusak/vim-carbon-now-sh'
+Plug 'majutsushi/tagbar'
+Plug 'iamcco/markdown-preview.vim'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc-neco'
+Plug 'elzr/vim-json'
+Plug 'Yggdroot/indentLine'
+Plug 'jiangmiao/auto-pairs'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-endwise'
+Plug 'mbbill/undotree'
 Plug 'drewtempelmeyer/palenight.vim'
 Plug 'pangloss/vim-javascript'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'nvie/vim-flake8'
-"Plug 'vim-scripts/indentpython.vim'
 Plug 'psf/black', { 'branch': 'stable' }
 Plug 'fisadev/vim-isort'
 Plug 'preservim/nerdtree'
-"Plug 'ycm-core/YouCompleteMe'
-"Plug 'mattn/emmet-vim'
-Plug 'sheerun/vim-polyglot'
-"Plug 'michaeljsmith/vim-indent-object'
+"Plug 'sheerun/vim-polyglot'
+Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'qpkorr/vim-bufkill'
+Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 call plug#end()
 
 if !has('nvim')
@@ -78,6 +91,20 @@ colorscheme palenight
 "endif
 
 "let g:ycm_python_binary_path = '/usr/bin/python3'
+
+lua << EOF
+require'nvim-treesitter.configs'.setup {
+        highlight = {
+                enable = true,
+        },
+        refactor = {
+                highlight_definitions = {
+                        enable = true
+                },
+        },
+        ensure_installed = 'python'
+}
+EOF
 
 let mapleader = ","
 let g:netrw_browse_split = 2
@@ -150,8 +177,6 @@ nnoremap <leader>fi :Files<CR>
 nnoremap <leader>C :Colors<CR>
 nnoremap <Leader>b :Buffers<cr>
 nnoremap <Leader>s :BLines<cr>
-"nnoremap <leader><CR> :Buffers<CR>
-"nnoremap <leader>fl :Lines<CR>
 nnoremap <leader>ag :Ag! <C-R><C-W><CR>
 nnoremap <leader>m :History<CR>
 nnoremap \ :Rg<CR>
