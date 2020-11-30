@@ -55,13 +55,12 @@
 (setq byte-compile-warnings '(cl-functions))
 
 ;; Show paren mode
-(show-paren-mode)
+;; (show-paren-mode)
 
-(use-package smartparens
-  :ensure t
-  :config
-  (smartparens-global-mode)
-  )
+;; (use-package smartparens
+;;   :ensure t
+;;   :config
+;;   (smartparens-global-mode))
 
 ;; Make scheme less colorful
 ;; (setq inhibit-compacting-font-caches t)
@@ -73,7 +72,7 @@
   (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde))
 
 ;; Cursor
-(blink-cursor-mode 0)
+(blink-cursor-mode 1)
 ;; (setq cursor-in-non-selected-windows t)
 
 ;; Enable Transient mark mode
@@ -84,8 +83,8 @@
 ;; (when window-system
 ;;   (global-hl-line-mode))
 ;; (global-visual-line-mode t)
-(setq jit-lock-defer-time nil)
-(setq fast-but-imprecise-scrolling t)
+;; (setq jit-lock-defer-time nil)
+;; (setq fast-but-imprecise-scrolling t)
 ;; (setq font-lock-maximum-decoration 3)
 
 ;; Disable backups and auto-saves
@@ -96,12 +95,14 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ;; Treat camelCase as sepecrate words
-(global-subword-mode 1)
-(setq frame-title-format '("Emacs"))
-(setq column-number-mode t)
+;; (global-subword-mode 1)
+;; (setq frame-title-format '("Emacs"))
+;; (setq column-number-mode t)
 
 (setq dired-listing-switches "-laGh1v --group-directories-first")
-(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+;; (setq display-line-numbers-type 'relative)
+;; (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+
 ;; (add-hook 'prog-mode-hook 'visual-line-mode)
 
 (global-set-key (kbd "C-S-l") 'display-line-numbers-mode)
@@ -120,7 +121,8 @@
 
 (use-package prettier
   :ensure t
-  :hook ((web-mode . (eval . (prettier-mode t)))))
+  :config
+  (setenv "NODE_PATH" "/home/hoang/node_modules"))
 
 (add-hook 'nxml-mode-hook
           (lambda ()
@@ -187,6 +189,13 @@ kill it (unless it's modified)."
 
 ;; ;; from http://mbork.pl/2015-04-25_Some_Dired_goodies
 ;; (put 'dired-find-alternate-file 'disabled nil) ; visiting a file from dired closes the dired buffer
+
+(add-hook 'prog-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
+
+(use-package beacon
+  :ensure t
+  :config
+  (beacon-mode 1))
 
 (use-package org
   :ensure t
@@ -362,8 +371,14 @@ kill it (unless it's modified)."
   :config
   (minions-mode 1))
 
-;; (set-face-attribute 'default nil :family "Input" :height 140 :weight 'normal)
-(set-face-font 'default "Input-13")
+;; (set-face-bold-p 'bold nil)
+;; (set-face-attribute 'default nil :family "JetBrainsMono" :height 140 :weight 'normal)
+;; (set-face-font 'default "JetBrainsMono-13")
+(set-face-attribute 'default nil
+                    :family "JetBrainsMono Variable"
+                    :height 130
+                    :weight 'normal
+                    :width 'normal)
 
 (setq-default python-indent-guess-indent-offset-verbose nil)
 (setq-default py-python-command "python3")
@@ -386,8 +401,7 @@ kill it (unless it's modified)."
 ;; (use-package evil
 ;;   :ensure t
 ;;   :config
-;;   (evil-mode 1)
-;;   )
+;;   (evil-mode 1))
 
 ;; (use-package moody
 ;;   :ensure t
@@ -406,21 +420,39 @@ kill it (unless it's modified)."
 
 (use-package yasnippet
   :ensure t
-  :diminish yas
   :config
   (use-package yasnippet-snippets
     :ensure t)
-  ;; (setq yas-snippet-dirs (append yas-snippet-dirs
-  ;;                                '("~/Dropbox/snippets/")))
+  (setq yas-snippet-dirs (append yas-snippet-dirs '("~/Dropbox/snippets/")))
   (yas-global-mode 1))
+
+;; (use-package yasnippet
+;;   :ensure t
+;;   :config
+;;   (use-package yasnippet-snippets
+;;     :ensure t)
+;;   )
 
 (use-package company
   :ensure t
   :config
-  (setq company-idle-delay 0.1)
+  (setq company-idle-delay 0)
   (setq company-global-modes '(not org-mode markdown-mode))
-  (setq company-minimum-prefix-length 3)
-  (add-hook 'after-init-hook 'global-company-mode))
+  (setq company-minimum-prefix-length 2)
+  (add-hook 'after-init-hook 'global-company-mode)
+  (global-company-mode))
+
+;; Add yasnippet support for all company backends
+;; https://github.com/syl20bnr/spacemacs/pull/179
+(defvar company-mode/enable-yas t "Enable yasnippet for all backends.")
+
+(defun company-mode/backend-with-yas (backend)
+  (if (or (not company-mode/enable-yas) (and (listp backend)    (member 'company-yasnippet backend)))
+  backend
+(append (if (consp backend) backend (list backend))
+        '(:with company-yasnippet))))
+
+(setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
 
 (use-package js2-mode
   :ensure t
@@ -463,7 +495,6 @@ kill it (unless it's modified)."
   :config
   (elpy-enable)
   (setq eldoc-idle-delay 0.3)
-  (setq elpy-rpc-python-command "python3")
   (add-hook 'elpy-mode-hook (lambda ()
                               (highlight-indentation-mode -1)
                               (flycheck-mode)
@@ -474,7 +505,9 @@ kill it (unless it's modified)."
   (define-key elpy-refactor-map (kbd "f")
   (cons (format "%sormat code"
                 (propertize "f" 'face 'bold))
-        'elpy-black-fix-code)))
+        'elpy-black-fix-code))
+  :bind
+  (([f9] . elpy-black-fix-code)))
 
 (use-package blacken
   :ensure t)
@@ -643,7 +676,7 @@ kill it (unless it's modified)."
 
 (use-package swiper
   :after ivy
-  :bind (("C-s" . swiper-isearch)
+  :bind (("C-s" . swiper)
          :map swiper-map ("M-%" . swiper-query-replace))
   :config
   (setq ivy-display-style 'fancy)
@@ -687,22 +720,22 @@ kill it (unless it's modified)."
 ;;   :config
 ;;   (load-theme 'dracula t))
 
-(use-package tree-sitter
-  :ensure t
-  :config
-  (global-tree-sitter-mode)
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+;; (use-package tree-sitter
+;;   :ensure t
+;;   :config
+;;   (global-tree-sitter-mode)
+;;   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
-(use-package tree-sitter-langs
-  :ensure t)
+;; (use-package tree-sitter-langs
+;;   :ensure t)
 
 
 (use-package doom-themes
   :ensure t
   :config
-  (setq doom-themes-enable-bold nil
+  (setq doom-themes-enable-bold t
         doom-themes-enable-italic t)
-  (load-theme 'doom-gruvbox t)
+  (load-theme 'doom-one t)
   (doom-themes-org-config)
   (doom-themes-visual-bell-config)
   (doom-themes-neotree-config)
@@ -760,9 +793,9 @@ kill it (unless it's modified)."
     )
   )
 
-(use-package avy
-  :ensure t
-  :bind ("M-s" . avy-goto-char-2))
+;; (use-package avy
+;;   :ensure t
+;;   :bind ("M-s" . avy-goto-char-2))
 
 (use-package bm
   :ensure t
@@ -832,7 +865,6 @@ kill it (unless it's modified)."
   (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.xml?\\'" . web-mode))
 
   (defun my-web-mode-hook ()
     (setq web-mode-enable-auto-closing t)
@@ -1319,8 +1351,8 @@ kill it (unless it's modified)."
  ;; If there is more than one, they won't work right.
  '(all-the-icons-ivy-buffer-commands '(ivy-switch-buffer-other-window ivy-switch-buffer))
  '(package-selected-packages
-   '(python-black blacken company-jedi mic-paren tree-sitter tree-sitter-langs evil vterm dracula-theme origami zen-mode prettier py-isort ivy-rich ivy-filthy-rich quelpa-use-package quelpa dired+ dashboard expand-region fill-column-indicator yasnippet-snippets xclip which-key web-mode use-package undo-tree try tide smartparens rust-mode rg restclient rainbow-delimiters pyimpsort posframe org-bullets nord-theme neotree multiple-cursors minions markdown-mode magit js2-mode hungry-delete hl-todo emmet-mode elpy easy-kill doom-themes doom-modeline dired-collapse diminish csv-mode counsel-projectile carbon-now-sh bm all-the-icons-ivy all-the-icons-dired ag ace-window))
- '(tramp-verbose 6 t))
+   '(apheleia beacon python-black blacken company-jedi mic-paren tree-sitter tree-sitter-langs evil vterm dracula-theme origami zen-mode prettier py-isort ivy-rich ivy-filthy-rich quelpa-use-package quelpa dired+ dashboard expand-region fill-column-indicator yasnippet-snippets xclip which-key web-mode use-package undo-tree try tide smartparens rust-mode rg restclient rainbow-delimiters pyimpsort posframe org-bullets nord-theme neotree multiple-cursors minions markdown-mode magit js2-mode hungry-delete hl-todo emmet-mode elpy easy-kill doom-themes doom-modeline dired-collapse diminish csv-mode counsel-projectile carbon-now-sh bm all-the-icons-ivy all-the-icons-dired ag ace-window))
+ '(tramp-verbose 6))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
