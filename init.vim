@@ -1,5 +1,5 @@
 set guicursor=
-" set relativenumber
+set cursorline
 set noerrorbells
 set expandtab
 set shiftwidth=4
@@ -18,7 +18,6 @@ set clipboard=unnamed
 set cmdheight=2
 " set colorcolumn=80
 set scrolloff=3 " Keep 3 lines below and above the cursor
-" highlight ColorColumn ctermbg=0 guibg=lightgrey
 highlight ColorColumn ctermbg=0
 
 filetype on
@@ -36,7 +35,6 @@ Plug 'morhetz/gruvbox'
 Plug 'drewtempelmeyer/palenight.vim'
 Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'arcticicestudio/nord-vim'
-" Plug 'luochen1990/rainbow'
 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -48,8 +46,9 @@ Plug 'vim-scripts/git-time-lapse'
 Plug 'kristijanhusak/vim-carbon-now-sh'
 Plug 'majutsushi/tagbar'
 Plug 'iamcco/markdown-preview.vim'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'neoclide/coc-neco'
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug 'neoclide/coc-neco'
+Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
 Plug 'elzr/vim-json'
 Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-surround'
@@ -60,15 +59,14 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'nvie/vim-flake8'
 Plug 'psf/black', { 'branch': 'stable' }
-Plug 'fisadev/vim-isort'
+" Plug 'fisadev/vim-isort'
 Plug 'preservim/nerdtree'
 " Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'sheerun/vim-polyglot'
 Plug 'qpkorr/vim-bufkill'
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
-Plug 'Yggdroot/indentLine'
+" Plug 'Yggdroot/indentLine'
 Plug 'Vimjas/vim-python-pep8-indent'
-
 call plug#end()
 
 if !has('nvim')
@@ -94,8 +92,9 @@ if (has("termguicolors"))
   set termguicolors
 endif
 
+" let g:gruvbox_contrast_dark = 'hard'
 set background=dark
-colorscheme nord
+colorscheme palenight
 " let g:palenight_terminal_italics=1
 " let g:rainbow_active = 1 "set to 0 if you want to enable it later via :RainbowToggle
 

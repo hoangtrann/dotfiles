@@ -8,7 +8,7 @@ export ZSH="/home/hoang/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="spaceship"
+# ZSH_THEME="robbyrussell"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -69,10 +69,10 @@ ZSH_THEME="spaceship"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-	git
-	zsh-autosuggestions
-	zsh-syntax-highlighting
-	autojump
+    git
+    zsh-autosuggestions
+    zsh-syntax-highlighting
+    autojump
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -80,7 +80,7 @@ source $ZSH/oh-my-zsh.sh
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
-export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+export FZF_DEFAULT_COMMAND="rg --files --hidden --follow --glob '!.git'"
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
@@ -91,6 +91,7 @@ export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
 #   export EDITOR='mvim'
 # fi
 
+export EDITOR='nvim'
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
@@ -100,22 +101,43 @@ export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
 alias zshconfig="vi ~/.zshrc"
 
 alias vi="nvim "
 alias gs="git status"
 alias gl="git log"
 alias gc="git commit"
+
 alias l='exa'
 alias la='exa -a'
 alias ll='exa -lah'
 alias ls='exa --color=auto'
+
 alias ide="~/ide.sh"
+alias "c=xclip"
+alias "v=xclip -o"
+alias "cs=xclip -selection clipboard"
+alias "vs=xclip -o -selection clipboard"
+
 # alias tmux='TERM=xterm-256color tmux -2'
 #
 prompt_context() {}
+
+vterm_printf(){
+    if [ -n "$TMUX" ]; then
+        # Tell tmux to pass the escape sequences through
+        # (Source: http://permalink.gmane.org/gmane.comp.terminal-emulators.tmux.user/1324)
+        printf "\ePtmux;\e\e]%s\007\e\\" "$1"
+    elif [ "${TERM%%-*}" = "screen" ]; then
+        # GNU screen (screen, screen-256color, screen-256color-bce)
+        printf "\eP\e]%s\007\e\\" "$1"
+    else
+        printf "\e]%s\e\\" "$1"
+    fi
+}
+if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
+    alias clear='vterm_printf "51;Evterm-clear-scrollback";tput clear'
+fi
 
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
@@ -133,3 +155,8 @@ function workon() {
     pyenv activate "$@" 2> >(grep -v PYENV_VIRTUALENV_DISABLE_PROMPT)
 }
 #export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+
+autoload -U add-zsh-hook
+add-zsh-hook -Uz chpwd (){ print -Pn "\e]2;%m:%2~\a" }
+
+eval "$(starship init zsh)"

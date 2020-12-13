@@ -1,9 +1,6 @@
 ;; -*- mode: lisp -*-
 
 (require 'package)
-
-;; Setting up the packages host
-
 (defvar gnu '("gnu" . "http://elpa.gnu.org/packages/"))
 (defvar melpa '("melpa" . "https://melpa.org/packages/"))
 (defvar melpa-stable '("melpa-stable" . "https://stable.melpa.org/packages/"))
@@ -16,7 +13,7 @@
 (add-to-list 'package-archives gnu t)
 (add-to-list 'package-archives ublt t)
 (add-to-list 'package-archives org-elpa t)
-
+(add-to-list 'package-archives '("elpy" . "https://jorgenschaefer.github.io/packages/"))
 (defun packages-install (&rest packages)
   (message "running packages-install")
   (mapc (lambda (package)
@@ -29,13 +26,10 @@
         packages)
   (package-initialize)
   (delete-other-windows))
-
 (defun init--install-packages ()
   (message "Lets install some packages")
   (packages-install
-   (cons 'use-package melpa)
-   ))
-
+   (cons 'use-package melpa)))
 (condition-case nil
     (init--install-packages)
   (error
@@ -45,45 +39,28 @@
 ;; Disable start-up message
 (setq inhibit-startup-message t)
 (setq initial-major-mode 'org-mode)
-
-;; Disable menu bar, tool bar, scroll bar
 (menu-bar-mode -1)
 (toggle-scroll-bar -1)
 (tool-bar-mode -1)
 (setq ring-bell-function 'ignore)
 (setq auto-window-vscroll nil)
 (setq byte-compile-warnings '(cl-functions))
+(blink-cursor-mode 1)
+(setq cursor-in-non-selected-windows t)
+(setq show-paren-delay 0)
+(show-paren-mode)
+(transient-mark-mode 1)
 
-;; Show paren mode
-;; (show-paren-mode)
-
-;; (use-package smartparens
-;;   :ensure t
-;;   :config
-;;   (smartparens-global-mode))
+(setq dired-listing-switches "-laGh1v --group-directories-first")
 
 ;; Make scheme less colorful
 ;; (setq inhibit-compacting-font-caches t)
 
-;; Display blank line like vim
-(setq-default indicate-empty-lines t)
-(progn
-  (define-fringe-bitmap 'tilde [0 0 0 113 219 142 0 0] nil nil 'center)
-  (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde))
-
-;; Cursor
-(blink-cursor-mode 1)
-;; (setq cursor-in-non-selected-windows t)
-
-;; Enable Transient mark mode
-(transient-mark-mode 1)
-
 ;; Use highlight on curent line
-;; (global-hl-line-mode +1)
-;; (when window-system
-;;   (global-hl-line-mode))
+;; (when window-system (global-hl-line-mode))
+
 ;; (global-visual-line-mode t)
-;; (setq jit-lock-defer-time nil)
+(setq jit-lock-defer-time nil)
 ;; (setq fast-but-imprecise-scrolling t)
 ;; (setq font-lock-maximum-decoration 3)
 
@@ -96,13 +73,12 @@
 
 ;; Treat camelCase as sepecrate words
 ;; (global-subword-mode 1)
-;; (setq frame-title-format '("Emacs"))
-;; (setq column-number-mode t)
+(setq frame-title-format '("Emacs"))
+(setq column-number-mode t)
 
-(setq dired-listing-switches "-laGh1v --group-directories-first")
+
 ;; (setq display-line-numbers-type 'relative)
-;; (add-hook 'prog-mode-hook 'display-line-numbers-mode)
-
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
 ;; (add-hook 'prog-mode-hook 'visual-line-mode)
 
 (global-set-key (kbd "C-S-l") 'display-line-numbers-mode)
@@ -118,6 +94,22 @@
 (setq-default js-indent-level 4)
 (setq-default css-indent-offset 4)
 (setq-default c-basic-offset 4)
+
+;; (autoload 'View-scroll-half-page-forward "view")
+;; (autoload 'View-scroll-half-page-backward "view")
+;; (global-set-key (kbd "C-v") 'View-scroll-half-page-forward)
+;; (global-set-key (kbd "M-v") 'View-scroll-half-page-backward)
+
+(set-face-attribute 'default nil
+                    :family "SF Mono"
+                    :height 140
+                    :weight 'normal
+                    :width 'normal)
+
+;; (use-package smartparens
+;;   :ensure t
+;;   :config
+;;   (smartparens-global-mode))
 
 (use-package prettier
   :ensure t
@@ -144,11 +136,6 @@
 (global-set-key (kbd "C-x 2") 'ian/split-and-follow-horizontally)
 (global-set-key (kbd "C-x 3") 'ian/split-and-follow-vertically)
 
-;; (autoload 'View-scroll-half-page-forward "view")
-;; (autoload 'View-scroll-half-page-backward "view")
-
-;; (global-set-key (kbd "C-v") 'View-scroll-half-page-forward)
-;; (global-set-key (kbd "M-v") 'View-scroll-half-page-backward)
 
 (defun kill-current-line (&optional n)
   (interactive "p")
@@ -188,13 +175,16 @@ kill it (unless it's modified)."
 (global-set-key (kbd "C-`") 'bh:switch-bury-or-kill-buffer)
 
 ;; ;; from http://mbork.pl/2015-04-25_Some_Dired_goodies
-;; (put 'dired-find-alternate-file 'disabled nil) ; visiting a file from dired closes the dired buffer
+(put 'dired-find-alternate-file 'disabled nil) ; visiting a file from dired closes the dired buffer
 
-(add-hook 'prog-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
+;; (add-hook 'prog-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
 
 (use-package beacon
   :ensure t
   :config
+  (setq beacon-size 15)
+  (setq beacon-blink-when-window-scrolls nil)
+  (setq beacon-blink-when-window-changes t)
   (beacon-mode 1))
 
 (use-package org
@@ -216,7 +206,6 @@ kill it (unless it's modified)."
   :init
   (setq diredp-hide-details-initially-flag nil)
   (setq diredp-hide-details-propagate-flag nil)
-
   :config
   (diredp-toggle-find-file-reuse-dir 1))
 
@@ -313,22 +302,15 @@ kill it (unless it's modified)."
 ;;     (treemacs-filewatch-mode t))
 ;;   :bind
 ;;   (:map global-map
-;;         ([f8]        . treemacs-projectile-toggle)
+;;         ([f8]        . treemacs-toggle)
 ;;         ("M-0"       . treemacs-select-window)
-;;         ("C-c 1"     . treemacs-delete-other-windows)
-;;         ))
+;;         ("C-c 1"     . treemacs-delete-other-windows)))
 
 ;; (use-package treemacs-projectile
 ;;   :defer t
 ;;   :ensure t
 ;;   :config
-;;   (setq treemacs-header-function #'treemacs-projectile-create-header)
-;;   )
-
-;; (use-package nord-theme
-;;   :ensure t
-;;   :config
-;;   (load-theme 'nord t))
+;;   (setq treemacs-header-function #'treemacs-projectile-create-header))
 
 ;; ;; To nyan or not nyan
 ;; (use-package nyan-mode
@@ -359,11 +341,11 @@ kill it (unless it's modified)."
   (setq doom-modeline-buffer-modification-icon t)
   (setq doom-modeline-buffer-state-icon t)
   (setq doom-modeline-indent-info nil)
-  (setq doom-modeline-checker-simple-format t)
+  (setq doom-modeline-checker-simple-format nil)
   (setq doom-modeline-vcs-max-length 12)
   (setq doom-modeline-env-version t)
   (setq doom-modeline-env-enable-python t)
-  (setq doom-modeline-minor-modes nil)
+  (setq doom-modeline-minor-modes t)
   )
 
 (use-package minions
@@ -371,44 +353,25 @@ kill it (unless it's modified)."
   :config
   (minions-mode 1))
 
-;; (set-face-bold-p 'bold nil)
-;; (set-face-attribute 'default nil :family "JetBrainsMono" :height 140 :weight 'normal)
-;; (set-face-font 'default "JetBrainsMono-13")
-(set-face-attribute 'default nil
-                    :family "JetBrainsMono Variable"
-                    :height 130
-                    :weight 'normal
-                    :width 'normal)
 
 (setq-default python-indent-guess-indent-offset-verbose nil)
-(setq-default py-python-command "python3")
-(setq-default python-shell-interpreter "python3")
+;; (setq-default py-python-command "python3")
+;; (setq-default python-shell-interpreter "python3")
 
-(use-package flycheck
-  :ensure t
-  :config
-  (add-hook 'after-init-hook #'global-flycheck-mode)
-  (setq flycheck-check-syntax-automatically '(mode-enabled save))
-  (add-hook 'python-mode-hook
-            (lambda ()
-              (setq flycheck-checker 'python-flake8
-                    flycheck-checker-error-threshold 400))))
-
-
-(use-package diminish
-  :ensure t)
+;; (use-package flycheck
+;;   :ensure t
+;;   :config
+;;   (add-hook 'after-init-hook #'global-flycheck-mode)
+;;   (setq flycheck-check-syntax-automatically '(mode-enabled save))
+;;   (add-hook 'python-mode-hook
+;;             (lambda ()
+;;               (setq flycheck-checker 'python-flake8
+;;                     flycheck-checker-error-threshold 400))))
 
 ;; (use-package evil
 ;;   :ensure t
 ;;   :config
 ;;   (evil-mode 1))
-
-;; (use-package moody
-;;   :ensure t
-;;   :config
-;;   (setq x-underline-at-descent-line t)
-;;   (moody-replace-mode-line-buffer-identification)
-;;   (moody-replace-vc-mode))
 
 (use-package ag
   :ensure t)
@@ -418,41 +381,24 @@ kill it (unless it's modified)."
   :config
   (rg-enable-default-bindings))
 
+(use-package ripgrep
+  :ensure t)
+
 (use-package yasnippet
   :ensure t
   :config
-  (use-package yasnippet-snippets
-    :ensure t)
+  (use-package yasnippet-snippets :ensure t)
   (setq yas-snippet-dirs (append yas-snippet-dirs '("~/Dropbox/snippets/")))
   (yas-global-mode 1))
-
-;; (use-package yasnippet
-;;   :ensure t
-;;   :config
-;;   (use-package yasnippet-snippets
-;;     :ensure t)
-;;   )
 
 (use-package company
   :ensure t
   :config
   (setq company-idle-delay 0)
   (setq company-global-modes '(not org-mode markdown-mode))
-  (setq company-minimum-prefix-length 2)
-  (add-hook 'after-init-hook 'global-company-mode)
-  (global-company-mode))
-
-;; Add yasnippet support for all company backends
-;; https://github.com/syl20bnr/spacemacs/pull/179
-(defvar company-mode/enable-yas t "Enable yasnippet for all backends.")
-
-(defun company-mode/backend-with-yas (backend)
-  (if (or (not company-mode/enable-yas) (and (listp backend)    (member 'company-yasnippet backend)))
-  backend
-(append (if (consp backend) backend (list backend))
-        '(:with company-yasnippet))))
-
-(setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
+  (setq company-minimum-prefix-length 3)
+  (global-set-key (kbd "C-c y") 'company-yasnippet)
+  (add-hook 'after-init-hook 'global-company-mode))
 
 (use-package js2-mode
   :ensure t
@@ -472,42 +418,62 @@ kill it (unless it's modified)."
   (add-hook 'python-mode-hook (defun python-mode-hook ()
                                 (add-to-list 'company-backends 'company-jedi))))
 
-;; (use-package company-tern
-;;   :ensure t
-;;   :config
-;;   (add-to-list 'company-backends 'company-tern)
-;;   (add-hook 'js2-mode-hook (lambda ()
-;;                              (tern-mode)
-;;                              (company-mode))))
-
-;; (use-package pyimpsort
-;;   :ensure t)
-
 (use-package py-isort
   :ensure t
   )
 
-(use-package elpy
+;; (use-package pyenv-mode
+;;   :ensure t
+;;   :init
+;;   (add-to-list 'exec-path "~/.pyenv/shims")
+;;   (setenv "WORKON_HOME" "~/.pyenv/versions/")
+;;   :bind
+;;   ("C-x p e" . pyenv-activate-current-project)
+;;   :config
+;;   (pyenv-mode)
+;;   (defun pyenv-activate-current-project ()
+;;   "Automatically activates pyenv version if .python-version file exists."
+;;   (interactive)
+;;   (f-traverse-upwards
+;;    (lambda (path)
+;;      (message path)
+;;      (let ((pyenv-version-path (f-expand ".python-version" path)))
+;;        (if (f-exists? pyenv-version-path)
+;;             (let ((pyenv-current-version (s-trim (f-read-text pyenv-version-path 'utf-8))))
+;;               (pyenv-mode-set pyenv-current-version)
+;;               (message (concat "Setting virtualenv to " pyenv-current-version))))))))
+;;   )
+
+(use-package pyenv-mode-auto
   :ensure t
-  :defer t
   :init
-  (advice-add 'python-mode :before 'elpy-enable)
+  (add-to-list 'exec-path "~/.pyenv/shims")
+  (setenv "WORKON_HOME" "~/.pyenv/versions/")
+  (setenv "VIRTUALENVWRAPPER_HOOK_DIR" "~/.pyenv/versions/")
   :config
-  (elpy-enable)
-  (setq eldoc-idle-delay 0.3)
-  (add-hook 'elpy-mode-hook (lambda ()
-                              (highlight-indentation-mode -1)
-                              (flycheck-mode)
-                              (setq python-check-command "flake8")))
-  (when (require 'flycheck nil t)
-    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-    (add-hook 'elpy-mode-hook 'flycheck-mode))
-  (define-key elpy-refactor-map (kbd "f")
-  (cons (format "%sormat code"
-                (propertize "f" 'face 'bold))
-        'elpy-black-fix-code))
-  :bind
-  (([f9] . elpy-black-fix-code)))
+  )
+
+;; (use-package elpy
+;;   :ensure t
+;;   :defer 0.5
+;;   :init
+;;   (advice-add 'python-mode :before 'elpy-enable)
+;;   :config
+;;   (elpy-enable)
+;;   (setq eldoc-idle-delay 0.3)
+;;   (add-hook 'elpy-mode-hook (lambda ()
+;;                               (highlight-indentation-mode -1)
+;;                               (flycheck-mode)
+;;                               (setq python-check-command "flake8")))
+;;   (when (require 'flycheck nil t)
+;;     (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+;;     (add-hook 'elpy-mode-hook 'flycheck-mode))
+;;   (define-key elpy-refactor-map (kbd "f")
+;;     (cons (format "%sormat code"
+;;                   (propertize "f" 'face 'bold))
+;;           'elpy-black-fix-code))
+;;   :bind
+;;   (([f9] . elpy-black-fix-code)))
 
 (use-package blacken
   :ensure t)
@@ -517,7 +483,7 @@ kill it (unless it's modified)."
   :after python)
 
 (remove-hook 'find-file-hooks 'vc-refresh-state)
-;; ;; Magit - Magic
+
 (use-package magit
   :ensure t
   :config
@@ -529,6 +495,24 @@ kill it (unless it's modified)."
 (use-package all-the-icons
   :ensure t
   :defer 0.5)
+
+(use-package ivy
+  :delight
+  :bind (("C-x b" . ivy-switch-buffer)
+         ("C-x B" . ivy-switch-buffer-other-window)
+         ("M-H"   . ivy-resume)
+         :map ivy-minibuffer-map
+         ("<tab>" . ivy-alt-done)
+         ("C-i" . ivy-partial-or-done)
+         ("S-SPC" . nil)
+         :map ivy-switch-buffer-map
+         ("C-k" . ivy-switch-buffer-kill))
+  :custom
+  (ivy-case-fold-search-default t)
+  (ivy-count-format "(%d/%d)")
+  (ivy-re-builders-alist '((t . ivy--regex-plus)))
+  (ivy-use-virtual-buffers t)
+  :config (ivy-mode))
 
 (use-package counsel
   :after ivy
@@ -542,25 +526,6 @@ kill it (unless it's modified)."
          ("C-x C-v" . counsel-set-variable))
   :config (counsel-mode)
   :custom (counsel-rg-base-command "rg -S -M 150 --no-heading --line-number --color never %s"))
-
-(use-package ivy
-  :delight
-  :after ivy-rich
-  :bind (("C-x b" . ivy-switch-buffer)
-         ("C-x B" . ivy-switch-buffer-other-window)
-         ("M-H"   . ivy-resume)
-         :map ivy-minibuffer-map
-         ("<tab>" . ivy-alt-done)
-         ("C-i" . ivy-partial-or-done)
-         ("S-SPC" . nil)
-         :map ivy-switch-buffer-map
-         ("C-k" . ivy-switch-buffer-kill))
-  :custom
-  (ivy-case-fold-search-default t)
-  (ivy-count-format "(%d/%d) ")
-  (ivy-re-builders-alist '((t . ivy--regex-plus)))
-  (ivy-use-virtual-buffers t)
-  :config (ivy-mode))
 
 (use-package ivy-pass
   :after ivy
@@ -584,17 +549,15 @@ kill it (unless it's modified)."
                  (file-name-nondirectory
                   (directory-file-name candidate))
                  'face 'success)))))
-
-  (defun ivy-rich-compiling (candidate)
-    "Displays compiling buffers of the candidate for ivy-rich."
-    (let* ((candidate (expand-file-name candidate ivy--directory)))
-      (if (or (not (file-exists-p candidate)) (file-remote-p candidate)
-              (not (magit-git-repo-p candidate)))
-          ""
-        (if (my/projectile-compilation-buffers candidate)
-            "compiling"
-          ""))))
-
+  ;; (defun ivy-rich-compiling (candidate)
+  ;;   "Displays compiling buffers of the candidate for ivy-rich."
+  ;;   (let* ((candidate (expand-file-name candidate ivy--directory)))
+  ;;     (if (or (not (file-exists-p candidate)) (file-remote-p candidate)
+  ;;             (not (magit-git-repo-p candidate)))
+  ;;         ""
+  ;;       (if (my/projectile-compilation-buffers candidate)
+  ;;           "compiling"
+  ;;         ""))))
   (defun ivy-rich-file-group (candidate)
     "Displays the file group of the candidate for ivy-rich"
     (let ((candidate (expand-file-name candidate ivy--directory)))
@@ -604,14 +567,12 @@ kill it (unless it's modified)."
                (group-function (if (fboundp #'group-name) #'group-name #'identity))
                (group-name (funcall group-function group-id)))
           (format "%s" group-name)))))
-
   (defun ivy-rich-file-modes (candidate)
     "Displays the file mode of the candidate for ivy-rich."
     (let ((candidate (expand-file-name candidate ivy--directory)))
       (if (or (not (file-exists-p candidate)) (file-remote-p candidate))
           ""
         (format "%s" (file-attribute-modes (file-attributes candidate))))))
-
   (defun ivy-rich-file-size (candidate)
     "Displays the file size of the candidate for ivy-rich."
     (let ((candidate (expand-file-name candidate ivy--directory)))
@@ -622,7 +583,6 @@ kill it (unless it's modified)."
            ((> size 1000000) (format "%.1fM " (/ size 1000000.0)))
            ((> size 1000) (format "%.1fk " (/ size 1000.0)))
            (t (format "%d " size)))))))
-
   (defun ivy-rich-file-user (candidate)
     "Displays the file user of the candidate for ivy-rich."
     (let ((candidate (expand-file-name candidate ivy--directory)))
@@ -631,7 +591,6 @@ kill it (unless it's modified)."
         (let* ((user-id (file-attribute-user-id (file-attributes candidate)))
                (user-name (user-login-name user-id)))
           (format "%s" user-name)))))
-
   (defun ivy-rich-switch-buffer-icon (candidate)
     "Returns an icon for the candidate out of `all-the-icons'."
     (with-current-buffer
@@ -676,49 +635,23 @@ kill it (unless it's modified)."
 
 (use-package swiper
   :after ivy
-  :bind (("C-s" . swiper)
+  :bind (("C-s" . swiper-isearch)
+         ("M-." . swiper-isearch-thing-at-point)
          :map swiper-map ("M-%" . swiper-query-replace))
   :config
   (setq ivy-display-style 'fancy)
   (setq swiper-use-visual-line nil)
   (setq swiper-use-visual-line-p (lambda (a) nil)))
 
-;; (defun bjm-swiper-recenter (&rest args)
-;;   "recenter display after swiper"
-;;   (recenter)
-;;   )
-;; (advice-add 'swiper :after #'bjm-swiper-recenter)
+(defun bjm-swiper-recenter (&rest args)
+  "recenter display after swiper"
+  (recenter))
+(advice-add 'swiper :after #'bjm-swiper-recenter)
 
 (use-package all-the-icons-dired
   :ensure t
   :config
   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
-
-;; (use-package projectile
-;;   :ensure t
-;;   :config
-;;   (add-hook 'prog-mode-hook 'projectile-mode)
-;;   (projectile-mode +1)
-;;   (defadvice projectile-project-root (around ignore-remote first activate)
-;;     (unless (file-remote-p default-directory) ad-do-it)))
-
-;; (use-package counsel-projectile
-;;   :ensure t
-;;   :config
-;;   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-;;   (counsel-projectile-mode))
-
-;; ;; Modify action of counsel-projectile to open project in magit
-;; ;; (counsel-projectile-modify-action
-;; ;;  'counsel-projectile-switch-project-action
-;; ;;  '((move counsel-projectile-switch-project-action-vc 1)
-;; ;;    (setkey counsel-projectile-switch-project-action-vc "o")
-;; ;;    (setkey counsel-projectile-switch-project-action " ")))
-
-;; (use-package dracula-theme
-;;   :ensure t
-;;   :config
-;;   (load-theme 'dracula t))
 
 ;; (use-package tree-sitter
 ;;   :ensure t
@@ -729,25 +662,23 @@ kill it (unless it's modified)."
 ;; (use-package tree-sitter-langs
 ;;   :ensure t)
 
-
 (use-package doom-themes
   :ensure t
   :config
-  (setq doom-themes-enable-bold t
-        doom-themes-enable-italic t)
-  (load-theme 'doom-one t)
+  (setq doom-themes-enable-bold nil
+        doom-themes-enable-italic nil)
+  (load-theme 'doom-palenight t)
   (doom-themes-org-config)
-  (doom-themes-visual-bell-config)
-  (doom-themes-neotree-config)
+  ;; (doom-themes-visual-bell-config)
+  ;; (doom-themes-neotree-config)
+  (doom-themes-treemacs-config)
   )
 
 (use-package projectile
   :ensure t
-  :defer 1
+  :defer 0.5
   :preface
   (defun my/projectile-compilation-buffers (&optional project)
-    "Get a list of a project's compilation buffers.
-  If PROJECT is not specified the command acts on the current project."
     (let* ((project-root (or project (projectile-project-root)))
            (buffer-list (mapcar #'process-buffer compilation-in-progress))
            (all-buffers (cl-remove-if-not
@@ -758,44 +689,28 @@ kill it (unless it's modified)."
           (funcall projectile-buffers-filter-function all-buffers)
         all-buffers)))
   :custom
-  ;; (projectile-cache-file (expand-file-name (format "%s/emacs/projectile.cache" xdg-cache)))
-  ;; (projectile-known-projects-file (expand-file-name (format "%s/emacs/projectile-bookmarks.eld" xdg-cache)))
-  ;; (projectile-enable-caching t)
-  ;; (projectile-keymap-prefix (kbd "C-c C-p"))
+  (projectile-enable-caching t)
   (projectile-completion-system 'ivy)
   (projectile-mode-line '(:eval (projectile-project-name)))
   :config
+  (setq projectile-switch-project-action #'projectile-dired)
+  (setq projectile-completion-system 'ivy)
   (add-hook 'prog-mode-hook 'projectile-mode)
   (projectile-mode +1)
-  (defadvice projectile-project-root (around ignore-remote first activate)
-    (unless (file-remote-p default-directory) ad-do-it))
-  )
-
-(use-package counsel-projectile
-  :ensure t
-  :after (counsel projectile)
-  :config
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-  (counsel-projectile-mode 1)
-  (progn
-    (defun my/counsel-projectile-switch-project-action-dired (project)
-      "Open ‘dired’ at the root of the project."
-      (let ((projectile-switch-project-action
-             (lambda ()
-               (projectile-dired))))
-        (counsel-projectile-switch-project-by-name project)))
+  (defadvice projectile-project-root (around ignore-remote first activate)
+    (unless (file-remote-p default-directory) ad-do-it)))
 
-    (counsel-projectile-modify-action
-     'counsel-projectile-switch-project-action
-     '((add ("." my/counsel-projectile-switch-project-action-dired
-             "open ‘dired’ at the root of the project")
-            1)))
-    )
-  )
-
-;; (use-package avy
+;; (use-package counsel-projectile
 ;;   :ensure t
-;;   :bind ("M-s" . avy-goto-char-2))
+;;   :after (counsel projectile)
+;;   :config
+;;   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+;;   (counsel-projectile-mode 1))
+
+(use-package avy
+  :ensure t
+  :bind ("M-'" . avy-goto-char-2))
 
 (use-package bm
   :ensure t
@@ -820,36 +735,6 @@ kill it (unless it's modified)."
   :ensure t
   :config
   (global-set-key (kbd "C-q") 'er/expand-region))
-
-;; (setq save-interprogram-paste-before-kill t)
-
-;; (defun narrow-or-widen-dwim (p)
-;;   "If the buffer is narrowed, it widens. Otherwise, it narrows intelligently.
-;; Intelligently means: region, org-src-block, org-subtree, or defun,
-;; whichever applies first.
-;; Narrowing to org-src-block actually calls `org-edit-src-code'.
-
-;; With prefix P, don't widen, just narrow even if buffer is already
-;; narrowed."
-;;   (interactive "P")
-;;   (declare (interactive-only))
-;;   (cond ((and (buffer-narrowed-p) (not p)) (widen))
-;;         ((region-active-p)
-;;          (narrow-to-region (region-beginning) (region-end)))
-;;         ((derived-mode-p 'org-mode)
-;;          ;; `org-edit-src-code' is not a real narrowing command.
-;;          ;; Remove this first conditional if you don't want it.
-;;          (cond ((ignore-errors (org-edit-src-code))
-;;                 (delete-other-windows))
-;;                ((org-at-block-p)
-;;                 (org-narrow-to-block))
-;;                (t (org-narrow-to-subtree))))
-;;         (t (narrow-to-defun))))
-
-;; ;; (define-key endless/toggle-map "n" #'narrow-or-widen-dwim)
-;; ;; This line actually replaces Emacs' entire narrowing keymap, that's
-;; ;; how much I like this command. Only copy it if that's what you want.
-;; (define-key ctl-x-map "n" #'narrow-or-widen-dwim)
 
 ;; ;; Web - Mode
 
@@ -902,34 +787,15 @@ kill it (unless it's modified)."
   (company-mode +1))
 
 ;; ;; formats the buffer before saving
-(add-hook 'before-save-hook 'tide-format-before-save)
-(add-hook 'typescript-mode-hook #'setup-tide-mode)
+;; (add-hook 'before-save-hook 'tide-format-before-save)
+;; (add-hook 'typescript-mode-hook #'setup-tide-mode)
 
-;; (setq dired-dwim-target t)
-;; (use-package dired-narrow
+;; (use-package dired-subtree
 ;;   :ensure t
+;;   :after dired
 ;;   :config
-;;   (bind-key "C-c C-n" #'dired-narrow)
-;;   (bind-key "C-c C-f" #'dired-narrow-fuzzy)
-;;   (bind-key "C-x C-N" #'dired-narrow-regexp)
-;;   )
-
-(use-package dired-subtree
-  :ensure t
-  :after dired
-  :config
-  (bind-key "<tab>" #'dired-subtree-toggle dired-mode-map)
-  (bind-key "<backtab>" #'dired-subtree-cycle dired-mode-map))
-
-;; (use-package dumb-jump
-;;   :ensure t
-;;   :init (dumb-jump-mode)
-;;   :bind (("M-g o" . dumb-jump-go-other-window)
-;;          ("M-g j" . dumb-jump-go)
-;;          ("M-g x" . dumb-jump-go-prefer-external)
-;;          ("M-g z" . dumb-jump-go-prefer-external-other-window))
-;;   :config
-;;   (setq dumb-jump-selector 'ivy))
+;;   (bind-key "<tab>" #'dired-subtree-toggle dired-mode-map)
+;;   (bind-key "<backtab>" #'dired-subtree-cycle dired-mode-map))
 
 (use-package dired-collapse
   :ensure t
@@ -937,45 +803,11 @@ kill it (unless it's modified)."
   :config
   (setq dired-collapse-mode t))
 
-;; (global-set-key (kbd "C-x C-b") 'ibuffer)
-;; (setq ibuffer-saved-filter-groups
-;;       (quote (("default"
-;;                ("dired" (mode . dired-mode))
-;;                ("org" (name . "^.*org$"))
-;;                ("magit" (mode . magit-mode))
-;;                ("IRC" (or (mode . circe-channel-mode) (mode . circe-server-mode)))
-;;                ("web" (or (mode . web-mode) (mode . js2-mode)))
-;;                ("shell" (or (mode . eshell-mode) (mode . shell-mode)))
-;;                ("mu4e" (or
-
-;;                         (mode . mu4e-compose-mode)
-;;                         (name . "\*mu4e\*")
-;;                         ))
-;;                ("programming" (or
-;;                                (mode . clojure-mode)
-;;                                (mode . clojurescript-mode)
-;;                                (mode . python-mode)
-;;                                (mode . c++-mode)))
-;;                ("emacs" (or
-;;                          (name . "^\\*scratch\\*$")
-;;                          (name . "^\\*Messages\\*$")))
-;;                ))))
-;; (add-hook 'ibuffer-mode-hook
-;;           (lambda ()
-;;             (ibuffer-auto-mode 1)
-;;             (ibuffer-switch-to-saved-filter-groups "default")))
-
-;; don't show these
-;; (add-to-list 'ibuffer-never-show-predicates "zowie")
-;; Don't show filter groups if there are no buffers in that group
-;; (setq ibuffer-show-empty-filter-groups nil)
-;; Don't ask for confirmation to delete marked buffers
-;; (setq ibuffer-expert t)
-
 (use-package ibuffer
   :bind ("C-x C-b" . ibuffer))
 
 (use-package ibuffer-projectile
+  :ensure t
   :after ibuffer
   :preface
   (defun my/ibuffer-projectile ()
@@ -1003,93 +835,7 @@ kill it (unless it's modified)."
   (add-hook 'prog-mode-hook #'origami-mode)
   ;; (define-key origami-mode-map (kbd "C-c f a") 'origami-toggle-all-nodes)
   ;; http://stackoverflow.com/questions/916797/emacs-global-set-key-to-c-tab
-  (define-key origami-mode-map (kbd "C-;") 'origami-recursively-toggle-node)
-  )
-
-
-;; (use-package hideshow
-;;   :ensure t
-;;   :bind (("C-M->" . my-toggle-hideshow-all)
-;;          ("C-M-<" . hs-hide-level)
-;;          ("C-;" . hs-toggle-hiding)
-;;          ;; ([C-tab] . hs-toggle-hiding)
-;;          )
-;;   :config
-;;   ;; Hide the comments too when you do a 'hs-hide-all'
-;;   (setq hs-hide-comments nil)
-;;   ;; Set whether isearch opens folded comments, code, or both
-;;   ;; where x is code, comments, t (both), or nil (neither)
-;;   (setq hs-isearch-open t)
-;;   ;; Add more here
-
-;;   (setq hs-set-up-overlay
-;;         (defun my-display-code-line-counts (ov)
-;;           (when (eq 'code (overlay-get ov 'hs))
-;;             (overlay-put ov 'display
-;;                          (propertize
-;;                           (format " ... <%d>"
-;;                                   (count-lines (overlay-start ov)
-;;                                                (overlay-end ov)))
-;;                           'face 'font-lock-type-face)))))
-
-;;   (defvar my-hs-hide nil "Current state of hideshow for toggling all.")
-;;        ;;;###autoload
-;;   (defun my-toggle-hideshow-all () "Toggle hideshow all."
-;;          (interactive)
-;;          (setq my-hs-hide (not my-hs-hide))
-;;          (if my-hs-hide
-;;              (hs-hide-all)
-;;            (hs-show-all)))
-
-;;   (add-hook 'prog-mode-hook #'hs-minor-mode)
-;;   )
-
-(use-package sgml-mode
-  :ensure t)
-
-(add-to-list 'hs-special-modes-alist
-             (list 'nxml-mode
-                   "<!--\\|<[^/>]*[^/]>"
-                   "-->\\|</[^/>]*[^/]>"
-                   "<!--"
-                   'nxml-forward-element
-                   nil))
-
-;; Fix HTML folding
-(dolist (mode '(sgml-mode
-                html-mode
-                html-erb-mode))
-  (add-to-list 'hs-special-modes-alist
-               (list mode
-                     "<!--\\|<[^/>]*[^/]>"
-                     "-->\\|</[^/>]*[^/]>"
-                     "<!--"
-                     'sgml-skip-tag-forward
-                     nil)))
-
-;; (defun ian/newline-and-push-brace ()
-;;   "`newline-and-indent', but bracket aware."
-;;   (interactive)
-;;   (insert "\n")
-;;   (when (looking-at "}")
-;;     (insert "\n")
-;;     (indent-according-to-mode)
-;;     (forward-line -1))
-;;   (indent-according-to-mode))
-
-;; (global-set-key (kbd "RET") 'ian/newline-and-push-brace)
-
-;; ;; NXML mode
-;; (setq x-select-enable-clipboard t)
-;; (add-hook 'nxml-mode-hook 'hs-minor-mode)
-;; (add-hook 'nxml-mode-hook (lambda ()
-;;                             (global-set-key [C-tab] 'completion-at-point)))
-;; (setq rng-nxml-auto-validate-flag nil)
-
-;; ;; SGML Mode
-;; ;; (defalias 'xml-mode 'sgml-mode
-;; ;;   "Use `sgml-mode' instead of nXML's `xml-mode'.")
-;; ;; (setq-default sgml-basic-offset 4)
+  (define-key origami-mode-map (kbd "C-;") 'origami-recursively-toggle-node))
 
 ;; ;; Indent buffer
 (defun iwb ()
@@ -1098,13 +844,12 @@ kill it (unless it's modified)."
   (delete-trailing-whitespace)
   (indent-region (point-min) (point-max) nil)
   (untabify (point-min) (point-max)))
-
 (global-set-key (kbd "C-c n") 'iwb)
 
-;; (use-package hl-todo
-;;   :ensure t
-;;   :config
-;;   (global-hl-todo-mode))
+(use-package hl-todo
+  :ensure t
+  :config
+  (global-hl-todo-mode))
 
 (use-package markdown-mode
   :ensure t
@@ -1132,23 +877,6 @@ kill it (unless it's modified)."
 (use-package carbon-now-sh
   :ensure t)
 
-;; ;; (use-package highlight-indent-guides
-;; ;;   :ensure t
-;; ;;   :config
-;; ;;   (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
-;; ;;   (setq highlight-indent-guides-method 'character))
-
-;; ;; (use-package highlight-parentheses
-;; ;;   :ensure t
-;; ;;   :diminish highlight-parentheses-mode
-;; ;;   :config
-;; ;;   (add-hook 'emacs-lisp-mode-hook
-;; ;;             (lambda()
-;; ;;               (highlight-parentheses-mode)
-;; ;;               )))
-
-;; ;; (global-highlight-parentheses-mode)
-
 (use-package rainbow-delimiters
   :ensure t
   :config
@@ -1157,8 +885,6 @@ kill it (unless it's modified)."
               (rainbow-delimiters-mode)
               ))
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
-
-;; ;; (add-hook 'before-save-hook #'gofmt-before-save)
 
 ;; ;; REST Support
 (use-package restclient
@@ -1305,25 +1031,25 @@ kill it (unless it's modified)."
 (use-package page-break-lines
   :ensure t)
 
-(use-package dashboard
-  :ensure t
-  :config
-  (dashboard-setup-startup-hook)
+;; (use-package dashboard
+;;   :ensure t
+;;   :config
+;;   (dashboard-setup-startup-hook)
 
-  (turn-on-page-break-lines-mode)
+;;   (turn-on-page-break-lines-mode)
 
-  ;; (setq dashboard-banner-logo-title "Hey there sexy!")
-  (setq dashboard-startup-banner 3)
-  (setq dashboard-center-content t)
-  (setq dashboard-show-shortcuts nil)
-  (setq dashboard-set-heading-icons t)
-  (setq dashboard-set-file-icons t)
-  (setq dashboard-set-init-info t)
-  (setq dashboard-items '((recents  . 5)
-                          (bookmarks . 5)
-                          (projects . 5)
-                          (agenda . 5)
-                          (registers . 5))))
+;;   ;; (setq dashboard-banner-logo-title "Hey there sexy!")
+;;   (setq dashboard-startup-banner 3)
+;;   (setq dashboard-center-content t)
+;;   (setq dashboard-show-shortcuts nil)
+;;   (setq dashboard-set-heading-icons t)
+;;   (setq dashboard-set-file-icons t)
+;;   (setq dashboard-set-init-info t)
+;;   (setq dashboard-items '((recents  . 5)
+;;                           (bookmarks . 5)
+;;                           (projects . 5)
+;;                           (agenda . 5)
+;;                           (registers . 5))))
 
 (use-package rust-mode
   :ensure t
@@ -1332,6 +1058,10 @@ kill it (unless it's modified)."
             (lambda () (setq indent-tabs-mode nil)))
   (setq rust-format-on-save t)
   )
+
+(use-package docker
+  :ensure t
+  :bind ("C-c d" . docker))
 
 (use-package xclip
   :ensure t
@@ -1343,6 +1073,9 @@ kill it (unless it's modified)."
   (let ((default-directory "/ssh:user@host:"))
     (shell)))
 
+(set-face-italic-p 'italic nil)
+(set-face-bold-p 'bold nil)
+
 (customize-set-variable 'tramp-verbose 6 "Enable remote command traces")
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -1351,7 +1084,7 @@ kill it (unless it's modified)."
  ;; If there is more than one, they won't work right.
  '(all-the-icons-ivy-buffer-commands '(ivy-switch-buffer-other-window ivy-switch-buffer))
  '(package-selected-packages
-   '(apheleia beacon python-black blacken company-jedi mic-paren tree-sitter tree-sitter-langs evil vterm dracula-theme origami zen-mode prettier py-isort ivy-rich ivy-filthy-rich quelpa-use-package quelpa dired+ dashboard expand-region fill-column-indicator yasnippet-snippets xclip which-key web-mode use-package undo-tree try tide smartparens rust-mode rg restclient rainbow-delimiters pyimpsort posframe org-bullets nord-theme neotree multiple-cursors minions markdown-mode magit js2-mode hungry-delete hl-todo emmet-mode elpy easy-kill doom-themes doom-modeline dired-collapse diminish csv-mode counsel-projectile carbon-now-sh bm all-the-icons-ivy all-the-icons-dired ag ace-window))
+   '(ripgrep pyenv-mode pyenv ibuffer-projectile docker apheleia beacon python-black blacken company-jedi mic-paren tree-sitter tree-sitter-langs evil vterm dracula-theme origami zen-mode prettier py-isort ivy-rich ivy-filthy-rich quelpa-use-package quelpa dired+ dashboard expand-region fill-column-indicator yasnippet-snippets xclip which-key web-mode use-package undo-tree try tide smartparens rust-mode rg restclient rainbow-delimiters pyimpsort posframe org-bullets nord-theme neotree multiple-cursors minions markdown-mode magit js2-mode hungry-delete hl-todo emmet-mode elpy easy-kill doom-themes doom-modeline dired-collapse diminish csv-mode counsel-projectile carbon-now-sh bm all-the-icons-ivy all-the-icons-dired ag ace-window))
  '(tramp-verbose 6))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
