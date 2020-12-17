@@ -13,7 +13,6 @@
 (add-to-list 'package-archives gnu t)
 (add-to-list 'package-archives ublt t)
 (add-to-list 'package-archives org-elpa t)
-(add-to-list 'package-archives '("elpy" . "https://jorgenschaefer.github.io/packages/"))
 (defun packages-install (&rest packages)
   (message "running packages-install")
   (mapc (lambda (package)
@@ -46,6 +45,7 @@
 (setq auto-window-vscroll nil)
 (setq byte-compile-warnings '(cl-functions))
 (blink-cursor-mode 1)
+(setq-default blink-cursor-delay 0.4)
 (setq cursor-in-non-selected-windows t)
 (setq show-paren-delay 0)
 (show-paren-mode)
@@ -62,7 +62,7 @@
 ;; (global-visual-line-mode t)
 (setq jit-lock-defer-time nil)
 ;; (setq fast-but-imprecise-scrolling t)
-;; (setq font-lock-maximum-decoration 3)
+;; (setq font-lock-maximum-decoration nil)
 
 ;; Disable backups and auto-saves
 (setq make-backup-files nil)
@@ -76,7 +76,6 @@
 (setq frame-title-format '("Emacs"))
 (setq column-number-mode t)
 
-
 ;; (setq display-line-numbers-type 'relative)
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 ;; (add-hook 'prog-mode-hook 'visual-line-mode)
@@ -86,7 +85,7 @@
 (global-set-key (kbd "C-x k") 'kill-this-buffer)
 (global-set-key (kbd "C-S-f") 'rg)
 (global-set-key (kbd "C-S-k") 'kill-whole-line)
-(global-set-key (kbd "C-<tab>") 'mode-line-other-buffer)
+;; (global-set-key (kbd "C-<tab>") 'mode-line-other-buffer)
 
 ;; ;; Never use tabs, use spaces instead
 (setq-default indent-tabs-mode nil)
@@ -95,13 +94,13 @@
 (setq-default css-indent-offset 4)
 (setq-default c-basic-offset 4)
 
-;; (autoload 'View-scroll-half-page-forward "view")
-;; (autoload 'View-scroll-half-page-backward "view")
-;; (global-set-key (kbd "C-v") 'View-scroll-half-page-forward)
-;; (global-set-key (kbd "M-v") 'View-scroll-half-page-backward)
+(autoload 'View-scroll-half-page-forward "view")
+(autoload 'View-scroll-half-page-backward "view")
+(global-set-key (kbd "C-v") 'View-scroll-half-page-forward)
+(global-set-key (kbd "M-v") 'View-scroll-half-page-backward)
 
 (set-face-attribute 'default nil
-                    :family "SF Mono"
+                    :family "Monaco"
                     :height 140
                     :weight 'normal
                     :width 'normal)
@@ -123,18 +122,18 @@
             (setq-default nxml-attribute-indent 4)))
 
 ;; ;; View and Windows
-(defun ian/split-and-follow-horizontally ()
-  (interactive)
-  (split-window-below)
-  (other-window 1))
+;; (defun ian/split-and-follow-horizontally ()
+;;   (interactive)
+;;   (split-window-below)
+;;   (other-window 1))
 
-(defun ian/split-and-follow-vertically ()
-  (interactive)
-  (split-window-right)
-  (other-window 1))
+;; (defun ian/split-and-follow-vertically ()
+;;   (interactive)
+;;   (split-window-right)
+;;   (other-window 1))
 
-(global-set-key (kbd "C-x 2") 'ian/split-and-follow-horizontally)
-(global-set-key (kbd "C-x 3") 'ian/split-and-follow-vertically)
+;; (global-set-key (kbd "C-x 2") 'ian/split-and-follow-horizontally)
+;; (global-set-key (kbd "C-x 3") 'ian/split-and-follow-vertically)
 
 
 (defun kill-current-line (&optional n)
@@ -174,18 +173,19 @@ kill it (unless it's modified)."
 
 (global-set-key (kbd "C-`") 'bh:switch-bury-or-kill-buffer)
 
-;; ;; from http://mbork.pl/2015-04-25_Some_Dired_goodies
-(put 'dired-find-alternate-file 'disabled nil) ; visiting a file from dired closes the dired buffer
+;; http://mbork.pl/2015-04-25_Some_Dired_goodies
+;; visiting a file from dired closes the dired buffer
+(put 'dired-find-alternate-file 'disabled nil)
 
 ;; (add-hook 'prog-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
 
-(use-package beacon
-  :ensure t
-  :config
-  (setq beacon-size 15)
-  (setq beacon-blink-when-window-scrolls nil)
-  (setq beacon-blink-when-window-changes t)
-  (beacon-mode 1))
+;; (use-package beacon
+;;   :ensure t
+;;   :config
+;;   (setq beacon-size 15)
+;;   (setq beacon-blink-when-window-scrolls nil)
+;;   (setq beacon-blink-when-window-changes t)
+;;   (beacon-mode 1))
 
 (use-package org
   :ensure t
@@ -201,13 +201,13 @@ kill it (unless it's modified)."
   (add-hook 'org-mode-hook 'org-bullets-mode))
 
 
-(use-package dired+
-  :load-path "3rd"
-  :init
-  (setq diredp-hide-details-initially-flag nil)
-  (setq diredp-hide-details-propagate-flag nil)
-  :config
-  (diredp-toggle-find-file-reuse-dir 1))
+;; (use-package dired+
+;;   :load-path "3rd"
+;;   :init
+;;   (setq diredp-hide-details-initially-flag nil)
+;;   (setq diredp-hide-details-propagate-flag nil)
+;;   :config
+;;   (diredp-toggle-find-file-reuse-dir 1))
 
 ;; Quickly edit .emacs
 (defun config-visit ()
@@ -224,8 +224,8 @@ kill it (unless it's modified)."
   :config
   (which-key-mode)
   (which-key-mode t)
-  (setq which-key-idle-delay 0.3)
-  (setq which-key-idle-secondary-delay 0.3))
+  (setq which-key-idle-delay 0.2)
+  (setq which-key-idle-secondary-delay 0.5))
 
 ;; ;; Ace windows
 (use-package ace-window
@@ -355,18 +355,18 @@ kill it (unless it's modified)."
 
 
 (setq-default python-indent-guess-indent-offset-verbose nil)
-;; (setq-default py-python-command "python3")
-;; (setq-default python-shell-interpreter "python3")
+(setq-default py-python-command "python3")
+(setq-default python-shell-interpreter "python3")
 
-;; (use-package flycheck
-;;   :ensure t
-;;   :config
-;;   (add-hook 'after-init-hook #'global-flycheck-mode)
-;;   (setq flycheck-check-syntax-automatically '(mode-enabled save))
-;;   (add-hook 'python-mode-hook
-;;             (lambda ()
-;;               (setq flycheck-checker 'python-flake8
-;;                     flycheck-checker-error-threshold 400))))
+(use-package flycheck
+  :ensure t
+  :config
+  (add-hook 'after-init-hook #'global-flycheck-mode)
+  (setq flycheck-check-syntax-automatically '(mode-enabled save))
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (setq flycheck-checker 'python-flake8
+                    flycheck-checker-error-threshold 400))))
 
 ;; (use-package evil
 ;;   :ensure t
@@ -391,14 +391,14 @@ kill it (unless it's modified)."
   (setq yas-snippet-dirs (append yas-snippet-dirs '("~/Dropbox/snippets/")))
   (yas-global-mode 1))
 
-(use-package company
-  :ensure t
-  :config
-  (setq company-idle-delay 0)
-  (setq company-global-modes '(not org-mode markdown-mode))
-  (setq company-minimum-prefix-length 3)
-  (global-set-key (kbd "C-c y") 'company-yasnippet)
-  (add-hook 'after-init-hook 'global-company-mode))
+;; (use-package company
+;;   :ensure t
+;;   :config
+;;   (setq company-idle-delay 0)
+;;   (setq company-global-modes '(not org-mode markdown-mode))
+;;   (setq company-minimum-prefix-length 3)
+;;   (global-set-key (kbd "C-c y") 'company-yasnippet)
+;;   (add-hook 'after-init-hook 'global-company-mode))
 
 (use-package js2-mode
   :ensure t
@@ -412,15 +412,14 @@ kill it (unless it's modified)."
               (when (executable-find "eslint")
                 (flycheck-select-checker 'javascript-eslint)))))
 
-(use-package company-jedi
-  :ensure t
-  :config
-  (add-hook 'python-mode-hook (defun python-mode-hook ()
-                                (add-to-list 'company-backends 'company-jedi))))
+;; (use-package company-jedi
+;;   :ensure t
+;;   :config
+;;   (add-hook 'python-mode-hook (defun python-mode-hook ()
+;;                                 (add-to-list 'company-backends 'company-jedi))))
 
 (use-package py-isort
-  :ensure t
-  )
+  :ensure t)
 
 ;; (use-package pyenv-mode
 ;;   :ensure t
@@ -444,43 +443,50 @@ kill it (unless it's modified)."
 ;;               (message (concat "Setting virtualenv to " pyenv-current-version))))))))
 ;;   )
 
-(use-package pyenv-mode-auto
-  :ensure t
-  :init
-  (add-to-list 'exec-path "~/.pyenv/shims")
-  (setenv "WORKON_HOME" "~/.pyenv/versions/")
-  (setenv "VIRTUALENVWRAPPER_HOOK_DIR" "~/.pyenv/versions/")
-  :config
-  )
-
-;; (use-package elpy
+;; (use-package pyenv-mode-auto
 ;;   :ensure t
-;;   :defer 0.5
 ;;   :init
-;;   (advice-add 'python-mode :before 'elpy-enable)
-;;   :config
-;;   (elpy-enable)
-;;   (setq eldoc-idle-delay 0.3)
-;;   (add-hook 'elpy-mode-hook (lambda ()
-;;                               (highlight-indentation-mode -1)
-;;                               (flycheck-mode)
-;;                               (setq python-check-command "flake8")))
-;;   (when (require 'flycheck nil t)
-;;     (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-;;     (add-hook 'elpy-mode-hook 'flycheck-mode))
-;;   (define-key elpy-refactor-map (kbd "f")
-;;     (cons (format "%sormat code"
-;;                   (propertize "f" 'face 'bold))
-;;           'elpy-black-fix-code))
-;;   :bind
-;;   (([f9] . elpy-black-fix-code)))
+;;   (add-to-list 'exec-path "~/.pyenv/shims")
+;;   (setenv "WORKON_HOME" "~/.pyenv/versions/")
+;;   (setenv "VIRTUALENVWRAPPER_HOOK_DIR" "~/.pyenv/versions/"))
 
-(use-package blacken
-  :ensure t)
-
-(use-package python-black
+(use-package elpy
   :ensure t
-  :after python)
+  :defer 0.5
+  :init
+  (advice-add 'python-mode :before 'elpy-enable)
+  :bind
+  (([f9] . elpy-black-fix-code))
+  :config
+  (elpy-enable)
+  (setq eldoc-idle-delay 0.5)
+  (add-hook 'elpy-mode-hook (lambda () (setq company-idle-delay nil)))
+  ;; (add-hook 'elpy-mode-hook (lambda ()
+  ;;                             (highlight-indentation-mode -1)
+  ;;                             (flycheck-mode)
+  ;;                             (setq python-check-command "flake8")))
+  (when (load "flycheck" t t)
+    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+    (add-hook 'elpy-mode-hook 'flycheck-mode))
+  (define-key elpy-refactor-map (kbd "f")
+    (cons (format "%sormat code"
+                  (propertize "f" 'face 'bold))
+          'elpy-black-fix-code))
+  (defun elpy-goto-definition-or-rgrep ()
+  "Go to the definition of the symbol at point, if found. Otherwise, run `elpy-rgrep-symbol'."
+    (interactive)
+    (ring-insert find-tag-marker-ring (point-marker))
+    (condition-case nil (elpy-goto-definition)
+        (error (elpy-rgrep-symbol
+                (concat "\\(def\\|class\\)\s" (thing-at-point 'symbol) "("))))))
+  ;; (define-key elpy-mode-map (kbd "M-.") 'elpy-goto-definition-or-rgrep))
+
+;; (use-package blacken
+;;   :ensure t)
+
+;; (use-package python-black
+;;   :ensure t
+;;   :after python)
 
 (remove-hook 'find-file-hooks 'vc-refresh-state)
 
@@ -671,8 +677,7 @@ kill it (unless it's modified)."
   (doom-themes-org-config)
   ;; (doom-themes-visual-bell-config)
   ;; (doom-themes-neotree-config)
-  (doom-themes-treemacs-config)
-  )
+  (doom-themes-treemacs-config))
 
 (use-package projectile
   :ensure t
@@ -731,10 +736,10 @@ kill it (unless it's modified)."
   :config
   (global-hungry-delete-mode))
 
-(use-package expand-region
-  :ensure t
-  :config
-  (global-set-key (kbd "C-q") 'er/expand-region))
+;; (use-package expand-region
+;;   :ensure t
+;;   :config
+;;   (global-set-key (kbd "C-q") 'er/expand-region))
 
 ;; ;; Web - Mode
 
@@ -770,23 +775,23 @@ kill it (unless it's modified)."
   (if (equal web-mode-content-type "jsx")
       (let ((web-mode-enable-part-face nil)) ad-do-it) ad-do-it))
 
-(use-package tide
-  :ensure t
-  :after (typescript-mode company flycheck)
-  :hook ((typescript-mode . tide-setup)
-         (typescript-mode . tide-hl-identifier-mode)
-         (before-save . tide-format-before-save)))
+;; (use-package tide
+;;   :ensure t
+;;   :after (typescript-mode company flycheck)
+;;   :hook ((typescript-mode . tide-setup)
+;;          (typescript-mode . tide-hl-identifier-mode)
+;;          (before-save . tide-format-before-save)))
 
-(defun setup-tide-mode ()
-  (interactive)
-  (tide-setup)
-  (flycheck-mode +1)
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
-  (eldoc-mode +1)
-  (tide-hl-identifier-mode +1)
-  (company-mode +1))
+;; (defun setup-tide-mode ()
+;;   (interactive)
+;;   (tide-setup)
+;;   (flycheck-mode +1)
+;;   (setq flycheck-check-syntax-automatically '(save mode-enabled))
+;;   (eldoc-mode +1)
+;;   (tide-hl-identifier-mode +1)
+;;   (company-mode +1))
 
-;; ;; formats the buffer before saving
+;; formats the buffer before saving
 ;; (add-hook 'before-save-hook 'tide-format-before-save)
 ;; (add-hook 'typescript-mode-hook #'setup-tide-mode)
 
@@ -823,11 +828,11 @@ kill it (unless it's modified)."
 ;; ;;   :ensure t
 ;; ;;   :bind ("M-y" . popup-kill-ring))
 
-(use-package easy-kill
-  :ensure t
-  :config
-  (global-set-key [remap kill-ring-save] #'easy-kill)
-  (global-set-key [remap mark-sexp] #'easy-mark))
+;; (use-package easy-kill
+;;   :ensure t
+;;   :config
+;;   (global-set-key [remap kill-ring-save] #'easy-kill)
+;;   (global-set-key [remap mark-sexp] #'easy-mark))
 
 (use-package origami
   :ensure t
@@ -918,8 +923,7 @@ kill it (unless it's modified)."
   (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
   (global-set-key (kbd "C->") 'mc/mark-next-like-this)
   (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
-  )
+  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
 
 (define-key mc/keymap (kbd "<return>") nil)
 

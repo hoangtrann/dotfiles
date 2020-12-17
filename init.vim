@@ -1,5 +1,8 @@
-set guicursor=
-set cursorline
+" set guicursor=
+set number
+set ai
+set hlsearch
+set ruler
 set noerrorbells
 set expandtab
 set shiftwidth=4
@@ -13,11 +16,11 @@ set nowrap
 set smartcase
 set noswapfile
 set nobackup
-set incsearch
+" set incsearch
 set clipboard=unnamed
-set cmdheight=2
-" set colorcolumn=80
-set scrolloff=3 " Keep 3 lines below and above the cursor
+" set cmdheight=2
+set colorcolumn=80
+" set scrolloff=3 " Keep 3 lines below and above the cursor
 highlight ColorColumn ctermbg=0
 
 filetype on
@@ -39,29 +42,24 @@ Plug 'arcticicestudio/nord-vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'tomtom/tcomment_vim'
-Plug 'mg979/vim-visual-multi'
 Plug 'tpope/vim-fugitive'
-Plug 'rbong/vim-flog'
 Plug 'vim-scripts/git-time-lapse'
-Plug 'kristijanhusak/vim-carbon-now-sh'
 Plug 'majutsushi/tagbar'
-Plug 'iamcco/markdown-preview.vim'
 " Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Plug 'neoclide/coc-neco'
 Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
 Plug 'elzr/vim-json'
-Plug 'jiangmiao/auto-pairs'
+" Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-surround'
-Plug 'tpope/vim-endwise'
 Plug 'mbbill/undotree'
 Plug 'pangloss/vim-javascript'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'nvie/vim-flake8'
 Plug 'psf/black', { 'branch': 'stable' }
-" Plug 'fisadev/vim-isort'
+Plug 'fisadev/vim-isort'
 Plug 'preservim/nerdtree'
-" Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'sheerun/vim-polyglot'
 Plug 'qpkorr/vim-bufkill'
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
@@ -94,9 +92,8 @@ endif
 
 " let g:gruvbox_contrast_dark = 'hard'
 set background=dark
-colorscheme palenight
+colorscheme gruvbox
 " let g:palenight_terminal_italics=1
-" let g:rainbow_active = 1 "set to 0 if you want to enable it later via :RainbowToggle
 
 if executable('rg')
     let g:rg_derive_root = 'true'
@@ -105,19 +102,19 @@ set grepprg=rg\ --vimgrep\ --smart-case\ --hidden\ --follow
 " let g:rg_derive_root='true'
 
 
-" lua << EOF
-" require'nvim-treesitter.configs'.setup {
-"         highlight = {
-"                 enable = true,
-"         },
-"         refactor = {
-"                 highlight_definitions = {
-"                         enable = true
-"                 },
-"         },
-"         ensure_installed = 'python'
-" }
-" EOF
+lua << EOF
+require'nvim-treesitter.configs'.setup {
+        highlight = {
+                enable = true,
+        },
+        refactor = {
+                highlight_definitions = {
+                        enable = true
+                },
+        },
+        ensure_installed = 'python'
+}
+EOF
 
 let mapleader = ","
 let g:netrw_browse_split = 2
