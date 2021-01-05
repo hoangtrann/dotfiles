@@ -1,4 +1,4 @@
-" set guicursor=
+set guicursor=
 set number
 set ai
 set hlsearch
@@ -16,11 +16,11 @@ set nowrap
 set smartcase
 set noswapfile
 set nobackup
-" set incsearch
+set incsearch
 set clipboard=unnamed
-" set cmdheight=2
+set cmdheight=2
 set colorcolumn=80
-" set scrolloff=3 " Keep 3 lines below and above the cursor
+set scrolloff=3 " Keep 3 lines below and above the cursor
 highlight ColorColumn ctermbg=0
 
 filetype on
@@ -38,6 +38,7 @@ Plug 'morhetz/gruvbox'
 Plug 'drewtempelmeyer/palenight.vim'
 Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'arcticicestudio/nord-vim'
+Plug 'joshdick/onedark.vim'
 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -45,11 +46,10 @@ Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-fugitive'
 Plug 'vim-scripts/git-time-lapse'
 Plug 'majutsushi/tagbar'
-" Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Plug 'neoclide/coc-neco'
-Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
 Plug 'elzr/vim-json'
-" Plug 'jiangmiao/auto-pairs'
+Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-surround'
 Plug 'mbbill/undotree'
 Plug 'pangloss/vim-javascript'
@@ -57,13 +57,13 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'nvie/vim-flake8'
 Plug 'psf/black', { 'branch': 'stable' }
-Plug 'fisadev/vim-isort'
+" Plug 'fisadev/vim-isort'
 Plug 'preservim/nerdtree'
 Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'sheerun/vim-polyglot'
 Plug 'qpkorr/vim-bufkill'
-Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
-" Plug 'Yggdroot/indentLine'
+Plug 'prettier/vim-prettier'
+Plug 'Yggdroot/indentLine'
 Plug 'Vimjas/vim-python-pep8-indent'
 call plug#end()
 
@@ -91,9 +91,10 @@ if (has("termguicolors"))
 endif
 
 " let g:gruvbox_contrast_dark = 'hard'
-set background=dark
-colorscheme gruvbox
 " let g:palenight_terminal_italics=1
+"
+set background=dark
+colorscheme onedark
 
 if executable('rg')
     let g:rg_derive_root = 'true'
@@ -246,3 +247,4 @@ let g:airline_symbols.whitespace = 'Ξ'
 let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = ''
+
