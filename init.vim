@@ -1,7 +1,9 @@
 set guicursor=
 set number
+set relativenumber
 set ai
-set hlsearch
+set nohlsearch
+set incsearch
 set ruler
 set noerrorbells
 set expandtab
@@ -16,12 +18,12 @@ set nowrap
 set smartcase
 set noswapfile
 set nobackup
-set incsearch
 set clipboard=unnamed
 set cmdheight=2
 set colorcolumn=80
-set scrolloff=3 " Keep 3 lines below and above the cursor
-highlight ColorColumn ctermbg=0
+set scrolloff=8 " Keep 3 lines below and above the cursor
+" highlight ColorColumn ctermbg=0
+" highlight ColorColumn=
 
 filetype on
 filetype indent plugin on
@@ -46,8 +48,9 @@ Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-fugitive'
 Plug 'vim-scripts/git-time-lapse'
 Plug 'majutsushi/tagbar'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Plug 'neoclide/coc-neco'
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 Plug 'elzr/vim-json'
 Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-surround'
@@ -57,13 +60,13 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'nvie/vim-flake8'
 Plug 'psf/black', { 'branch': 'stable' }
-" Plug 'fisadev/vim-isort'
+Plug 'fisadev/vim-isort'
 Plug 'preservim/nerdtree'
-Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'sheerun/vim-polyglot'
 Plug 'qpkorr/vim-bufkill'
 Plug 'prettier/vim-prettier'
-Plug 'Yggdroot/indentLine'
+" Plug 'Yggdroot/indentLine'
 Plug 'Vimjas/vim-python-pep8-indent'
 call plug#end()
 
@@ -105,15 +108,10 @@ set grepprg=rg\ --vimgrep\ --smart-case\ --hidden\ --follow
 
 lua << EOF
 require'nvim-treesitter.configs'.setup {
-        highlight = {
-                enable = true,
-        },
-        refactor = {
-                highlight_definitions = {
-                        enable = true
-                },
-        },
-        ensure_installed = 'python'
+  ensure_installed = "maintained",
+  highlight = {
+          enable = true,
+  },
 }
 EOF
 
@@ -156,9 +154,9 @@ imap <S-Right> <Esc><Right>wi
 nmap <S-Right> w
 
 " indent/unindent with tab/shift-tab
-nmap <Tab> >>
-imap <S-Tab> <Esc><<i
-nmap <S-tab> <<
+" nmap <Tab> >>
+" imap <S-Tab> <Esc><<i
+" nmap <S-tab> <<
 
 " mouse
 set mouse=a
@@ -174,23 +172,29 @@ map <leader>t :TagbarToggle<CR>
 " Fzf
 nnoremap <leader><leader> :Files<CR>
 nnoremap <leader>fi :Files <C-R>=expand('%:h')<CR><CR>
+" nnoremap <leader>fi :Files<CR>
 nnoremap <leader>G :GFiles?<CR>
-nnoremap <Leader>b :Buffers<cr>
+nnoremap <Leader>B :Buffers<cr>
 nnoremap <Leader>s :BLines<cr>
 nnoremap <leader>C :Colors<CR>
 nnoremap <leader>ag :Ag! <C-R><C-W><CR>
 nnoremap <leader>m :History<CR>
 nnoremap \ :Rg<CR>
-" nnoremap <leader>fi :Files<CR>
 " nnoremap <C-T> :Files<cr>
-"
+
 " Call flake8 on save buffer
 autocmd BufWritePost *.py call flake8#Flake8()
 autocmd FileType python cnoreabbrev <expr> q winnr("$") > 1 && getcmdtype() == ":" && getcmdline() == 'q' ? 'ccl <BAR> q' : 'q'
 let g:syntastic_python_flake8_config_file='.flake8'
 nnoremap <C-K> :call flake8#Flake8ShowError()<cr>
 
-" restore place in file from previous session
+let g:python_host_prog = '/home/ryan/.pyenv/versions/neovim2/bin/python'
+let g:python3_host_prog = '/home/ryan/.pyenv/versions/neovim3/bin/python'
+
+let g:vim_isort_python_version = 'python3'
+let s:available_short_python = ':py3'
+let g:vim_isort_map = '<C-i>'
+
 autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
 nnoremap <F9> :Black<CR>
@@ -211,6 +215,8 @@ noremap <Leader>y "*y
 noremap <Leader>p "*p
 noremap <Leader>Y "+y
 noremap <Leader>P "+p
+
+" silent! noremap <C-i> :CocCommand pyright.organizeimports<CR>
 
 let g:airline#extensions#branch#enabled=1
 let g:airline#parts#ffenc#skip_expected_string='utf-8[unix]'
@@ -248,3 +254,5 @@ let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = ''
 
+" <TAB>: completion.
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
