@@ -75,7 +75,8 @@
 (setq column-number-mode t)
 
 ;; (setq display-line-numbers-type 'relative)
-(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(add-hook 'prog-mode-hook 'display-line-numbers-mode )
+;; (global-display-line-numbers-mode)
 ;; (add-hook 'prog-mode-hook 'visual-line-mode)
 
 (global-set-key (kbd "C-S-l") 'display-line-numbers-mode)
@@ -97,9 +98,9 @@
 (global-set-key (kbd "M-v") 'View-scroll-half-page-backward)
 
 (set-face-attribute 'default nil
-                    :family "JetBrains Mono"
-                    :height 120
-                    :weight 'regular
+                    :family "Monaco"
+                    :height 140
+                    :weight 'light
                     :width 'normal)
 
 (use-package smartparens
@@ -219,7 +220,7 @@ kill it (unless it's modified)."
   :config
   (which-key-mode)
   (which-key-mode t)
-  (setq which-key-idle-delay 0.2)
+  (setq which-key-idle-delay 0.5)
   (setq which-key-idle-secondary-delay 0.5))
 
 ;; ;; Ace windows
@@ -280,32 +281,87 @@ kill it (unless it's modified)."
     (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
   :config
   (progn
-    (setq treemacs-follow-after-init          t
-          treemacs-width                      35
-          treemacs-indentation                2
-          treemacs-git-integration            t
-          treemacs-collapse-dirs              3
-          treemacs-silent-refresh             nil
-          treemacs-change-root-without-asking nil
-          treemacs-sorting                    'alphabetic-desc
-          treemacs-show-hidden-files          t
-          treemacs-never-persist              nil
-          treemacs-is-never-other-window      nil
-          treemacs-goto-tag-strategy          'refetch-index)
+    (setq treemacs-collapse-dirs                 (if treemacs-python-executable 3 0)
+          treemacs-deferred-git-apply-delay      0.5
+          treemacs-directory-name-transformer    #'identity
+          treemacs-display-in-side-window        t
+          treemacs-eldoc-display                 t
+          treemacs-file-event-delay              5000
+          treemacs-file-extension-regex          treemacs-last-period-regex-value
+          treemacs-file-follow-delay             0.2
+          treemacs-file-name-transformer         #'identity
+          treemacs-follow-after-init             t
+          treemacs-git-command-pipe              ""
+          treemacs-goto-tag-strategy             'refetch-index
+          treemacs-indentation                   2
+          treemacs-indentation-string            " "
+          treemacs-is-never-other-window         nil
+          treemacs-max-git-entries               5000
+          treemacs-missing-project-action        'ask
+          treemacs-move-forward-on-expand        nil
+          treemacs-no-png-images                 nil
+          treemacs-no-delete-other-windows       t
+          treemacs-project-follow-cleanup        nil
+          treemacs-persist-file                  (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+          treemacs-position                      'left
+          treemacs-read-string-input             'from-child-frame
+          treemacs-recenter-distance             0.1
+          treemacs-recenter-after-file-follow    nil
+          treemacs-recenter-after-tag-follow     nil
+          treemacs-recenter-after-project-jump   'always
+          treemacs-recenter-after-project-expand 'on-distance
+          treemacs-show-cursor                   nil
+          treemacs-show-hidden-files             t
+          treemacs-silent-filewatch              nil
+          treemacs-silent-refresh                nil
+          treemacs-sorting                       'alphabetic-asc
+          treemacs-space-between-root-nodes      t
+          treemacs-tag-follow-cleanup            t
+          treemacs-tag-follow-delay              1.5
+          treemacs-user-mode-line-format         nil
+          treemacs-user-header-line-format       nil
+          treemacs-width                         35
+          treemacs-workspace-switch-cleanup      nil)
+
+    ;; The default width and height of the icons is 22 pixels. If you are
+    ;; using a Hi-DPI display, uncomment this to double the icon size.
+    ;;(treemacs-resize-icons 44)
 
     (treemacs-follow-mode t)
-    (treemacs-filewatch-mode t))
+    (treemacs-filewatch-mode t)
+    (treemacs-fringe-indicator-mode 'always)
+    (pcase (cons (not (null (executable-find "git")))
+                 (not (null treemacs-python-executable)))
+      (`(t . t)
+       (treemacs-git-mode 'deferred))
+      (`(t . _)
+       (treemacs-git-mode 'simple))))
+  ;; (treemacs-load-theme "all-the-icons")
   :bind
   (:map global-map
-        ([f8]        . treemacs-toggle)
         ("M-0"       . treemacs-select-window)
-        ("C-c 1"     . treemacs-delete-other-windows)))
+        ("C-x t 1"   . treemacs-delete-other-windows)
+        ("C-x t t"   . treemacs)
+        ("C-x t B"   . treemacs-bookmark)
+        ("C-x t C-t" . treemacs-find-file)
+        ("C-x t M-t" . treemacs-find-tag)))
 
 (use-package treemacs-projectile
-  :defer t
+  :after treemacs projectile
+  :ensure t)
+
+(use-package treemacs-icons-dired
+  :after treemacs dired
   :ensure t
-  :config
-  (setq treemacs-header-function #'treemacs-projectile-create-header))
+  :config (treemacs-icons-dired-mode))
+
+(use-package treemacs-magit
+  :after treemacs magit
+  :ensure t)
+
+;; (use-package treemacs-all-the-icons
+;;   :after treemacs all-the-icons
+;;   :ensure t)
 
 ;; ;; To nyan or not nyan
 ;; (use-package nyan-mode
@@ -317,7 +373,7 @@ kill it (unless it's modified)."
 ;; (use-package fill-column-indicator
 ;;   :ensure t
 ;;   :config
-;;   (setq-default fci-rule-column 80)
+;;   (setq-default fci-rule-column 88)
 ;;   (add-hook 'python-mode-hook 'fci-mode))
 
 (use-package doom-modeline
@@ -329,14 +385,14 @@ kill it (unless it's modified)."
   (setq doom-modeline-bar-width 3)
   (setq doom-modeline-window-width-limit fill-column)
   (setq doom-modeline-project-detection 'project)
-  (setq doom-modeline-buffer-file-name-style 'auto)
+  (setq doom-modeline-buffer-file-name-style 'filename)
   (setq find-file-visit-truename t)
   (setq doom-modeline-icon (display-graphic-p))
   (setq doom-modeline-major-mode-icon t)
   (setq doom-modeline-buffer-modification-icon t)
   (setq doom-modeline-buffer-state-icon t)
   (setq doom-modeline-indent-info nil)
-  (setq doom-modeline-checker-simple-format nil)
+  (setq doom-modeline-checker-simple-format t)
   (setq doom-modeline-vcs-max-length 12)
   (setq doom-modeline-env-version t)
   (setq doom-modeline-env-enable-python t)
@@ -350,8 +406,8 @@ kill it (unless it's modified)."
 
 
 (setq-default python-indent-guess-indent-offset-verbose nil)
-(setq-default py-python-command "python3")
-(setq-default python-shell-interpreter "python3")
+(setq-default py-python-command "/home/ryan/.pyenv/versions/3.7.9/bin/python3")
+(setq-default python-shell-interpreter "/home/ryan/.pyenv/versions/3.7.9/bin/python3")
 
 (use-package flycheck
   :ensure t
@@ -407,14 +463,19 @@ kill it (unless it's modified)."
               (when (executable-find "eslint")
                 (flycheck-select-checker 'javascript-eslint)))))
 
-(use-package company-jedi
-  :ensure t
-  :config
-  (add-hook 'python-mode-hook (defun python-mode-hook ()
-                                (add-to-list 'company-backends 'company-jedi))))
+;; (use-package company-jedi
+;;   :ensure t
+;;   :config
+;;   (add-hook 'python-mode-hook (defun python-mode-hook ()
+;;                                 (add-to-list 'company-backends 'company-jedi))))
 
 (use-package py-isort
   :ensure t)
+
+(use-package blacken
+  :ensure t
+  :config
+ (setq blacken-line-length 80))
 
 (use-package elpy
   :ensure t
@@ -426,6 +487,7 @@ kill it (unless it's modified)."
   :config
   (elpy-enable)
   (setq eldoc-idle-delay 0.3)
+  (setq elpy-rpc-python-command "/home/ryan/.pyenv/versions/3.7.9/bin/python3")
   (add-hook 'elpy-mode-hook (lambda ()
                               (highlight-indentation-mode -1)
                               (flycheck-mode)
@@ -443,7 +505,11 @@ kill it (unless it's modified)."
     (ring-insert find-tag-marker-ring (point-marker))
     (condition-case nil (elpy-goto-definition)
         (error (elpy-rgrep-symbol
-                (concat "\\(def\\|class\\)\s" (thing-at-point 'symbol) "("))))))
+                (concat "\\(def\\|class\\)\s" (thing-at-point 'symbol) "(")))))
+  (eval-after-load "elpy"
+  '(cl-dolist (key '("C-<up>" "C-<down>" "C-<left>" "C-<right>"))
+     (define-key elpy-mode-map (kbd key) nil)))
+  )
   ;; (define-key elpy-mode-map (kbd "M-.") 'elpy-goto-definition-or-rgrep))
 
 (remove-hook 'find-file-hooks 'vc-refresh-state)
@@ -531,108 +597,116 @@ kill it (unless it's modified)."
   :after ivy
   :commands ivy-pass)
 
-(use-package ivy-rich
-  :ensure t
-  :defer 0.1
-  :preface
-  (defun ivy-rich-branch-candidate (candidate)
-    "Displays the branch candidate of the candidate for ivy-rich."
-    (let ((candidate (expand-file-name candidate ivy--directory)))
-      (if (or (not (file-exists-p candidate)) (file-remote-p candidate))
-          ""
-        (format "%s%s"
-                (propertize
-                 (replace-regexp-in-string abbreviated-home-dir "~/"
-                                           (file-name-directory
-                                            (directory-file-name candidate)))
-                 'face 'font-lock-doc-face)
-                (propertize
-                 (file-name-nondirectory
-                  (directory-file-name candidate))
-                 'face 'success)))))
-  ;; (defun ivy-rich-compiling (candidate)
-  ;;   "Displays compiling buffers of the candidate for ivy-rich."
-  ;;   (let* ((candidate (expand-file-name candidate ivy--directory)))
-  ;;     (if (or (not (file-exists-p candidate)) (file-remote-p candidate)
-  ;;             (not (magit-git-repo-p candidate)))
-  ;;         ""
-  ;;       (if (my/projectile-compilation-buffers candidate)
-  ;;           "compiling"
-  ;;         ""))))
-  (defun ivy-rich-file-group (candidate)
-    "Displays the file group of the candidate for ivy-rich"
-    (let ((candidate (expand-file-name candidate ivy--directory)))
-      (if (or (not (file-exists-p candidate)) (file-remote-p candidate))
-          ""
-        (let* ((group-id (file-attribute-group-id (file-attributes candidate)))
-               (group-function (if (fboundp #'group-name) #'group-name #'identity))
-               (group-name (funcall group-function group-id)))
-          (format "%s" group-name)))))
-  (defun ivy-rich-file-modes (candidate)
-    "Displays the file mode of the candidate for ivy-rich."
-    (let ((candidate (expand-file-name candidate ivy--directory)))
-      (if (or (not (file-exists-p candidate)) (file-remote-p candidate))
-          ""
-        (format "%s" (file-attribute-modes (file-attributes candidate))))))
-  (defun ivy-rich-file-size (candidate)
-    "Displays the file size of the candidate for ivy-rich."
-    (let ((candidate (expand-file-name candidate ivy--directory)))
-      (if (or (not (file-exists-p candidate)) (file-remote-p candidate))
-          ""
-        (let ((size (file-attribute-size (file-attributes candidate))))
-          (cond
-           ((> size 1000000) (format "%.1fM " (/ size 1000000.0)))
-           ((> size 1000) (format "%.1fk " (/ size 1000.0)))
-           (t (format "%d " size)))))))
-  (defun ivy-rich-file-user (candidate)
-    "Displays the file user of the candidate for ivy-rich."
-    (let ((candidate (expand-file-name candidate ivy--directory)))
-      (if (or (not (file-exists-p candidate)) (file-remote-p candidate))
-          ""
-        (let* ((user-id (file-attribute-user-id (file-attributes candidate)))
-               (user-name (user-login-name user-id)))
-          (format "%s" user-name)))))
-  (defun ivy-rich-switch-buffer-icon (candidate)
-    "Returns an icon for the candidate out of `all-the-icons'."
-    (with-current-buffer
-        (get-buffer candidate)
-      (let ((icon (all-the-icons-icon-for-mode major-mode :height 0.9)))
-        (if (symbolp icon)
-            (all-the-icons-icon-for-mode 'fundamental-mode :height 0.9)
-          icon))))
-  :config
-  (plist-put ivy-rich-display-transformers-list
-             'counsel-find-file
-             '(:columns
-               ((ivy-rich-candidate               (:width 73))
-                (ivy-rich-file-user               (:width 8 :face font-lock-doc-face))
-                (ivy-rich-file-group              (:width 4 :face font-lock-doc-face))
-                (ivy-rich-file-modes              (:width 11 :face font-lock-doc-face))
-                (ivy-rich-file-size               (:width 7 :face font-lock-doc-face))
-                (ivy-rich-file-last-modified-time (:width 30 :face font-lock-doc-face)))))
-  ;; (plist-put ivy-rich-display-transformers-list
-  ;;            'counsel-projectile-switch-project
-  ;;            '(:columns
-  ;;              ((ivy-rich-branch-candidate        (:width 80))
-  ;;               (ivy-rich-compiling))))
-  (plist-put ivy-rich-display-transformers-list
-             'ivy-switch-buffer
-             '(:columns
-               ((ivy-rich-switch-buffer-icon       (:width 2))
-                (ivy-rich-candidate                (:width 40))
-                (ivy-rich-switch-buffer-size       (:width 7))
-                (ivy-rich-switch-buffer-indicators (:width 4 :face error :align right))
-                (ivy-rich-switch-buffer-major-mode (:width 20 :face warning)))
-               :predicate (lambda (cand) (get-buffer cand))))
-  (ivy-rich-mode 1))
+;; (use-package ivy-rich
+;;   :ensure t
+;;   :defer 0.1
+;;   :preface
+;;   (defun ivy-rich-branch-candidate (candidate)
+;;     "Displays the branch candidate of the candidate for ivy-rich."
+;;     (let ((candidate (expand-file-name candidate ivy--directory)))
+;;       (if (or (not (file-exists-p candidate)) (file-remote-p candidate))
+;;           ""
+;;         (format "%s%s"
+;;                 (propertize
+;;                  (replace-regexp-in-string abbreviated-home-dir "~/"
+;;                                            (file-name-directory
+;;                                             (directory-file-name candidate)))
+;;                  'face 'font-lock-doc-face)
+;;                 (propertize
+;;                  (file-name-nondirectory
+;;                   (directory-file-name candidate))
+;;                  'face 'success)))))
+;;   ;; (defun ivy-rich-compiling (candidate)
+;;   ;;   "Displays compiling buffers of the candidate for ivy-rich."
+;;   ;;   (let* ((candidate (expand-file-name candidate ivy--directory)))
+;;   ;;     (if (or (not (file-exists-p candidate)) (file-remote-p candidate)
+;;   ;;             (not (magit-git-repo-p candidate)))
+;;   ;;         ""
+;;   ;;       (if (my/projectile-compilation-buffers candidate)
+;;   ;;           "compiling"
+;;   ;;         ""))))
+;;   (defun ivy-rich-file-group (candidate)
+;;     "Displays the file group of the candidate for ivy-rich"
+;;     (let ((candidate (expand-file-name candidate ivy--directory)))
+;;       (if (or (not (file-exists-p candidate)) (file-remote-p candidate))
+;;           ""
+;;         (let* ((group-id (file-attribute-group-id (file-attributes candidate)))
+;;                (group-function (if (fboundp #'group-name) #'group-name #'identity))
+;;                (group-name (funcall group-function group-id)))
+;;           (format "%s" group-name)))))
+;;   (defun ivy-rich-file-modes (candidate)
+;;     "Displays the file mode of the candidate for ivy-rich."
+;;     (let ((candidate (expand-file-name candidate ivy--directory)))
+;;       (if (or (not (file-exists-p candidate)) (file-remote-p candidate))
+;;           ""
+;;         (format "%s" (file-attribute-modes (file-attributes candidate))))))
+;;   (defun ivy-rich-file-size (candidate)
+;;     "Displays the file size of the candidate for ivy-rich."
+;;     (let ((candidate (expand-file-name candidate ivy--directory)))
+;;       (if (or (not (file-exists-p candidate)) (file-remote-p candidate))
+;;           ""
+;;         (let ((size (file-attribute-size (file-attributes candidate))))
+;;           (cond
+;;            ((> size 1000000) (format "%.1fM " (/ size 1000000.0)))
+;;            ((> size 1000) (format "%.1fk " (/ size 1000.0)))
+;;            (t (format "%d " size)))))))
+;;   (defun ivy-rich-file-user (candidate)
+;;     "Displays the file user of the candidate for ivy-rich."
+;;     (let ((candidate (expand-file-name candidate ivy--directory)))
+;;       (if (or (not (file-exists-p candidate)) (file-remote-p candidate))
+;;           ""
+;;         (let* ((user-id (file-attribute-user-id (file-attributes candidate)))
+;;                (user-name (user-login-name user-id)))
+;;           (format "%s" user-name)))))
+;;   (defun ivy-rich-switch-buffer-icon (candidate)
+;;     "Returns an icon for the candidate out of `all-the-icons'."
+;;     (with-current-buffer
+;;         (get-buffer candidate)
+;;       (let ((icon (all-the-icons-icon-for-mode major-mode :height 0.9)))
+;;         (if (symbolp icon)
+;;             (all-the-icons-icon-for-mode 'fundamental-mode :height 0.9)
+;;           icon))))
+;;   :config
+;;   (plist-put ivy-rich-display-transformers-list
+;;              'counsel-find-file
+;;              '(:columns
+;;                ((ivy-rich-candidate               (:width 73))
+;;                 (ivy-rich-file-user               (:width 8 :face font-lock-doc-face))
+;;                 (ivy-rich-file-group              (:width 4 :face font-lock-doc-face))
+;;                 (ivy-rich-file-modes              (:width 11 :face font-lock-doc-face))
+;;                 (ivy-rich-file-size               (:width 7 :face font-lock-doc-face))
+;;                 (ivy-rich-file-last-modified-time (:width 30 :face font-lock-doc-face)))))
+;;   ;; (plist-put ivy-rich-display-transformers-list
+;;   ;;            'counsel-projectile-switch-project
+;;   ;;            '(:columns
+;;   ;;              ((ivy-rich-branch-candidate        (:width 80))
+;;   ;;               (ivy-rich-compiling))))
+;;   (plist-put ivy-rich-display-transformers-list
+;;              'ivy-switch-buffer
+;;              '(:columns
+;;                ((ivy-rich-switch-buffer-icon       (:width 2))
+;;                 (ivy-rich-candidate                (:width 40))
+;;                 (ivy-rich-switch-buffer-size       (:width 7))
+;;                 (ivy-rich-switch-buffer-indicators (:width 4 :face error :align right))
+;;                 (ivy-rich-switch-buffer-major-mode (:width 20 :face warning)))
+;;                :predicate (lambda (cand) (get-buffer cand))))
+;;   (ivy-rich-mode 1))
 
 (use-package all-the-icons-ivy
   :ensure t
   :after (all-the-icons ivy)
   :custom (all-the-icons-ivy-buffer-commands '(ivy-switch-buffer-other-window))
   :config
-  (add-to-list 'all-the-icons-ivy-file-commands 'counsel-dired-jump)
-  (add-to-list 'all-the-icons-ivy-file-commands 'counsel-find-library)
+  ;; (add-to-list 'all-the-icons-ivy-file-commands 'counsel-dired-jump)
+  ;; (add-to-list 'all-the-icons-ivy-file-commands 'counsel-find-library)
+  (setq all-the-icons-ivy-file-commands
+        '(counsel-find-file
+          counsel-file-jump
+          counsel-recentf
+          counsel-projectile-find-file
+          counsel-projectile-find-dir
+          counsel-dired-jump
+          counsel-find-library))
   (all-the-icons-ivy-setup))
 
 (use-package all-the-icons-dired
@@ -640,25 +714,34 @@ kill it (unless it's modified)."
   :config
   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
-;; (use-package tree-sitter
-;;   :ensure t
-;;   :config
-;;   (global-tree-sitter-mode)
-;;   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+(use-package all-the-icons-ivy-rich
+  :ensure t
+  :init (all-the-icons-ivy-rich-mode 1))
 
-;; (use-package tree-sitter-langs
-;;   :ensure t)
+(use-package ivy-rich
+  :ensure t
+  :init (ivy-rich-mode 1))
+
+(use-package tree-sitter
+  :ensure t
+  :config
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+(use-package tree-sitter-langs
+  :ensure t)
 
 (use-package doom-themes
   :ensure t
   :config
   (setq doom-themes-enable-bold nil
-        doom-themes-enable-italic nil)
+        doom-themes-enable-italic nil
+        doom-gruvbox-dark-variant "medium")
   (load-theme 'doom-dracula t)
   (doom-themes-org-config)
-  ;; (doom-themes-visual-bell-config)
-  ;; (doom-themes-neotree-config)
-  (doom-themes-treemacs-config))
+  (doom-themes-treemacs-config)
+  (doom-themes-visual-bell-config)
+  (doom-themes-neotree-config))
 
 (use-package projectile
   :ensure t
@@ -692,7 +775,20 @@ kill it (unless it's modified)."
   :after (counsel projectile)
   :config
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  (defun my/counsel-projectile-switch-project-action-dired (project)
+    "Open ‘dired’ at the root of the project."
+    (let ((projectile-switch-project-action
+           (lambda ()
+             (projectile-dired))))
+      (counsel-projectile-switch-project-by-name project)))
+
+  (counsel-projectile-modify-action
+   'counsel-projectile-switch-project-action
+   '((add ("." my/counsel-projectile-switch-project-action-dired
+           "open ‘dired’ at the root of the project")
+          1)))
   (counsel-projectile-mode 1))
+
 
 (use-package avy
   :ensure t
@@ -712,7 +808,7 @@ kill it (unless it's modified)."
 (use-package expand-region
   :ensure t
   :config
-  (global-set-key (kbd "C-\\") 'er/expand-region))
+  (global-set-key (kbd "C-q") 'er/expand-region))
 
 ;; ;; Web - Mode
 
@@ -855,14 +951,14 @@ kill it (unless it's modified)."
 (use-package carbon-now-sh
   :ensure t)
 
-(use-package rainbow-delimiters
-  :ensure t
-  :config
-  (add-hook 'lisp-mode-hook
-            (lambda()
-              (rainbow-delimiters-mode)
-              ))
-  (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
+;; (use-package rainbow-delimiters
+;;   :ensure t
+;;   :config
+;;   (add-hook 'lisp-mode-hook
+;;             (lambda()
+;;               (rainbow-delimiters-mode)
+;;               ))
+;;   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 
 ;; ;; REST Support
 (use-package restclient
@@ -882,9 +978,6 @@ kill it (unless it's modified)."
   (add-hook 'sgml-mode-hook 'emmet-mode)
   (add-hook 'web-mode-hook 'emmet-mode)
   )
-
-(use-package dockerfile-mode
-  :ensure t)
 
 (use-package f
   :ensure t)
@@ -993,8 +1086,8 @@ kill it (unless it's modified)."
 (add-hook 'before-save-hook 'whitespace-cleanup)
 (setq mode-require-final-newline t)
 
-;; (setq explicit-shell-file-name "/bin/bash")
-;; (setq explicit-shell-file-name "/bin/zsh")
+(setq explicit-shell-file-name "/bin/bash")
+;; (setq explicit-shell-file-name "/usr/bin/zsh")
 
 ;; ;; Resize windows
 (global-set-key (kbd "C-s-<left>") 'shrink-window-horizontally)
@@ -1037,6 +1130,12 @@ kill it (unless it's modified)."
   :ensure t
   :bind ("C-c d" . docker))
 
+(use-package dockerfile-mode
+  :ensure t)
+
+(use-package docker-compose-mode
+  :ensure t)
+
 (use-package xclip
   :ensure t
   :config
@@ -1046,6 +1145,16 @@ kill it (unless it's modified)."
   (interactive)
   (let ((default-directory "/ssh:user@host:"))
     (shell)))
+
+;; (use-package multi-term
+;;   :ensure t
+;;   :config
+;;    (setq multi-term-program "/usr/bin/zsh"))
+
+(use-package vterm
+  :ensure t)
+
+(add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-tail-mode))
 
 (set-face-italic-p 'italic nil)
 (set-face-bold-p 'bold nil)
@@ -1057,7 +1166,8 @@ kill it (unless it's modified)."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(all-the-icons-ivy ivy-rich ivy-pass xclip docker rust-mode page-break-lines vterm multiple-cursors emmet-mode restclient rainbow-delimiters carbon-now-sh posframe undo-tree markdown-mode hl-todo origami ibuffer-projectile dired-collapse web-mode hungry-delete bm projectile doom-themes all-the-icons-dired magit elpy py-isort js2-mode yasnippet-snippets yasnippet ripgrep rg ag flycheck minions doom-modeline neotree ace-window which-key csv-mode org-bullets prettier use-package)))
+   '(all-the-icons-ivy-rich tree-sitter-langs tree-sitter blacken fill-column-indicator docker-compose-mode all-the-icons-ivy ivy-rich ivy-pass xclip docker rust-mode page-break-lines multiple-cursors emmet-mode restclient rainbow-delimiters carbon-now-sh posframe undo-tree markdown-mode hl-todo origami ibuffer-projectile dired-collapse web-mode hungry-delete bm projectile doom-themes all-the-icons-dired magit elpy py-isort js2-mode yasnippet-snippets yasnippet ripgrep rg ag flycheck minions doom-modeline neotree ace-window which-key csv-mode org-bullets prettier use-package))
+ '(tramp-verbose 6))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
