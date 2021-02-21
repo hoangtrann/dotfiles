@@ -7,7 +7,8 @@ Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'arcticicestudio/nord-vim'
 Plug 'joshdick/onedark.vim'
 Plug 'haishanh/night-owl.vim'
-Plug 'ryanoasis/vim-devicons'
+Plug 'sainnhe/forest-night'
+" Plug 'ryanoasis/vim-devicons'
 
 Plug 'editorconfig/editorconfig-vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -19,6 +20,7 @@ Plug 'majutsushi/tagbar'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'tpope/vim-surround'
 Plug 'mbbill/undotree'
+Plug 'prettier/vim-prettier', { 'do': 'npm install', 'branch': 'release/0.x' }
 
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
@@ -29,12 +31,14 @@ Plug 'vim-airline/vim-airline-themes'
 " Plug 'nvie/vim-flake8'
 " Plug 'psf/black', { 'branch': 'stable' }
 " Plug 'fisadev/vim-isort'
-"
+
 Plug 'preservim/nerdtree'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 " Plug 'sheerun/vim-polyglot'
 Plug 'qpkorr/vim-bufkill'
+
+Plug 'Yggdroot/indentLine'
 
 call plug#end()
 
@@ -56,6 +60,7 @@ set noerrorbells
 set cursorline
 
 set expandtab
+set smarttab
 set shiftwidth=2
 set tabstop=2
 set softtabstop=2
@@ -76,6 +81,9 @@ set scrolloff=8 " Keep 3 lines below and above the cursor
 set hidden
 
 set signcolumn=number
+
+set updatetime=300
+set shortmess+=c
 
 " highlight ColorColumn ctermbg=0
 " highlight ColorColumn=
@@ -121,7 +129,7 @@ augroup configgroup
   autocmd BufNewFile,BufRead *.json setf javascript
 
   " Make Python follow PEP8
-  autocmd FileType python setlocal sts=4 ts=4 sw=4 tw=79
+  autocmd FileType python setlocal sts=4 ts=4 sw=4
 
   autocmd FileType {xml,html} setlocal sts=4 ts=4 sw=4
 
@@ -149,8 +157,8 @@ endif
 " let g:gruvbox_contrast_dark = 'hard'
 " let g:palenight_terminal_italics=1
 "
-set background=dark
-colorscheme night-owl
+set background=light
+colorscheme forest-night
 
 if executable('rg')
     let g:rg_derive_root = 'true'
@@ -194,6 +202,11 @@ nmap <leader><Up> :wincmd k<CR>
 nmap <leader><Down> :wincmd j<CR>
 nmap <leader><Left> :wincmd h<CR>
 nmap <leader><Right> :wincmd l<CR>
+
+nmap <C-k> :wincmd k<CR>
+nmap <C-j> :wincmd j<CR>
+nmap <C-h> :wincmd h<CR>
+nmap <C-l> :wincmd l<CR>
 
 " move through buffers
 nmap <leader>[ :bp!<CR>
@@ -249,6 +262,8 @@ let g:vim_isort_python_version = 'python3'
 let s:available_short_python = ':py3'
 let g:vim_isort_map = '<C-i>'
 
+let python_highlight_space_errors = 0
+let g:pymode_syntax_space_errors = 0
 
 " Configure NerdTree
 " file browser
@@ -261,9 +276,8 @@ let NERDTreeIgnore = ['\.pyc$', '__pycache__']
 " let g:nerdtree_open = 0
 
 silent! nmap <C-p> :NERDTreeToggle<CR>
-map <leader>r :NERDTreeFind<cr>
-
-" silent! map <F3> :NERDTreeFind<CR>
+" map <leader>r :NERDTreeFind<cr>
+silent! map <F3> :NERDTreeFind<CR>
 
 " let g:NERDTreeMapActivateNode="<F3>"
 " let g:NERDTreeMapPreview="<F4>"
@@ -273,13 +287,14 @@ noremap <Leader>p "*p
 noremap <Leader>Y "+y
 noremap <Leader>P "+p
 
-" silent! noremap <C-i> :CocCommand pyright.organizeimports<CR>
+silent! noremap <C-i> :CocCommand pyright.organizeimports<CR>
 
 let g:airline#extensions#branch#enabled=1
 let g:airline#parts#ffenc#skip_expected_string='utf-8[unix]'
-" let g:airline#extensions#branch#displayed_head_limit = 12
-let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#branch#displayed_head_limit = 12
+let g:airline#extensions#tabline#enabled = 0
 let g:airline_powerline_fonts = 1
+
 " Append the character code to airline_section_z
 let g:airline_section_z = airline#section#create(['windowswap', '%3p%%', 'linenr', ':%3v', ' | 0x%2B'])
 let g:airline#extensions#coc#enabled = 1
@@ -308,13 +323,13 @@ let g:airline_symbols.notexists = '∄'
 let g:airline_symbols.whitespace = 'Ξ'
 
 " powerline symbols
-"let g:airline_left_sep = ''
-"let g:airline_left_alt_sep = ''
-"let g:airline_right_sep = ''
-"let g:airline_right_alt_sep = ''
-let g:airline_symbols.branch = ''
-let g:airline_symbols.readonly = ''
-let g:airline_symbols.linenr = ''
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
+let g:airline_symbols.branch = ''
+let g:airline_symbols.readonly = ''
+let g:airline_symbols.linenr = ''
 
 " <TAB>: completion.
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
@@ -333,6 +348,19 @@ let g:coc_global_extensions = [
   \'coc-prettier',
   \'coc-xml'
   \]
+
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
+
+" Use `[g` and `]g` to navigate diagnostics
+" " Use `:CocDiagnostics` to get all diagnostics of current buffer in location
+" list.
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
 " GoTo code navigation.
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
@@ -341,6 +369,8 @@ nmap <silent> gr <Plug>(coc-references)
 
 " Use K to show documentation in preview window.
 nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+autocmd CursorHold * silent call CocActionAsync('highlight')
 
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
@@ -361,3 +391,20 @@ nmap <leader>f  <Plug>(coc-format-selected)
 
 " Add `:Format` command to format current buffer.
 command! -nargs=0 Format :call CocAction('format')
+" Add `:Fold` command to fold current buffer.
+command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+" Add `:OR` command for organize imports of the current buffer.
+command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+
+nmap <silent> <F9> :call CocAction('format')<CR>
+
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+    let col = col('.') - 1
+      return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
