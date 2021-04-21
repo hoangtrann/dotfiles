@@ -9,6 +9,7 @@ Plug 'joshdick/onedark.vim'
 Plug 'haishanh/night-owl.vim'
 Plug 'sainnhe/forest-night'
 " Plug 'ryanoasis/vim-devicons'
+Plug 'sainnhe/gruvbox-material'
 
 Plug 'editorconfig/editorconfig-vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -31,6 +32,7 @@ Plug 'vim-airline/vim-airline-themes'
 " Plug 'nvie/vim-flake8'
 " Plug 'psf/black', { 'branch': 'stable' }
 " Plug 'fisadev/vim-isort'
+Plug 'Vimjas/vim-python-pep8-indent'
 
 Plug 'preservim/nerdtree'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
@@ -76,7 +78,7 @@ set clipboard=unnamed
 
 set showcmd
 set cmdheight=2
-set colorcolumn=80
+" set colorcolumn=80
 set scrolloff=8 " Keep 3 lines below and above the cursor
 set hidden
 
@@ -157,8 +159,8 @@ endif
 " let g:gruvbox_contrast_dark = 'hard'
 " let g:palenight_terminal_italics=1
 "
-set background=light
-colorscheme forest-night
+set background=dark
+colorscheme dracula
 
 if executable('rg')
     let g:rg_derive_root = 'true'
@@ -240,7 +242,7 @@ nnoremap <leader><leader> :Files<CR>
 nnoremap <leader>fi :Files <C-R>=expand('%:h')<CR><CR>
 " nnoremap <leader>fi :Files<CR>
 nnoremap <leader>G :GFiles?<CR>
-nnoremap <Leader>B :Buffers<cr>
+nnoremap <Leader>b :Buffers<cr>
 nnoremap <Leader>s :BLines<cr>
 nnoremap <leader>C :Colors<CR>
 nnoremap <leader>ag :Ag! <C-R><C-W><CR>
@@ -260,7 +262,7 @@ let g:python3_host_prog = '/home/ryan/.pyenv/versions/neovim3/bin/python'
 
 let g:vim_isort_python_version = 'python3'
 let s:available_short_python = ':py3'
-let g:vim_isort_map = '<C-i>'
+" let g:vim_isort_map = '<C-i>'
 
 let python_highlight_space_errors = 0
 let g:pymode_syntax_space_errors = 0
@@ -276,8 +278,8 @@ let NERDTreeIgnore = ['\.pyc$', '__pycache__']
 " let g:nerdtree_open = 0
 
 silent! nmap <C-p> :NERDTreeToggle<CR>
-" map <leader>r :NERDTreeFind<cr>
-silent! map <F3> :NERDTreeFind<CR>
+map <leader>r :NERDTreeFind<cr>
+" silent! map <F3> :NERDTreeFind<CR>
 
 " let g:NERDTreeMapActivateNode="<F3>"
 " let g:NERDTreeMapPreview="<F4>"
@@ -287,7 +289,7 @@ noremap <Leader>p "*p
 noremap <Leader>Y "+y
 noremap <Leader>P "+p
 
-silent! noremap <C-i> :CocCommand pyright.organizeimports<CR>
+" silent! noremap <C-i> :CocCommand pyright.organizeimports<CR>
 
 let g:airline#extensions#branch#enabled=1
 let g:airline#parts#ffenc#skip_expected_string='utf-8[unix]'
@@ -332,7 +334,7 @@ let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = ''
 
 " <TAB>: completion.
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+" inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 
 
 
@@ -398,11 +400,11 @@ command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organize
 
 nmap <silent> <F9> :call CocAction('format')<CR>
 
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+" inoremap <silent><expr> <TAB>
+"       \ pumvisible() ? "\<C-n>" :
+"       \ <SID>check_back_space() ? "\<TAB>" :
+"       \ coc#refresh()
+" inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 function! s:check_back_space() abort
     let col = col('.') - 1
