@@ -7,13 +7,15 @@ Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'arcticicestudio/nord-vim'
 Plug 'joshdick/onedark.vim'
 Plug 'haishanh/night-owl.vim'
-Plug 'sainnhe/forest-night'
-" Plug 'ryanoasis/vim-devicons'
-Plug 'sainnhe/gruvbox-material'
+Plug 'sainnhe/everforest'
+Plug 'ryanoasis/vim-devicons'
+" Plug 'sainnhe/gruvbox-material'
+Plug 'sainnhe/edge'
 
 Plug 'editorconfig/editorconfig-vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'airblade/vim-rooter'
 Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-fugitive'
 Plug 'rbong/vim-flog'
@@ -22,6 +24,7 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'tpope/vim-surround'
 Plug 'mbbill/undotree'
 Plug 'prettier/vim-prettier', { 'do': 'npm install', 'branch': 'release/0.x' }
+Plug 'altercation/vim-colors-solarized'
 
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
@@ -59,7 +62,7 @@ set incsearch
 set ruler
 set noerrorbells
 
-set cursorline
+" set cursorline
 
 set expandtab
 set smarttab
@@ -156,11 +159,14 @@ if (has("termguicolors"))
   set termguicolors
 endif
 
+let g:everforest_background = 'hard'
+" let g:edge_style = 'neon'
+let g:airline_theme = 'everforest'
 " let g:gruvbox_contrast_dark = 'hard'
 " let g:palenight_terminal_italics=1
-"
+
 set background=dark
-colorscheme dracula
+colorscheme everforest
 
 if executable('rg')
     let g:rg_derive_root = 'true'
@@ -242,7 +248,7 @@ nnoremap <leader><leader> :Files<CR>
 nnoremap <leader>fi :Files <C-R>=expand('%:h')<CR><CR>
 " nnoremap <leader>fi :Files<CR>
 nnoremap <leader>G :GFiles?<CR>
-nnoremap <Leader>b :Buffers<cr>
+nnoremap <Leader>B :Buffers<cr>
 nnoremap <Leader>s :BLines<cr>
 nnoremap <leader>C :Colors<CR>
 nnoremap <leader>ag :Ag! <C-R><C-W><CR>
