@@ -12,7 +12,7 @@ Plug 'ryanoasis/vim-devicons'
 " Plug 'sainnhe/gruvbox-material'
 Plug 'sainnhe/edge'
 Plug 'kyazdani42/nvim-web-devicons'
-Plug 'romgrk/barbar.nvim'
+" Plug 'romgrk/barbar.nvim'
 
 Plug 'editorconfig/editorconfig-vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -185,6 +185,7 @@ require'nvim-treesitter.configs'.setup {
   },
 }
 EOF
+highlight link TSError Normal
 
 set splitbelow splitright
 
