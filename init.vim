@@ -8,11 +8,11 @@ Plug 'arcticicestudio/nord-vim'
 Plug 'joshdick/onedark.vim'
 Plug 'haishanh/night-owl.vim'
 Plug 'sainnhe/everforest'
-Plug 'ryanoasis/vim-devicons'
-" Plug 'sainnhe/gruvbox-material'
+Plug 'sainnhe/gruvbox-material'
 Plug 'sainnhe/edge'
-Plug 'kyazdani42/nvim-web-devicons'
+" Plug 'kyazdani42/nvim-web-devicons'
 " Plug 'romgrk/barbar.nvim'
+" Plug 'ryanoasis/vim-devicons'
 
 Plug 'editorconfig/editorconfig-vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -26,7 +26,6 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'tpope/vim-surround'
 Plug 'mbbill/undotree'
 Plug 'prettier/vim-prettier', { 'do': 'npm install', 'branch': 'release/0.x' }
-Plug 'altercation/vim-colors-solarized'
 
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
@@ -47,6 +46,8 @@ Plug 'qpkorr/vim-bufkill'
 
 Plug 'Yggdroot/indentLine'
 
+Plug 'othree/xml.vim'
+
 call plug#end()
 
 set shortmess=atIc
@@ -55,17 +56,18 @@ set backupcopy=yes " Fix file watchers
 
 set guicursor=
 set number
+set relativenumber
+set nu rnu
 set nowrap
 set title         " Set terminal window
 
 set ai
-set nohlsearch
+" set nohlsearch
 set incsearch
 set ruler
 set noerrorbells
 
-" set cursorline
-
+set cursorline
 set expandtab
 set smarttab
 set shiftwidth=2
@@ -84,13 +86,15 @@ set clipboard=unnamed
 set showcmd
 set cmdheight=2
 set colorcolumn=80
-set scrolloff=8 " Keep 3 lines below and above the cursor
+set scrolloff=3 " Keep 3 lines below and above the cursor
 set hidden
 
 set signcolumn=number
 
 set updatetime=300
 set shortmess+=c
+
+" set splitbelow
 
 " highlight ColorColumn ctermbg=0
 " highlight ColorColumn=
@@ -105,17 +109,18 @@ endif
 " sane text files
 set encoding=utf-8
 set fileencoding=utf-8
-" Toggle between number and relativenumber
-function! ToggleNumber()
-  if(&relativenumber == 1)
-      set norelativenumber
-          set number
-      else
-          set relativenumber
-  endif
-endfunc
 
-map <Leader>tn :call ToggleNumber()<CR>
+" Toggle between number and relativenumber
+" function! ToggleNumber()
+"   if(&relativenumber == 1)
+"       set norelativenumber
+"           set number
+"       else
+"           set relativenumber
+"   endif
+" endfunc
+"
+" map <Leader>tn :call ToggleNumber()<CR>
 
 
 " I can type :help on my own, thanks.
@@ -134,6 +139,10 @@ augroup configgroup
 
   " Treat JSON files like JavaScript
   autocmd BufNewFile,BufRead *.json setf javascript
+
+  autocmd BufNewFile,BufRead *.xml setf html
+
+  autocmd FileType javascript setlocal sts=4 ts=4 sw=4
 
   " Make Python follow PEP8
   autocmd FileType python setlocal sts=4 ts=4 sw=4
@@ -174,8 +183,6 @@ if executable('rg')
     let g:rg_derive_root = 'true'
 endif
 set grepprg=rg\ --vimgrep\ --smart-case\ --hidden\ --follow
-" let g:rg_derive_root='true'
-
 
 lua << EOF
 require'nvim-treesitter.configs'.setup {
@@ -191,33 +198,29 @@ set splitbelow splitright
 
 let mapleader = ","
 
-" let g:palenight_terminal_italics=1
-" let g:ctrlp_use_caching = 0
-
 nnoremap <leader>h :wincmd h<CR>
 nnoremap <leader>j :wincmd j<CR>
 nnoremap <leader>k :wincmd k<CR>
 nnoremap <leader>l :wincmd l<CR>
-nnoremap <leader>u :UndotreeShow<CR>
-nnoremap <leader>pv :wincmd v<bar> :Ex <bar> :vertical resize 30<CR>
-nnoremap <Leader>rg :Rg <C-R><C-W><CR>
-nnoremap <Leader>+ :vertical resize +5<CR>
-nnoremap <Leader>- :vertical resize -5<CR>
-
-" Split window
-" nmap ss :split<Return><C-w>w
-" nmap sv :vsplit<Return><C-w>w
-
-" move through split windows
 nmap <leader><Up> :wincmd k<CR>
 nmap <leader><Down> :wincmd j<CR>
 nmap <leader><Left> :wincmd h<CR>
 nmap <leader><Right> :wincmd l<CR>
 
-nmap <C-k> :wincmd k<CR>
-nmap <C-j> :wincmd j<CR>
-nmap <C-h> :wincmd h<CR>
-nmap <C-l> :wincmd l<CR>
+" nmap <C-k> :wincmd k<CR>
+" nmap <C-j> :wincmd j<CR>
+" nmap <C-h> :wincmd h<CR>
+" nmap <C-l> :wincmd l<CR>
+
+" nmap ss :split<Return><C-w>w
+" nmap sv :vsplit<Return><C-w>w
+"
+nnoremap <leader>pv :wincmd v<bar> :Ex <bar> :vertical resize 30<CR>
+nnoremap <Leader>+ :vertical resize +5<CR>
+nnoremap <Leader>- :vertical resize -5<CR>
+
+nnoremap <Leader>rg :Rg <C-R><C-W><CR>
+nnoremap <leader>u :UndotreeShow<CR>
 
 " move through buffers
 nmap <leader>[ :bp!<CR>
@@ -225,15 +228,15 @@ nmap <leader>] :bn!<CR>
 nmap <leader>x :BD<CR>
 
 " word movement
-imap <S-Left> <Esc>bi
-nmap <S-Left> b
-imap <S-Right> <Esc><Right>wi
-nmap <S-Right> w
+" imap <S-Left> <Esc>bi
+" nmap <S-Left> b
+" imap <S-Right> <Esc><Right>wi
+" nmap <S-Right> w
 
 " indent/unindent with tab/shift-tab
-nmap <Tab> >>
-imap <S-Tab> <Esc><<i
-nmap <S-tab> <<
+" nmap <Tab> >>
+" imap <S-Tab> <Esc><<i
+" nmap <S-tab> <<
 
 " mouse
 set mouse=a
@@ -247,9 +250,9 @@ set foldlevel=99
 map <leader>t :TagbarToggle<CR>
 
 " Fzf
-nnoremap <leader><leader> :Files<CR>
+" nnoremap <leader><leader> :Files<CR>
+nnoremap <C-T> :Files<cr>
 nnoremap <leader>fi :Files <C-R>=expand('%:h')<CR><CR>
-" nnoremap <leader>fi :Files<CR>
 nnoremap <leader>G :GFiles?<CR>
 nnoremap <Leader>B :Buffers<cr>
 nnoremap <Leader>s :BLines<cr>
@@ -257,7 +260,8 @@ nnoremap <leader>C :Colors<CR>
 nnoremap <leader>ag :Ag! <C-R><C-W><CR>
 nnoremap <leader>m :History<CR>
 nnoremap \ :Rg<CR>
-" nnoremap <C-T> :Files<cr>
+
+" let g:fzf_layout = { 'down':  '40%'}
 
 " Call flake8 on save buffer
 " autocmd BufWritePost *.py call flake8#Flake8()
@@ -273,32 +277,28 @@ let g:python3_host_prog = '/home/ryan/.pyenv/versions/neovim3/bin/python'
 " let s:available_short_python = ':py3'
 " let g:vim_isort_map = '<C-i>'
 
-let python_highlight_space_errors = 0
-let g:pymode_syntax_space_errors = 0
+" let python_highlight_space_errors = 0
+" let g:pymode_syntax_space_errors = 0
 
 " Configure NerdTree
 " file browser
 let g:netrw_browse_split = 2
 let g:netrw_banner = 0
-let g:netrw_winsize = 35
+let g:netrw_winsize = 40
 
 let NERDTreeIgnore = ['\.pyc$', '__pycache__']
-let NERDTreeMinimalUI = 1
+" let NERDTreeMinimalUI = 1
 let g:nerdtree_open = 0
 
 silent! nmap <C-p> :NERDTreeToggle<CR>
-map <leader>r :NERDTreeFind<cr>
-" silent! map <F3> :NERDTreeFind<CR>
-
-let g:NERDTreeMapActivateNode="<F3>"
-let g:NERDTreeMapPreview="<F4>"
+silent! nmap <F3> :NERDTreeFind<cr>
+" let g:NERDTreeMapActivateNode="<F3>"
+" let g:NERDTreeMapPreview="<F4>"
 
 noremap <Leader>y "*y
 noremap <Leader>p "*p
 noremap <Leader>Y "+y
 noremap <Leader>P "+p
-
-" silent! noremap <C-i> :CocCommand pyright.organizeimports<CR>
 
 let g:airline#extensions#branch#enabled=1
 let g:airline#parts#ffenc#skip_expected_string='utf-8[unix]'
@@ -307,7 +307,7 @@ let g:airline#extensions#tabline#enabled = 0
 let g:airline_powerline_fonts = 1
 
 " Append the character code to airline_section_z
-let g:airline_section_z = airline#section#create(['windowswap', '%3p%%', 'linenr', ':%3v', ' | 0x%2B'])
+" let g:airline_section_z = airline#section#create(['windowswap', '%3p%%', 'linenr', ':%3v', ' | 0x%2B'])
 let g:airline#extensions#coc#enabled = 1
 
 if !exists('g:airline_symbols')
@@ -394,8 +394,8 @@ endfunction
 nmap <Leader>rn <Plug>(coc-rename)
 
 " Formatting selected code.
-xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
+" xmap <leader>f <Plug>(coc-format-selected)
+nmap <leader>f <Plug>(coc-format-selected)
 
 " Add `:Format` command to format current buffer.
 command! -nargs=0 Format :call CocAction('format')
@@ -416,3 +416,8 @@ function! s:check_back_space() abort
     let col = col('.') - 1
       return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
+
+let bufferline = get(g:, 'bufferline', {})
+let bufferline.animation = v:false
+let bufferline.auto_hide = v:true
+let bufferline.icons = v:false

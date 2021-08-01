@@ -2,13 +2,13 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/hoang/.oh-my-zsh"
+export ZSH="/home/ryan/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-# ZSH_THEME="robbyrussell"
+ZSH_THEME="robbyrussell"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -33,7 +33,7 @@ export ZSH="/home/hoang/.oh-my-zsh"
 # export UPDATE_ZSH_DAYS=13
 
 # Uncomment the following line if pasting URLs and other text is messed up.
-# DISABLE_MAGIC_FUNCTIONS=true
+# DISABLE_MAGIC_FUNCTIONS="true"
 
 # Uncomment the following line to disable colors in ls.
 # DISABLE_LS_COLORS="true"
@@ -45,6 +45,8 @@ export ZSH="/home/hoang/.oh-my-zsh"
 # ENABLE_CORRECTION="true"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
+# Caution: this setting can cause issues with multiline prompts (zsh 5.7.1 and newer seem to work)
+# See https://github.com/ohmyzsh/ohmyzsh/issues/5765
 # COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
@@ -69,10 +71,10 @@ export ZSH="/home/hoang/.oh-my-zsh"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-    git
-    zsh-autosuggestions
-    zsh-syntax-highlighting
-    autojump
+  git
+  autojump
+  zsh-syntax-highlighting
+  zsh-autosuggestions
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -80,7 +82,7 @@ source $ZSH/oh-my-zsh.sh
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
-export FZF_DEFAULT_COMMAND="rg --files --hidden --follow --glob '!.git'"
+
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
@@ -90,8 +92,7 @@ export FZF_DEFAULT_COMMAND="rg --files --hidden --follow --glob '!.git'"
 # else
 #   export EDITOR='mvim'
 # fi
-
-export EDITOR='nvim'
+export EDITOR="nvim"
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
@@ -101,62 +102,38 @@ export EDITOR='nvim'
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
-alias zshconfig="vi ~/.zshrc"
+# alias zshconfig="mate ~/.zshrc"
+# alias ohmyzsh="mate ~/.oh-my-zsh"
+alias "open"="explorer.exe "
+alias "vi"="nvim"
+alias "ide"="sh ~/ide.sh"
+alias "dc"="docker-compose"
+# alias "fd"="fdfind"
 
-alias vi="nvim "
-alias gs="git status"
-alias gl="git log"
-alias gc="git commit"
-
-alias l='exa'
-alias la='exa -a'
-alias ll='exa -lah'
-alias ls='exa --color=auto'
-
-alias ide="~/ide.sh"
-alias "c=xclip"
-alias "v=xclip -o"
-alias "cs=xclip -selection clipboard"
-alias "vs=xclip -o -selection clipboard"
-
-# alias tmux='TERM=xterm-256color tmux -2'
-#
-prompt_context() {}
-
-vterm_printf(){
-    if [ -n "$TMUX" ]; then
-        # Tell tmux to pass the escape sequences through
-        # (Source: http://permalink.gmane.org/gmane.comp.terminal-emulators.tmux.user/1324)
-        printf "\ePtmux;\e\e]%s\007\e\\" "$1"
-    elif [ "${TERM%%-*}" = "screen" ]; then
-        # GNU screen (screen, screen-256color, screen-256color-bce)
-        printf "\eP\e]%s\007\e\\" "$1"
-    else
-        printf "\e]%s\e\\" "$1"
-    fi
-}
-if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
-    alias clear='vterm_printf "51;Evterm-clear-scrollback";tput clear'
-fi
+alias "gl"="git log --graph --oneline --full-history --all"
+alias "gs"="git status"
+alias "gc"="git commit"
+alias "gf"="git fetch"
+alias "gp"="git pull"
 
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
+
 if command -v pyenv 1>/dev/null 2>&1; then
-  eval "$(pyenv init -)"
+  eval "$(pyenv init - --no-rehash)"
+  eval "$(pyenv virtualenv-init - --no-rehash)"
 fi
-export PATH="$PATH:/opt/mssql-tools/bin"
-export TERM=xterm-256color
 
-eval $(dircolors ~/.dir_colors)
-fpath+=${ZDOTDIR:-~}/.zsh_functions
-export PATH="$HOME/.cargo/bin:$PATH"
-
-function workon() {
-    pyenv activate "$@" 2> >(grep -v PYENV_VIRTUALENV_DISABLE_PROMPT)
+function git() {
+  if $(pwd -P | grep -q "^\/mnt\/c\/*"); then
+    git.exe "$@"
+  else
+    command git "$@"
+  fi
 }
-#export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 
-autoload -U add-zsh-hook
-add-zsh-hook -Uz chpwd (){ print -Pn "\e]2;%m:%2~\a" }
+setopt +o nomatch
+
+export FZF_DEFAULT_COMMAND='fd --type f'
 
 eval "$(starship init zsh)"
