@@ -67,7 +67,7 @@ set incsearch
 set ruler
 set noerrorbells
 
-set cursorline
+" set cursorline
 set expandtab
 set smarttab
 set shiftwidth=2
@@ -170,14 +170,19 @@ if (has("termguicolors"))
   set termguicolors
 endif
 
-let g:everforest_background = 'hard'
+" let g:everforest_background = 'hard'
 " let g:edge_style = 'neon'
 " let g:airline_theme = 'onedark'
 " let g:gruvbox_contrast_dark = 'hard'
 " let g:palenight_terminal_italics=1
+"
+let g:gruvbox_material_enable_italic = 1
+let g:gruvbox_material_diagnostic_text_highlight = 1
+let g:gruvbox_material_diagnostic_line_highlight = 1
+
 
 set background=dark
-colorscheme everforest
+colorscheme gruvbox-material
 
 if executable('rg')
     let g:rg_derive_root = 'true'
