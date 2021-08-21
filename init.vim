@@ -10,9 +10,8 @@ Plug 'haishanh/night-owl.vim'
 Plug 'sainnhe/everforest'
 Plug 'sainnhe/gruvbox-material'
 Plug 'sainnhe/edge'
-" Plug 'kyazdani42/nvim-web-devicons'
-" Plug 'romgrk/barbar.nvim'
-" Plug 'ryanoasis/vim-devicons'
+Plug 'kyazdani42/nvim-web-devicons'
+Plug 'ryanoasis/vim-devicons'
 
 Plug 'editorconfig/editorconfig-vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -34,20 +33,21 @@ Plug 'honza/vim-snippets'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
-" Plug 'nvie/vim-flake8'
-" Plug 'psf/black', { 'branch': 'stable' }
-" Plug 'fisadev/vim-isort'
 Plug 'Vimjas/vim-python-pep8-indent'
 
 Plug 'preservim/nerdtree'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
-" Plug 'sheerun/vim-polyglot'
 Plug 'qpkorr/vim-bufkill'
 
 Plug 'Yggdroot/indentLine'
 
 Plug 'othree/xml.vim'
+Plug 'kyazdani42/nvim-tree.lua'
+Plug 'neovim/nvim-lspconfig'
+
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
 
 call plug#end()
 
@@ -96,9 +96,6 @@ set updatetime=300
 set shortmess+=c
 
 " set splitbelow
-
-" highlight ColorColumn ctermbg=0
-" highlight ColorColumn=
 
 filetype indent plugin on
 syntax on
@@ -177,13 +174,12 @@ endif
 " let g:gruvbox_contrast_dark = 'hard'
 " let g:palenight_terminal_italics=1
 "
-let g:gruvbox_material_enable_italic = 1
+" let g:gruvbox_material_enable_italic = 1
 " let g:gruvbox_material_diagnostic_text_highlight = 1
 " let g:gruvbox_material_diagnostic_line_highlight = 1
 
-
 set background=dark
-colorscheme gruvbox-material
+colorscheme nord
 
 if executable('rg')
     let g:rg_derive_root = 'true'
@@ -198,6 +194,7 @@ require'nvim-treesitter.configs'.setup {
   },
 }
 EOF
+
 highlight link TSError Normal
 
 set splitbelow splitright
@@ -213,14 +210,6 @@ nmap <leader><Down> :wincmd j<CR>
 nmap <leader><Left> :wincmd h<CR>
 nmap <leader><Right> :wincmd l<CR>
 
-" nmap <C-k> :wincmd k<CR>
-" nmap <C-j> :wincmd j<CR>
-" nmap <C-h> :wincmd h<CR>
-" nmap <C-l> :wincmd l<CR>
-
-" nmap ss :split<Return><C-w>w
-" nmap sv :vsplit<Return><C-w>w
-"
 nnoremap <leader>pv :wincmd v<bar> :Ex <bar> :vertical resize 30<CR>
 nnoremap <Leader>+ :vertical resize +5<CR>
 nnoremap <Leader>- :vertical resize -5<CR>
@@ -232,12 +221,6 @@ nnoremap <leader>u :UndotreeShow<CR>
 nmap <leader>[ :bp!<CR>
 nmap <leader>] :bn!<CR>
 nmap <leader>x :BD<CR>
-
-" word movement
-" imap <S-Left> <Esc>bi
-" nmap <S-Left> b
-" imap <S-Right> <Esc><Right>wi
-" nmap <S-Right> w
 
 " indent/unindent with tab/shift-tab
 " nmap <Tab> >>
@@ -255,16 +238,21 @@ set foldlevel=99
 " tag list
 map <leader>t :TagbarToggle<CR>
 
+nnoremap <leader>ff <cmd>Telescope find_files<cr>
+nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+
 " Fzf
 " nnoremap <leader><leader> :Files<CR>
-nnoremap <C-T> :Files<cr>
-nnoremap <leader>fi :Files <C-R>=expand('%:h')<CR><CR>
-nnoremap <leader>G :GFiles?<CR>
-nnoremap <Leader>B :Buffers<cr>
-nnoremap <Leader>s :BLines<cr>
-nnoremap <leader>C :Colors<CR>
-nnoremap <leader>ag :Ag! <C-R><C-W><CR>
-nnoremap <leader>m :History<CR>
+" nnoremap <C-T> :Files<cr>
+" nnoremap <leader>fi :Files <C-R>=expand('%:h')<CR><CR>
+" nnoremap <leader>G :GFiles?<CR>
+" nnoremap <Leader>B :Buffers<cr>
+" nnoremap <Leader>s :BLines<cr>
+" nnoremap <leader>C :Colors<CR>
+" nnoremap <leader>ag :Ag! <C-R><C-W><CR>
+" nnoremap <leader>m :History<CR>
 nnoremap \ :Rg<CR>
 
 " let g:fzf_layout = { 'down':  '40%'}
@@ -276,30 +264,27 @@ nnoremap \ :Rg<CR>
 " let g:syntastic_python_flake8_config_file='.flake8'
 " nnoremap <C-K> :call flake8#Flake8ShowError()<cr>
 
-let g:python_host_prog = '/home/ryan/.pyenv/versions/neovim2/bin/python'
-let g:python3_host_prog = '/home/ryan/.pyenv/versions/neovim3/bin/python'
-
-" let g:vim_isort_python_version = 'python3'
-" let s:available_short_python = ':py3'
-" let g:vim_isort_map = '<C-i>'
-
-" let python_highlight_space_errors = 0
-" let g:pymode_syntax_space_errors = 0
+" let g:python_host_prog = '/home/ryan/.pyenv/versions/neovim2/bin/python'
+let g:python3_host_prog = '/Users/ryan/.pyenv/versions/neovim3/bin/python'
 
 " Configure NerdTree
 " file browser
-let g:netrw_browse_split = 2
-let g:netrw_banner = 0
-let g:netrw_winsize = 40
+" let g:netrw_browse_split = 2
+" let g:netrw_banner = 0
+" let g:netrw_winsize = 40
 
-let NERDTreeIgnore = ['\.pyc$', '__pycache__']
+" let NERDTreeIgnore = ['\.pyc$', '__pycache__']
 " let NERDTreeMinimalUI = 1
-let g:nerdtree_open = 0
+" let g:nerdtree_open = 0
 
-silent! nmap <C-p> :NERDTreeToggle<CR>
-silent! nmap <F3> :NERDTreeFind<cr>
+" silent! nmap <C-p> :NERDTreeToggle<CR>
+" silent! nmap <F3> :NERDTreeFind<cr>
 " let g:NERDTreeMapActivateNode="<F3>"
 " let g:NERDTreeMapPreview="<F4>"
+
+nnoremap <C-n> :NvimTreeToggle<CR>
+nnoremap <leader>r :NvimTreeRefresh<CR>
+nnoremap <leader>n :NvimTreeFindFile<CR>
 
 noremap <Leader>y "*y
 noremap <Leader>p "*p
@@ -313,7 +298,7 @@ let g:airline#extensions#tabline#enabled = 0
 let g:airline_powerline_fonts = 1
 
 " Append the character code to airline_section_z
-" let g:airline_section_z = airline#section#create(['windowswap', '%3p%%', 'linenr', ':%3v', ' | 0x%2B'])
+let g:airline_section_z = airline#section#create(['windowswap', '%3p%%', 'linenr', ':%3v', ' | 0x%2B'])
 let g:airline#extensions#coc#enabled = 1
 
 if !exists('g:airline_symbols')
@@ -321,10 +306,6 @@ if !exists('g:airline_symbols')
 endif
 
 " unicode symbols
-let g:airline_left_sep = '»'
-let g:airline_left_sep = '▶'
-let g:airline_right_sep = '«'
-let g:airline_right_sep = '◀'
 let g:airline_symbols.crypt = '🔒'
 let g:airline_symbols.linenr = '␊'
 let g:airline_symbols.linenr = '␤'
@@ -362,12 +343,6 @@ let g:coc_global_extensions = [
   \'coc-yaml',
   \'coc-prettier'
   \]
-
-if has('nvim')
-  inoremap <silent><expr> <c-space> coc#refresh()
-else
-  inoremap <silent><expr> <c-@> coc#refresh()
-endif
 
 " Use `[g` and `]g` to navigate diagnostics
 " " Use `:CocDiagnostics` to get all diagnostics of current buffer in location
@@ -464,8 +439,3 @@ nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
 nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
-
-let bufferline = get(g:, 'bufferline', {})
-let bufferline.animation = v:false
-let bufferline.auto_hide = v:true
-let bufferline.icons = v:false
