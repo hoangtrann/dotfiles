@@ -3,7 +3,7 @@ call plug#begin('~/.config/nvim/plugged')
 " Colorschemes and icons
 Plug 'morhetz/gruvbox'
 Plug 'drewtempelmeyer/palenight.vim'
-Plug 'dracula/vim', { 'as': 'dracula' }
+Plug 'dracula/vim', { 'branch': 'master', 'as': 'dracula' }
 Plug 'arcticicestudio/nord-vim'
 Plug 'joshdick/onedark.vim'
 Plug 'haishanh/night-owl.vim'
@@ -12,15 +12,22 @@ Plug 'sainnhe/gruvbox-material'
 Plug 'sainnhe/edge'
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'ryanoasis/vim-devicons'
+Plug 'shaunsingh/moonlight.nvim'
+Plug 'folke/tokyonight.nvim'
+Plug 'projekt0n/github-nvim-theme'
+Plug 'hoob3rt/lualine.nvim'
 
 Plug 'editorconfig/editorconfig-vim'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-Plug 'airblade/vim-rooter'
+
+" Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+" Plug 'junegunn/fzf.vim'
+"
+" Plug 'airblade/vim-rooter'
+"
 Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-fugitive'
-Plug 'rbong/vim-flog'
-Plug 'majutsushi/tagbar'
+" Plug 'rbong/vim-flog'
+" Plug 'majutsushi/tagbar'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'tpope/vim-surround'
 Plug 'mbbill/undotree'
@@ -30,17 +37,17 @@ Plug 'mechatroner/rainbow_csv'
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+" Plug 'vim-airline/vim-airline'
+" Plug 'vim-airline/vim-airline-themes'
 
 Plug 'Vimjas/vim-python-pep8-indent'
 
-Plug 'preservim/nerdtree'
+" Plug 'preservim/nerdtree'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
-Plug 'qpkorr/vim-bufkill'
+" Plug 'qpkorr/vim-bufkill'
 
-Plug 'Yggdroot/indentLine'
+" Plug 'Yggdroot/indentLine'
 
 Plug 'othree/xml.vim'
 Plug 'kyazdani42/nvim-tree.lua'
@@ -55,11 +62,11 @@ set shortmess=atIc
 set nobackup
 set backupcopy=yes " Fix file watchers
 
-set guicursor=
+" set guicursor=
 set number
-set relativenumber
-set nu rnu
-set nowrap
+" set relativenumber
+" set nu rnu
+" set nowrap
 set title         " Set terminal window
 
 set ai
@@ -168,18 +175,21 @@ if (has("termguicolors"))
   set termguicolors
 endif
 
-" let g:everforest_background = 'hard'
+let g:everforest_background = 'hard'
 " let g:edge_style = 'neon'
 " let g:airline_theme = 'onedark'
 " let g:gruvbox_contrast_dark = 'hard'
 " let g:palenight_terminal_italics=1
 "
-" let g:gruvbox_material_enable_italic = 1
+let g:everforest_enable_italic = 0
+let g:everforest_disable_italic_comment = 1
+let g:gruvbox_material_enable_italic = 0
 " let g:gruvbox_material_diagnostic_text_highlight = 1
 " let g:gruvbox_material_diagnostic_line_highlight = 1
+let g:dracula_italic = 0
 
 set background=dark
-colorscheme nord
+colorscheme palenight
 
 if executable('rg')
     let g:rg_derive_root = 'true'
@@ -193,6 +203,29 @@ require'nvim-treesitter.configs'.setup {
           enable = true,
   },
 }
+
+-- require('github-theme').setup({
+--   \ themeStyle = "dark",
+--   \ })
+
+require('lualine').setup({
+  options = {
+    theme = 'palenight'
+  },
+  sections = {
+    lualine_a = {"mode"},
+    lualine_b = {"branch", "diff"},
+    lualine_c = {"filename"},
+    lualine_x = {
+      {"diagnostics", sources = {"coc"}},
+      "encoding",
+      "fileformat",
+      "filetype"
+    },
+    lualine_y = {"progress"},
+    lualine_z = {"location"}
+  }
+})
 EOF
 
 highlight link TSError Normal
@@ -236,7 +269,7 @@ set foldmethod=indent
 set foldlevel=99
 
 " tag list
-map <leader>t :TagbarToggle<CR>
+" map <leader>t :TagbarToggle<CR>
 
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
@@ -265,7 +298,7 @@ nnoremap \ :Rg<CR>
 " nnoremap <C-K> :call flake8#Flake8ShowError()<cr>
 
 " let g:python_host_prog = '/home/ryan/.pyenv/versions/neovim2/bin/python'
-let g:python3_host_prog = '/Users/ryan/.pyenv/versions/neovim3/bin/python'
+let g:python3_host_prog = '/home/ryan/.pyenv/versions/neovim3/bin/python'
 
 " Configure NerdTree
 " file browser
@@ -298,8 +331,8 @@ let g:airline#extensions#tabline#enabled = 0
 let g:airline_powerline_fonts = 1
 
 " Append the character code to airline_section_z
-let g:airline_section_z = airline#section#create(['windowswap', '%3p%%', 'linenr', ':%3v', ' | 0x%2B'])
-let g:airline#extensions#coc#enabled = 1
+" let g:airline_section_z = airline#section#create(['windowswap', '%3p%%', 'linenr', ':%3v', ' | 0x%2B'])
+" let g:airline#extensions#coc#enabled = 1
 
 if !exists('g:airline_symbols')
   let g:airline_symbols = {}
@@ -321,16 +354,18 @@ let g:airline_symbols.notexists = '∄'
 let g:airline_symbols.whitespace = 'Ξ'
 
 " powerline symbols
-let g:airline_left_sep = ''
-let g:airline_left_alt_sep = ''
-let g:airline_right_sep = ''
-let g:airline_right_alt_sep = ''
+" let g:airline_left_sep = ''
+" let g:airline_left_alt_sep = ''
+" let g:airline_right_sep = ''
+" let g:airline_right_alt_sep = ''
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
 let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = ''
 
-" <TAB>: completion.
-" inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 
 let g:coc_global_extensions = [
   \'coc-pyright',
@@ -401,7 +436,9 @@ endfunction
 " Add (Neo)Vim's native statusline support.
 " NOTE: Please see `:h coc-status` for integrations with external plugins that
 " provide custom statusline: lightline.vim, vim-airline.
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+" <TAB>: completion.
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 
 " Use <c-space> to trigger completion.
 if has('nvim')
@@ -412,6 +449,9 @@ endif
 
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 if has('nvim-0.4.0') || has('patch-8.2.0750')
   nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
@@ -439,3 +479,11 @@ nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
 nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+
+let g:nvim_tree_indent_markers = 1
+let g:nvim_tree_auto_open = 1
+let g:nvim_tree_quit_on_open = 0
+" let g:nvim_tree_width = 40
+" let g:nvim_tree_ignore = [ '.git', 'node_modules', '.cache' ]
+" let g:nvim_tree_gitignore = 1
+
