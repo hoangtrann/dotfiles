@@ -9,13 +9,16 @@ Plug 'joshdick/onedark.vim'
 Plug 'haishanh/night-owl.vim'
 Plug 'sainnhe/everforest'
 Plug 'sainnhe/gruvbox-material'
+Plug 'hoob3rt/lualine.nvim'
+Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
+" Plug 'ghifarit53/tokyonight-vim'
 Plug 'sainnhe/edge'
+Plug 'projekt0n/github-nvim-theme'
+Plug 'rose-pine/neovim'
+
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'ryanoasis/vim-devicons'
-Plug 'shaunsingh/moonlight.nvim'
-Plug 'folke/tokyonight.nvim'
-Plug 'projekt0n/github-nvim-theme'
-Plug 'hoob3rt/lualine.nvim'
+Plug 'akinsho/bufferline.nvim'
 
 Plug 'editorconfig/editorconfig-vim'
 
@@ -26,8 +29,9 @@ Plug 'editorconfig/editorconfig-vim'
 "
 Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-fugitive'
+" Plug 'TimUntersberger/neogit'
 " Plug 'rbong/vim-flog'
-" Plug 'majutsushi/tagbar'
+Plug 'majutsushi/tagbar'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'tpope/vim-surround'
 Plug 'mbbill/undotree'
@@ -37,16 +41,11 @@ Plug 'mechatroner/rainbow_csv'
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
-" Plug 'vim-airline/vim-airline'
-" Plug 'vim-airline/vim-airline-themes'
-
 Plug 'Vimjas/vim-python-pep8-indent'
 
-" Plug 'preservim/nerdtree'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
-" Plug 'qpkorr/vim-bufkill'
-
+Plug 'qpkorr/vim-bufkill'
 " Plug 'Yggdroot/indentLine'
 
 Plug 'othree/xml.vim'
@@ -56,13 +55,15 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 
+Plug 'windwp/nvim-autopairs'
+
 call plug#end()
 
 set shortmess=atIc
 set nobackup
 set backupcopy=yes " Fix file watchers
 
-" set guicursor=
+set guicursor=
 set number
 " set relativenumber
 " set nu rnu
@@ -93,7 +94,7 @@ set clipboard=unnamed
 
 set showcmd
 set cmdheight=2
-set colorcolumn=80
+" set colorcolumn=80
 set scrolloff=3 " Keep 3 lines below and above the cursor
 set hidden
 
@@ -175,21 +176,29 @@ if (has("termguicolors"))
   set termguicolors
 endif
 
-let g:everforest_background = 'hard'
 " let g:edge_style = 'neon'
 " let g:airline_theme = 'onedark'
 " let g:gruvbox_contrast_dark = 'hard'
 " let g:palenight_terminal_italics=1
-"
+
+" let g:everforest_background = 'hard'
 let g:everforest_enable_italic = 0
 let g:everforest_disable_italic_comment = 1
+
 let g:gruvbox_material_enable_italic = 0
 " let g:gruvbox_material_diagnostic_text_highlight = 1
 " let g:gruvbox_material_diagnostic_line_highlight = 1
-let g:dracula_italic = 0
+
+" let g:dracula_italic = 0
+
+" let g:tokyonight_style = "night"
+" let g:tokyonight_italic_functions = 0
+" let g:tokyonight_italic_comments = 0
+" let g:tokyonight_italic_keywords = 0
+" let g:tokyonight_italic_variables = 0
 
 set background=dark
-colorscheme palenight
+colorscheme gruvbox-material
 
 if executable('rg')
     let g:rg_derive_root = 'true'
@@ -203,21 +212,20 @@ require'nvim-treesitter.configs'.setup {
           enable = true,
   },
 }
-
--- require('github-theme').setup({
---   \ themeStyle = "dark",
---   \ })
-
 require('lualine').setup({
   options = {
-    theme = 'palenight'
+    theme = 'gruvbox_material',
+    section_separators = {'', ''},
+    component_separators = {'', ''}
+    -- section_separators = {'', ''},
+    -- component_separators = {'|', '|'}
   },
   sections = {
     lualine_a = {"mode"},
     lualine_b = {"branch", "diff"},
     lualine_c = {"filename"},
     lualine_x = {
-      {"diagnostics", sources = {"coc"}},
+      {"diagnostics", sources = {"coc"}, symbols = {error = 'E', warn = 'W', info = 'I', hint = 'H'}},
       "encoding",
       "fileformat",
       "filetype"
@@ -226,6 +234,21 @@ require('lualine').setup({
     lualine_z = {"location"}
   }
 })
+require('telescope').setup({
+  defaults = {
+    layout_strategy = 'vertical',
+    scroll_strategy = 'cycle',
+    winblend = 0,
+    file_ignore_patterns = { 'tags', 'i18n' },
+  }
+})
+-- require('neogit').setup({})
+require('nvim-autopairs').setup()
+
+-- require('github-theme').setup({
+-- comment_style = 'NONE'
+-- })
+require("bufferline").setup({})
 EOF
 
 highlight link TSError Normal
@@ -284,6 +307,7 @@ nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 " nnoremap <Leader>B :Buffers<cr>
 " nnoremap <Leader>s :BLines<cr>
 " nnoremap <leader>C :Colors<CR>
+
 " nnoremap <leader>ag :Ag! <C-R><C-W><CR>
 " nnoremap <leader>m :History<CR>
 nnoremap \ :Rg<CR>
@@ -324,47 +348,47 @@ noremap <Leader>p "*p
 noremap <Leader>Y "+y
 noremap <Leader>P "+p
 
-let g:airline#extensions#branch#enabled=1
-let g:airline#parts#ffenc#skip_expected_string='utf-8[unix]'
-let g:airline#extensions#branch#displayed_head_limit = 12
-let g:airline#extensions#tabline#enabled = 0
-let g:airline_powerline_fonts = 1
+" let g:airline#extensions#branch#enabled=1
+" let g:airline#parts#ffenc#skip_expected_string='utf-8[unix]'
+" let g:airline#extensions#branch#displayed_head_limit = 12
+" let g:airline#extensions#tabline#enabled = 0
+" let g:airline_powerline_fonts = 1
 
 " Append the character code to airline_section_z
 " let g:airline_section_z = airline#section#create(['windowswap', '%3p%%', 'linenr', ':%3v', ' | 0x%2B'])
 " let g:airline#extensions#coc#enabled = 1
 
-if !exists('g:airline_symbols')
-  let g:airline_symbols = {}
-endif
+" if !exists('g:airline_symbols')
+"   let g:airline_symbols = {}
+" endif
 
 " unicode symbols
-let g:airline_symbols.crypt = '🔒'
-let g:airline_symbols.linenr = '␊'
-let g:airline_symbols.linenr = '␤'
-let g:airline_symbols.linenr = '¶'
-let g:airline_symbols.maxlinenr = '☰'
-let g:airline_symbols.maxlinenr = ''
-let g:airline_symbols.branch = '⎇'
-let g:airline_symbols.paste = 'ρ'
-let g:airline_symbols.paste = 'Þ'
-let g:airline_symbols.paste = '∥'
-let g:airline_symbols.spell = 'Ꞩ'
-let g:airline_symbols.notexists = '∄'
-let g:airline_symbols.whitespace = 'Ξ'
+" let g:airline_symbols.crypt = '🔒'
+" let g:airline_symbols.linenr = '␊'
+" let g:airline_symbols.linenr = '␤'
+" let g:airline_symbols.linenr = '¶'
+" let g:airline_symbols.maxlinenr = '☰'
+" let g:airline_symbols.maxlinenr = ''
+" let g:airline_symbols.branch = '⎇'
+" let g:airline_symbols.paste = 'ρ'
+" let g:airline_symbols.paste = 'Þ'
+" let g:airline_symbols.paste = '∥'
+" let g:airline_symbols.spell = 'Ꞩ'
+" let g:airline_symbols.notexists = '∄'
+" let g:airline_symbols.whitespace = 'Ξ'
 
 " powerline symbols
 " let g:airline_left_sep = ''
 " let g:airline_left_alt_sep = ''
 " let g:airline_right_sep = ''
 " let g:airline_right_alt_sep = ''
-let g:airline_left_sep = ''
-let g:airline_left_alt_sep = ''
-let g:airline_right_sep = ''
-let g:airline_right_alt_sep = ''
-let g:airline_symbols.branch = ''
-let g:airline_symbols.readonly = ''
-let g:airline_symbols.linenr = ''
+" let g:airline_left_sep = ''
+" let g:airline_left_alt_sep = ''
+" let g:airline_right_sep = ''
+" let g:airline_right_alt_sep = ''
+" let g:airline_symbols.branch = ''
+" let g:airline_symbols.readonly = ''
+" let g:airline_symbols.linenr = ''
 
 
 let g:coc_global_extensions = [
@@ -480,10 +504,20 @@ nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
-let g:nvim_tree_indent_markers = 1
+let g:nvim_tree_ignore = [ '.git', 'node_modules', '.cache' ]
+let g:nvim_tree_width = 40
 let g:nvim_tree_auto_open = 1
-let g:nvim_tree_quit_on_open = 0
-" let g:nvim_tree_width = 40
-" let g:nvim_tree_ignore = [ '.git', 'node_modules', '.cache' ]
-" let g:nvim_tree_gitignore = 1
-
+let g:nvim_tree_auto_close = 1
+" let g:nvimtree_highlight_opened_files = 1
+" let g:nvim_tree_group_empty = 1
+" let g:nvim_tree_lsp_diagnostics = 1
+" let g:nvim_tree_update_cwd = 1
+" let g:nvim_tree_refresh_wait = 500
+let g:nvim_tree_gitignore = 0
+let g:nvim_tree_git_hl = 0
+let g:nvim_tree_show_icons = {
+    \ 'git': 0,
+    \ 'folders': 1,
+    \ 'files': 1,
+    \ 'folder_arrows': 1,
+    \ }
