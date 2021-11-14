@@ -9,28 +9,23 @@ Plug 'joshdick/onedark.vim'
 Plug 'haishanh/night-owl.vim'
 Plug 'sainnhe/everforest'
 Plug 'sainnhe/gruvbox-material'
-Plug 'hoob3rt/lualine.nvim'
+Plug 'hoob3rt/lualine.nvim', {'branch': 'master'}
 Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
-" Plug 'ghifarit53/tokyonight-vim'
 Plug 'sainnhe/edge'
 Plug 'projekt0n/github-nvim-theme'
 Plug 'rose-pine/neovim'
-
+Plug 'ntk148v/vim-horizon'
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'ryanoasis/vim-devicons'
-Plug 'akinsho/bufferline.nvim'
-
+" Plug 'akinsho/bufferline.nvim'
 Plug 'editorconfig/editorconfig-vim'
 
 " Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 " Plug 'junegunn/fzf.vim'
 "
-" Plug 'airblade/vim-rooter'
-"
+Plug 'airblade/vim-rooter'
 Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-fugitive'
-" Plug 'TimUntersberger/neogit'
-" Plug 'rbong/vim-flog'
 Plug 'majutsushi/tagbar'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'tpope/vim-surround'
@@ -40,13 +35,14 @@ Plug 'mechatroner/rainbow_csv'
 
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
+Plug 'akretion/vim-odoo-snippets'
 
 Plug 'Vimjas/vim-python-pep8-indent'
 
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 Plug 'qpkorr/vim-bufkill'
-" Plug 'Yggdroot/indentLine'
+Plug 'Yggdroot/indentLine'
 
 Plug 'othree/xml.vim'
 Plug 'kyazdani42/nvim-tree.lua'
@@ -94,8 +90,8 @@ set clipboard=unnamed
 
 set showcmd
 set cmdheight=2
-" set colorcolumn=80
-set scrolloff=3 " Keep 3 lines below and above the cursor
+set colorcolumn=100
+set scrolloff=8 " Keep 8 lines below and above the cursor
 set hidden
 
 set signcolumn=number
@@ -181,11 +177,12 @@ endif
 " let g:gruvbox_contrast_dark = 'hard'
 " let g:palenight_terminal_italics=1
 
-" let g:everforest_background = 'hard'
+let g:everforest_background = 'hard'
 let g:everforest_enable_italic = 0
 let g:everforest_disable_italic_comment = 1
 
 let g:gruvbox_material_enable_italic = 0
+" let g:gruvbox_material_background = 'hard'
 " let g:gruvbox_material_diagnostic_text_highlight = 1
 " let g:gruvbox_material_diagnostic_line_highlight = 1
 
@@ -196,9 +193,11 @@ let g:gruvbox_material_enable_italic = 0
 " let g:tokyonight_italic_comments = 0
 " let g:tokyonight_italic_keywords = 0
 " let g:tokyonight_italic_variables = 0
+let g:rose_pine_disable_italics = 1
+" let g:rose_pine_bold_vertical_split_line = 1
 
 set background=dark
-colorscheme gruvbox-material
+colorscheme everforest
 
 if executable('rg')
     let g:rg_derive_root = 'true'
@@ -214,21 +213,24 @@ require'nvim-treesitter.configs'.setup {
 }
 require('lualine').setup({
   options = {
-    theme = 'gruvbox_material',
-    section_separators = {'', ''},
-    component_separators = {'', ''}
-    -- section_separators = {'', ''},
-    -- component_separators = {'|', '|'}
+    theme = 'everforest',
+    -- section_separators = {left = '', right = ''},
+    -- component_separators = {left = '', right = ''}
+    section_separators = {left = '', right = ''},
+    component_separators = {left = '', right = ''}
   },
   sections = {
     lualine_a = {"mode"},
-    lualine_b = {"branch", "diff"},
-    lualine_c = {"filename"},
+    lualine_b = {"diff"},
+    lualine_c = {
+      {"filetype", icon_only = true},
+      "filename"
+      },
     lualine_x = {
       {"diagnostics", sources = {"coc"}, symbols = {error = 'E', warn = 'W', info = 'I', hint = 'H'}},
+      "branch",
       "encoding",
-      "fileformat",
-      "filetype"
+      "fileformat"
     },
     lualine_y = {"progress"},
     lualine_z = {"location"}
@@ -245,10 +247,23 @@ require('telescope').setup({
 -- require('neogit').setup({})
 require('nvim-autopairs').setup()
 
+require'nvim-tree'.setup({
+  open_on_setup = true,
+  auto_close = false,
+  hijack_cursor = true,
+  view = {
+    width = 35,
+    side = 'left',
+    auto_resize = true
+  }
+})
+
 -- require('github-theme').setup({
--- comment_style = 'NONE'
+--   comment_style = 'NONE'
 -- })
-require("bufferline").setup({})
+-- require("bufferline").setup({})
+
+-- require('rose-pine.functions').select_variant('dawn')
 EOF
 
 highlight link TSError Normal
@@ -292,7 +307,7 @@ set foldmethod=indent
 set foldlevel=99
 
 " tag list
-" map <leader>t :TagbarToggle<CR>
+map <leader>t :TagbarToggle<CR>
 
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
@@ -322,7 +337,7 @@ nnoremap \ :Rg<CR>
 " nnoremap <C-K> :call flake8#Flake8ShowError()<cr>
 
 " let g:python_host_prog = '/home/ryan/.pyenv/versions/neovim2/bin/python'
-let g:python3_host_prog = '/home/ryan/.pyenv/versions/neovim3/bin/python'
+let g:python3_host_prog = '/home/hoangtran/.pyenv/versions/neovim3/bin/python'
 
 " Configure NerdTree
 " file browser
@@ -504,20 +519,20 @@ nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
-let g:nvim_tree_ignore = [ '.git', 'node_modules', '.cache' ]
-let g:nvim_tree_width = 40
-let g:nvim_tree_auto_open = 1
-let g:nvim_tree_auto_close = 1
+" let g:nvim_tree_ignore = [ '.git', 'node_modules', '.cache' ]
+let g:nvim_tree_gitignore = 0
+let g:nvim_tree_indent_markers = 1
+" let g:nvim_tree_auto_open = 1
+" let g:nvim_tree_auto_close = 1
 " let g:nvimtree_highlight_opened_files = 1
 " let g:nvim_tree_group_empty = 1
 " let g:nvim_tree_lsp_diagnostics = 1
 " let g:nvim_tree_update_cwd = 1
 " let g:nvim_tree_refresh_wait = 500
-let g:nvim_tree_gitignore = 0
-let g:nvim_tree_git_hl = 0
-let g:nvim_tree_show_icons = {
-    \ 'git': 0,
-    \ 'folders': 1,
-    \ 'files': 1,
-    \ 'folder_arrows': 1,
-    \ }
+" let g:nvim_tree_git_hl = 0
+" let g:nvim_tree_show_icons = {
+"     \ 'git': 0,
+"     \ 'folders': 1,
+"     \ 'files': 1,
+"     \ 'folder_arrows': 1,
+"     \ }
