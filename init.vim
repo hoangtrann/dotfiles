@@ -17,7 +17,6 @@ Plug 'rose-pine/neovim'
 Plug 'ntk148v/vim-horizon'
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'ryanoasis/vim-devicons'
-" Plug 'akinsho/bufferline.nvim'
 Plug 'editorconfig/editorconfig-vim'
 
 " Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -27,7 +26,7 @@ Plug 'airblade/vim-rooter'
 Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-fugitive'
 Plug 'majutsushi/tagbar'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'tpope/vim-surround'
 Plug 'mbbill/undotree'
 Plug 'prettier/vim-prettier', { 'do': 'npm install', 'branch': 'release/0.x' }
@@ -47,6 +46,13 @@ Plug 'Yggdroot/indentLine'
 Plug 'othree/xml.vim'
 Plug 'kyazdani42/nvim-tree.lua'
 Plug 'neovim/nvim-lspconfig'
+Plug 'glepnir/lspsaga.nvim', { 'branch': 'main' }
+Plug 'mhartington/formatter.nvim'
+Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-path'
+Plug 'quangnguyen30192/cmp-nvim-ultisnips'
+
 
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
@@ -61,8 +67,8 @@ set backupcopy=yes " Fix file watchers
 
 set guicursor=
 set number
-" set relativenumber
-" set nu rnu
+set relativenumber
+set nu rnu
 " set nowrap
 set title         " Set terminal window
 
@@ -72,7 +78,7 @@ set incsearch
 set ruler
 set noerrorbells
 
-" set cursorline
+set cursorline
 set expandtab
 set smarttab
 set shiftwidth=2
@@ -90,14 +96,15 @@ set clipboard=unnamed
 
 set showcmd
 set cmdheight=2
-set colorcolumn=100
-set scrolloff=8 " Keep 8 lines below and above the cursor
+set colorcolumn=80
+set scrolloff=3 " Keep 8 lines below and above the cursor
 set hidden
 
 set signcolumn=number
 
 set updatetime=300
 set shortmess+=c
+set completeopt=menu,menuone,noselect
 
 " set splitbelow
 
@@ -172,16 +179,11 @@ if (has("termguicolors"))
   set termguicolors
 endif
 
-" let g:edge_style = 'neon'
-" let g:airline_theme = 'onedark'
-" let g:gruvbox_contrast_dark = 'hard'
-" let g:palenight_terminal_italics=1
+" let g:everforest_background = 'hard'
+" let g:everforest_enable_italic = 0
+" let g:everforest_disable_italic_comment = 1
 
-let g:everforest_background = 'hard'
-let g:everforest_enable_italic = 0
-let g:everforest_disable_italic_comment = 1
-
-let g:gruvbox_material_enable_italic = 0
+" let g:gruvbox_material_enable_italic = 0
 " let g:gruvbox_material_background = 'hard'
 " let g:gruvbox_material_diagnostic_text_highlight = 1
 " let g:gruvbox_material_diagnostic_line_highlight = 1
@@ -193,11 +195,12 @@ let g:gruvbox_material_enable_italic = 0
 " let g:tokyonight_italic_comments = 0
 " let g:tokyonight_italic_keywords = 0
 " let g:tokyonight_italic_variables = 0
+"
 let g:rose_pine_disable_italics = 1
 " let g:rose_pine_bold_vertical_split_line = 1
 
 set background=dark
-colorscheme everforest
+colorscheme nord
 
 if executable('rg')
     let g:rg_derive_root = 'true'
@@ -213,11 +216,11 @@ require'nvim-treesitter.configs'.setup {
 }
 require('lualine').setup({
   options = {
-    theme = 'everforest',
-    -- section_separators = {left = '', right = ''},
-    -- component_separators = {left = '', right = ''}
-    section_separators = {left = '', right = ''},
-    component_separators = {left = '', right = ''}
+    theme = 'nord',
+    section_separators = {left = '', right = ''},
+    component_separators = {left = '', right = ''}
+    -- section_separators = {left = '', right = ''},
+    -- component_separators = {left = '', right = ''}
   },
   sections = {
     lualine_a = {"mode"},
@@ -227,8 +230,6 @@ require('lualine').setup({
       "filename"
       },
     lualine_x = {
-      {"diagnostics", sources = {"coc"}, symbols = {error = 'E', warn = 'W', info = 'I', hint = 'H'}},
-      "branch",
       "encoding",
       "fileformat"
     },
@@ -263,7 +264,154 @@ require'nvim-tree'.setup({
 -- })
 -- require("bufferline").setup({})
 
--- require('rose-pine.functions').select_variant('dawn')
+-- require('rose-pine.functions').select_variant('moon')
+-- require('formatting')
+require'lspconfig'.pyright.setup{}
+local nvim_lsp = require('lspconfig')
+
+-- Use an on_attach function to only map the following keys
+-- after the language server attaches to the current buffer
+local on_attach = function(client, bufnr)
+  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+  -- Enable completion triggered by <c-x><c-o>
+  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+  -- Mappings.
+  local opts = { noremap=true, silent=true }
+
+  -- See `:help vim.lsp.*` for documentation on any of the below functions
+  buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+  buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+  buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+  buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+  buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+  buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+  buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+  buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+
+end
+
+-- Use a loop to conveniently call 'setup' on multiple servers and
+-- map buffer local keybindings when the language server attaches
+local servers = { 'pyright', 'rust_analyzer', 'tsserver' }
+for _, lsp in ipairs(servers) do
+  nvim_lsp[lsp].setup {
+    on_attach = on_attach,
+    flags = {
+      debounce_text_changes = 150,
+    }
+  }
+end
+
+local filetypes = {
+  typescript = "eslint",
+  typescriptreact = "eslint",
+  python = "flake8",
+  php = {"phpcs", "psalm"},
+}
+
+local linters = {
+  eslint = {
+    sourceName = "eslint",
+    command = "./node_modules/.bin/eslint",
+    rootPatterns = {".eslintrc.js", "package.json"},
+    debouce = 100,
+    args = {"--stdin", "--stdin-filename", "%filepath", "--format", "json"},
+    parseJson = {
+      errorsRoot = "[0].messages",
+      line = "line",
+      column = "column",
+      endLine = "endLine",
+      endColumn = "endColumn",
+      message = "${message} [${ruleId}]",
+      security = "severity"
+    },
+    securities = {[2] = "error", [1] = "warning"}
+  },
+  flake8 = {
+    command = "flake8",
+    sourceName = "flake8",
+    args = {"--format", "%(row)d:%(col)d:%(code)s: %(text)s", "%file"},
+    formatPattern = {
+      "^(\\d+):(\\d+):(\\w+):(\\w).+: (.*)$",
+      {
+          line = 1,
+          column = 2,
+          message = {"[", 3, "] ", 5},
+          security = 4
+      }
+    },
+    securities = {
+      E = "error",
+      W = "warning",
+      F = "info",
+      B = "hint",
+    },
+  }
+}
+
+nvim_lsp.diagnosticls.setup {
+  on_attach = on_attach,
+  filetypes = vim.tbl_keys(filetypes),
+  init_options = {
+    filetypes = filetypes,
+    linters = linters,
+  },
+}
+
+require('formatter').setup({
+  filetype = {
+    python = {
+      function()
+        return {
+          exe = "black", -- this should be available on your $PATH
+          args = { '-' },
+          stdin = true,
+        }
+      end
+    }
+  }
+})
+
+-- Setup nvim-cmp.
+  local cmp = require'cmp'
+  cmp.setup({
+    snippet = {
+      -- REQUIRED - you must specify a snippet engine
+      expand = function(args)
+        vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+      end,
+    },
+    mapping = {
+      ['<C-d>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
+      ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+      ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
+      ['<C-y>'] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
+      ['<C-e>'] = cmp.mapping({
+        i = cmp.mapping.abort(),
+        c = cmp.mapping.close(),
+      }),
+      ['<CR>'] = cmp.mapping.confirm({ select = true }),
+    },
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp', keyword_length = 3 },
+      { name = 'ultisnips' },
+      { name = 'path', keyword_length = 3 },
+      { name = 'buffer', keyword_length = 3 },
+    })
+  })
+
 EOF
 
 highlight link TSError Normal
@@ -271,6 +419,8 @@ highlight link TSError Normal
 set splitbelow splitright
 
 let mapleader = ","
+
+nnoremap <silent> <leader>f :Format<CR>
 
 nnoremap <leader>h :wincmd h<CR>
 nnoremap <leader>j :wincmd j<CR>
@@ -311,6 +461,7 @@ map <leader>t :TagbarToggle<CR>
 
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fs <cmd>Telescope grep_string<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 
@@ -337,7 +488,7 @@ nnoremap \ :Rg<CR>
 " nnoremap <C-K> :call flake8#Flake8ShowError()<cr>
 
 " let g:python_host_prog = '/home/ryan/.pyenv/versions/neovim2/bin/python'
-let g:python3_host_prog = '/home/hoangtran/.pyenv/versions/neovim3/bin/python'
+let g:python3_host_prog = '/Users/ryan/.pyenv/versions/neovim3/bin/python'
 
 " Configure NerdTree
 " file browser
@@ -406,122 +557,114 @@ noremap <Leader>P "+p
 " let g:airline_symbols.linenr = ''
 
 
-let g:coc_global_extensions = [
-  \'coc-pyright',
-  \'coc-eslint',
-  \'coc-snippets',
-  \'coc-emoji',
-  \'coc-json',
-  \'coc-css',
-  \'coc-html',
-  \'coc-yaml',
-  \'coc-prettier'
-  \]
+" let g:coc_global_extensions = [
+"   \'coc-pyright',
+"   \'coc-eslint',
+"   \'coc-snippets',
+"   \'coc-emoji',
+"   \'coc-json',
+"   \'coc-css',
+"   \'coc-html',
+"   \'coc-yaml',
+"   \'coc-prettier'
+"   \]
 
 " Use `[g` and `]g` to navigate diagnostics
 " " Use `:CocDiagnostics` to get all diagnostics of current buffer in location
 " list.
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
+" nmap <silent> [g <Plug>(coc-diagnostic-prev)
+" nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
 " GoTo code navigation.
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
+" nmap <silent> gd <Plug>(coc-definition)
+" nmap <silent> gy <Plug>(coc-type-definition)
+" nmap <silent> gi <Plug>(coc-implementation)
+" nmap <silent> gr <Plug>(coc-references)
 
 " Use K to show documentation in preview window.
-nnoremap <silent> K :call <SID>show_documentation()<CR>
+" nnoremap <silent> K :call <SID>show_documentation()<CR>
 
-autocmd CursorHold * silent call CocActionAsync('highlight')
+" autocmd CursorHold * silent call CocActionAsync('highlight')
 
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  elseif (coc#rpc#ready())
-    call CocActionAsync('doHover')
-  else
-    execute '!' . &keywordprg . " " . expand('<cword>')
-  endif
-endfunction
+" function! s:show_documentation()
+"   if (index(['vim','help'], &filetype) >= 0)
+"     execute 'h '.expand('<cword>')
+"   elseif (coc#rpc#ready())
+"     call CocActionAsync('doHover')
+"   else
+"     execute '!' . &keywordprg . " " . expand('<cword>')
+"   endif
+" endfunction
 
 " Symbol renaming.
-nmap <Leader>rn <Plug>(coc-rename)
+" nmap <Leader>rn <Plug>(coc-rename)
 
 " Formatting selected code.
-xmap <leader>f <Plug>(coc-format-selected)
-nmap <leader>f <Plug>(coc-format-selected)
+" xmap <leader>f <Plug>(coc-format-selected)
+" nmap <leader>f <Plug>(coc-format-selected)
 
 " Add `:Format` command to format current buffer.
-command! -nargs=0 Format :call CocAction('format')
+" command! -nargs=0 Format :call CocAction('format')
 " Add `:Fold` command to fold current buffer.
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+" command! -nargs=? Fold :call     CocAction('fold', <f-args>)
 " Add `:OR` command for organize imports of the current buffer.
-command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+" command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
 
-nmap <silent> <F9> :call CocAction('format')<CR>
+" nmap <silent> <F9> :call CocAction('format')<CR>
 
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-    let col = col('.') - 1
-      return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
+" inoremap <silent><expr> <TAB>
+"       \ pumvisible() ? "\<C-n>" :
+"       \ <SID>check_back_space() ? "\<TAB>" :
+"       \ coc#refresh()
+" inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+"
+" function! s:check_back_space() abort
+"     let col = col('.') - 1
+"       return !col || getline('.')[col - 1]  =~# '\s'
+" endfunction
 
 " Add (Neo)Vim's native statusline support.
 " NOTE: Please see `:h coc-status` for integrations with external plugins that
 " provide custom statusline: lightline.vim, vim-airline.
 
 " <TAB>: completion.
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+" inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 
 " Use <c-space> to trigger completion.
-if has('nvim')
-  inoremap <silent><expr> <c-space> coc#refresh()
-else
-  inoremap <silent><expr> <c-@> coc#refresh()
-endif
+" if has('nvim')
+"   inoremap <silent><expr> <c-space> coc#refresh()
+" else
+"   inoremap <silent><expr> <c-@> coc#refresh()
+" endif
+"
+" inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+"                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+"
+" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
-if has('nvim-0.4.0') || has('patch-8.2.0750')
-  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-endif
+" if has('nvim-0.4.0') || has('patch-8.2.0750')
+"   nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+"   nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+"   inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+"   inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+"   vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+"   vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+" endif
 
 " Mappings for CoCList
-" Show all diagnostics.
-nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
-" Manage extensions.
-nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
-" Show commands.
-nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
-" Find symbol of current document.
-nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
-" Search workspace symbols.
-nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
-" Do default action for next item.
-nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
-" Do default action for previous item.
-nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
-" Resume latest coc list.
-nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+" nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
+" nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
+" nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
+" nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
+" nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
+" nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
+" nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
+" nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
 " let g:nvim_tree_ignore = [ '.git', 'node_modules', '.cache' ]
-let g:nvim_tree_gitignore = 0
-let g:nvim_tree_indent_markers = 1
+" let g:nvim_tree_gitignore = 0
+" let g:nvim_tree_indent_markers = 1
 " let g:nvim_tree_auto_open = 1
 " let g:nvim_tree_auto_close = 1
 " let g:nvimtree_highlight_opened_files = 1
