@@ -1,33 +1,22 @@
 call plug#begin('~/.config/nvim/plugged')
 
 " Colorschemes and icons
-Plug 'morhetz/gruvbox'
 Plug 'drewtempelmeyer/palenight.vim'
-Plug 'dracula/vim', { 'branch': 'master', 'as': 'dracula' }
 Plug 'arcticicestudio/nord-vim'
 Plug 'joshdick/onedark.vim'
-Plug 'haishanh/night-owl.vim'
 Plug 'sainnhe/everforest'
 Plug 'sainnhe/gruvbox-material'
 Plug 'hoob3rt/lualine.nvim', {'branch': 'master'}
-Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
-Plug 'sainnhe/edge'
-Plug 'projekt0n/github-nvim-theme'
-Plug 'rose-pine/neovim'
-Plug 'ntk148v/vim-horizon'
+Plug 'rose-pine/neovim', { 'branch': 'main' }
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'ryanoasis/vim-devicons'
 Plug 'editorconfig/editorconfig-vim'
 
-" Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-" Plug 'junegunn/fzf.vim'
-"
 Plug 'airblade/vim-rooter'
 Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-fugitive'
-Plug 'majutsushi/tagbar'
-" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'tpope/vim-surround'
+
 Plug 'mbbill/undotree'
 Plug 'prettier/vim-prettier', { 'do': 'npm install', 'branch': 'release/0.x' }
 Plug 'mechatroner/rainbow_csv'
@@ -41,7 +30,7 @@ Plug 'Vimjas/vim-python-pep8-indent'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 Plug 'qpkorr/vim-bufkill'
-Plug 'Yggdroot/indentLine'
+" Plug 'Yggdroot/indentLine'
 
 Plug 'othree/xml.vim'
 Plug 'kyazdani42/nvim-tree.lua'
@@ -52,7 +41,7 @@ Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-path'
 Plug 'quangnguyen30192/cmp-nvim-ultisnips'
-
+Plug 'WhoIsSethDaniel/toggle-lsp-diagnostics.nvim'
 
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
@@ -67,8 +56,8 @@ set backupcopy=yes " Fix file watchers
 
 set guicursor=
 set number
-set relativenumber
-set nu rnu
+" set relativenumber
+" set nu
 " set nowrap
 set title         " Set terminal window
 
@@ -78,7 +67,7 @@ set incsearch
 set ruler
 set noerrorbells
 
-set cursorline
+" set cursorline
 set expandtab
 set smarttab
 set shiftwidth=2
@@ -96,7 +85,7 @@ set clipboard=unnamed
 
 set showcmd
 set cmdheight=2
-set colorcolumn=80
+" set colorcolumn=80
 set scrolloff=3 " Keep 8 lines below and above the cursor
 set hidden
 
@@ -196,11 +185,11 @@ endif
 " let g:tokyonight_italic_keywords = 0
 " let g:tokyonight_italic_variables = 0
 "
-let g:rose_pine_disable_italics = 1
+" let g:rose_pine_disable_italics = 1
 " let g:rose_pine_bold_vertical_split_line = 1
 
 set background=dark
-colorscheme nord
+" colorscheme rose-pine
 
 if executable('rg')
     let g:rg_derive_root = 'true'
@@ -209,22 +198,23 @@ set grepprg=rg\ --vimgrep\ --smart-case\ --hidden\ --follow
 
 lua << EOF
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = "maintained",
+  ensure_installed = "all",
+  ignore_install = {"phpdoc"},
   highlight = {
           enable = true,
   },
 }
 require('lualine').setup({
   options = {
-    theme = 'nord',
-    section_separators = {left = '', right = ''},
-    component_separators = {left = '', right = ''}
-    -- section_separators = {left = '', right = ''},
-    -- component_separators = {left = '', right = ''}
+    theme = 'rose-pine',
+    -- section_separators = {left = '', right = ''},
+    -- component_separators = {left = '', right = ''}
+    section_separators = {left = '', right = ''},
+    component_separators = {left = '', right = ''}
   },
   sections = {
     lualine_a = {"mode"},
-    lualine_b = {"diff"},
+    lualine_b = {"branch"},
     lualine_c = {
       {"filetype", icon_only = true},
       "filename"
@@ -246,25 +236,114 @@ require('telescope').setup({
   }
 })
 -- require('neogit').setup({})
-require('nvim-autopairs').setup()
+-- require('nvim-autopairs').setup()
 
-require'nvim-tree'.setup({
-  open_on_setup = true,
+require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
   auto_close = false,
+  auto_reload_on_write = true,
+  disable_netrw = false,
+  hide_root_folder = false,
   hijack_cursor = true,
+  hijack_netrw = true,
+  hijack_unnamed_buffer_when_opening = false,
+  ignore_buffer_on_setup = false,
+  open_on_setup = false,
+  open_on_tab = false,
+  sort_by = "name",
+  update_cwd = false,
   view = {
-    width = 35,
-    side = 'left',
-    auto_resize = true
-  }
-})
+    width = 30,
+    height = 30,
+    side = "left",
+    preserve_window_proportions = false,
+    number = false,
+    relativenumber = false,
+    signcolumn = "yes",
+    mappings = {
+      custom_only = false,
+      list = {
+        -- user mappings go here
+      },
+    },
+  },
+  hijack_directories = {
+    enable = true,
+    auto_open = true,
+  },
+  update_focused_file = {
+    enable = false,
+    update_cwd = false,
+    ignore_list = {},
+  },
+  ignore_ft_on_setup = {},
+  system_open = {
+    cmd = nil,
+    args = {},
+  },
+  diagnostics = {
+    enable = false,
+    show_on_dirs = false,
+    icons = {
+      hint = "",
+      info = "",
+      warning = "",
+      error = "",
+    },
+  },
+  filters = {
+    dotfiles = false,
+    custom = {},
+    exclude = {},
+  },
+  git = {
+    enable = true,
+    ignore = true,
+    timeout = 400,
+  },
+  actions = {
+    change_dir = {
+      enable = true,
+      global = false,
+    },
+    open_file = {
+      quit_on_open = false,
+      resize_window = true,
+      window_picker = {
+        enable = true,
+        chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
+        exclude = {
+          filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame" },
+          buftype = { "nofile", "terminal", "help" },
+        },
+      },
+    },
+  },
+  trash = {
+    cmd = "trash",
+    require_confirm = true,
+  },
+  log = {
+    enable = false,
+    truncate = false,
+    types = {
+      all = false,
+      config = false,
+      git = false,
+    },
+  },
+} -- END_DEFAULT_OPTS
 
 -- require('github-theme').setup({
 --   comment_style = 'NONE'
 -- })
 -- require("bufferline").setup({})
 
+require('rose-pine').setup({
+  dark_variant = 'moon'
+})
+
 -- require('rose-pine.functions').select_variant('moon')
+
 -- require('formatting')
 require'lspconfig'.pyright.setup{}
 local nvim_lsp = require('lspconfig')
@@ -299,6 +378,7 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
   buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
   buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+  buf_set_keymap('n', '<space>o', '<cmd>lua vim.lsp.buf.organizeImports()<CR>', opts)
 
 end
 
@@ -405,13 +485,16 @@ require('formatter').setup({
       ['<CR>'] = cmp.mapping.confirm({ select = true }),
     },
     sources = cmp.config.sources({
-      { name = 'nvim_lsp', keyword_length = 3 },
+      { name = 'nvim_lsp', keyword_length = 2 },
       { name = 'ultisnips' },
-      { name = 'path', keyword_length = 3 },
-      { name = 'buffer', keyword_length = 3 },
+      { name = 'path', keyword_length = 2 },
+      { name = 'buffer', keyword_length = 2 },
     })
   })
+require'toggle_lsp_diagnostics'.init()
 
+
+vim.cmd('colorscheme rose-pine')
 EOF
 
 highlight link TSError Normal
@@ -420,6 +503,7 @@ set splitbelow splitright
 
 let mapleader = ","
 
+nmap <leader>tt  <Plug>(toggle-lsp-diag)
 nnoremap <silent> <leader>f :Format<CR>
 
 nnoremap <leader>h :wincmd h<CR>
@@ -457,7 +541,7 @@ set foldmethod=indent
 set foldlevel=99
 
 " tag list
-map <leader>t :TagbarToggle<CR>
+" map <leader>t :TagbarToggle<CR>
 
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
@@ -662,20 +746,6 @@ noremap <Leader>P "+p
 " nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
-" let g:nvim_tree_ignore = [ '.git', 'node_modules', '.cache' ]
-" let g:nvim_tree_gitignore = 0
-" let g:nvim_tree_indent_markers = 1
-" let g:nvim_tree_auto_open = 1
-" let g:nvim_tree_auto_close = 1
-" let g:nvimtree_highlight_opened_files = 1
-" let g:nvim_tree_group_empty = 1
-" let g:nvim_tree_lsp_diagnostics = 1
-" let g:nvim_tree_update_cwd = 1
-" let g:nvim_tree_refresh_wait = 500
-" let g:nvim_tree_git_hl = 0
-" let g:nvim_tree_show_icons = {
-"     \ 'git': 0,
-"     \ 'folders': 1,
-"     \ 'files': 1,
-"     \ 'folder_arrows': 1,
-"     \ }
+nnoremap n nzz
+nnoremap N Nzz
+
