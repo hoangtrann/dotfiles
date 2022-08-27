@@ -11,6 +11,7 @@ Plug 'rose-pine/neovim', { 'branch': 'main' }
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'ryanoasis/vim-devicons'
 Plug 'editorconfig/editorconfig-vim'
+Plug 'catppuccin/nvim', { 'as': 'catppuccin', 'branch': 'main' }
 
 Plug 'airblade/vim-rooter'
 Plug 'tomtom/tcomment_vim'
@@ -27,7 +28,7 @@ Plug 'akretion/vim-odoo-snippets'
 
 Plug 'Vimjas/vim-python-pep8-indent'
 
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/nvim-treesitter', { 'branch': 'master', 'do': ':TSUpdate'}
 
 Plug 'qpkorr/vim-bufkill'
 " Plug 'Yggdroot/indentLine'
@@ -58,7 +59,7 @@ set guicursor=
 set number
 " set relativenumber
 " set nu
-" set nowrap
+set nowrap
 set title         " Set terminal window
 
 set ai
@@ -76,7 +77,7 @@ set softtabstop=2
 set autoindent
 
 set statusline=%<%F%h%m%r%=\[%B\]\ %l,%c%V\ %P " Default status line. Largely here as a fallback if airline is not available
-set laststatus=2
+set laststatus=3
 set backspace=indent,eol,start " Backspace over everything in insert mode
 set ignorecase " Make searches case-insensitive..."
 set smartcase
@@ -85,8 +86,8 @@ set clipboard=unnamed
 
 set showcmd
 set cmdheight=2
-" set colorcolumn=80
-set scrolloff=3 " Keep 8 lines below and above the cursor
+set colorcolumn=80
+set scrolloff=8 " Keep 8 lines below and above the cursor
 set hidden
 
 set signcolumn=number
@@ -94,6 +95,9 @@ set signcolumn=number
 set updatetime=300
 set shortmess+=c
 set completeopt=menu,menuone,noselect
+" set listchars=eol:↵
+" set listchars=eol:↵
+" set list
 
 " set splitbelow
 
@@ -187,6 +191,7 @@ endif
 "
 " let g:rose_pine_disable_italics = 1
 " let g:rose_pine_bold_vertical_split_line = 1
+" let g:catppuccin_flavour = "mocha"
 
 set background=dark
 " colorscheme rose-pine
@@ -197,6 +202,7 @@ endif
 set grepprg=rg\ --vimgrep\ --smart-case\ --hidden\ --follow
 
 lua << EOF
+
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "all",
   ignore_install = {"phpdoc"},
@@ -206,7 +212,7 @@ require'nvim-treesitter.configs'.setup {
 }
 require('lualine').setup({
   options = {
-    theme = 'rose-pine',
+    theme = 'catppuccin',
     -- section_separators = {left = '', right = ''},
     -- component_separators = {left = '', right = ''}
     section_separators = {left = '', right = ''},
@@ -229,11 +235,14 @@ require('lualine').setup({
 })
 require('telescope').setup({
   defaults = {
-    layout_strategy = 'vertical',
+    layout_strategy = 'horizontal',
+    layout_config = {
+      horizontal = { width = 0.95 },
+    },
     scroll_strategy = 'cycle',
     winblend = 0,
-    file_ignore_patterns = { 'tags', 'i18n' },
-  }
+    file_ignore_patterns = { 'tags', 'i18n', 'log' },
+  },
 })
 -- require('neogit').setup({})
 -- require('nvim-autopairs').setup()
@@ -338,9 +347,9 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
 -- })
 -- require("bufferline").setup({})
 
-require('rose-pine').setup({
-  dark_variant = 'moon'
-})
+-- require('rose-pine').setup({
+--   dark_variant = 'moon'
+-- })
 
 -- require('rose-pine.functions').select_variant('moon')
 
@@ -377,7 +386,6 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
   buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-  buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
   buf_set_keymap('n', '<space>o', '<cmd>lua vim.lsp.buf.organizeImports()<CR>', opts)
 
 end
@@ -451,15 +459,14 @@ nvim_lsp.diagnosticls.setup {
 }
 
 require('formatter').setup({
+
+  loggin = true,
+
   filetype = {
     python = {
       function()
-        return {
-          exe = "black", -- this should be available on your $PATH
-          args = { '-' },
-          stdin = true,
-        }
-      end
+        return {exe = "black", args = { "-" }, stdin = true}
+      end,
     }
   }
 })
@@ -493,8 +500,10 @@ require('formatter').setup({
   })
 require'toggle_lsp_diagnostics'.init()
 
+require("catppuccin").setup()
 
-vim.cmd('colorscheme rose-pine')
+-- " vim.g.catppuccin_flavour = "frappe"
+vim.cmd('colorscheme catppuccin')
 EOF
 
 highlight link TSError Normal
@@ -504,7 +513,7 @@ set splitbelow splitright
 let mapleader = ","
 
 nmap <leader>tt  <Plug>(toggle-lsp-diag)
-nnoremap <silent> <leader>f :Format<CR>
+" nnoremap <silent> <leader>F :Format<CR>
 
 nnoremap <leader>h :wincmd h<CR>
 nnoremap <leader>j :wincmd j<CR>
@@ -688,7 +697,6 @@ noremap <Leader>P "+p
 " nmap <leader>f <Plug>(coc-format-selected)
 
 " Add `:Format` command to format current buffer.
-" command! -nargs=0 Format :call CocAction('format')
 " Add `:Fold` command to fold current buffer.
 " command! -nargs=? Fold :call     CocAction('fold', <f-args>)
 " Add `:OR` command for organize imports of the current buffer.
