@@ -2,7 +2,7 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/ryan/.oh-my-zsh"
+export ZSH="/Users/ryan/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -73,9 +73,11 @@ ZSH_THEME="robbyrussell"
 plugins=(
   git
   autojump
-  zsh-syntax-highlighting
+  ssh-agent
   zsh-autosuggestions
 )
+
+export ZSH_DISABLE_COMPFIX=true
 
 source $ZSH/oh-my-zsh.sh
 
@@ -92,7 +94,7 @@ source $ZSH/oh-my-zsh.sh
 # else
 #   export EDITOR='mvim'
 # fi
-export EDITOR="nvim"
+
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
@@ -104,36 +106,22 @@ export EDITOR="nvim"
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias "open"="explorer.exe "
 alias "vi"="nvim"
-alias "ide"="sh ~/ide.sh"
-alias "dc"="docker-compose"
-# alias "fd"="fdfind"
+alias ccze='ccze -m ansi -o nolookups '
+alias ide='sh ~/ide.sh'
 
-alias "gl"="git log --graph --oneline --full-history --all"
-alias "gs"="git status"
-alias "gc"="git commit"
-alias "gf"="git fetch"
-alias "gp"="git pull"
+alias gs="git status"
+alias gl="git log --pretty=format:'%h %s' --graph"
+alias gf="git fetch origin"
 
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
-
-if command -v pyenv 1>/dev/null 2>&1; then
-  eval "$(pyenv init - --no-rehash)"
-  eval "$(pyenv virtualenv-init - --no-rehash)"
-fi
-
-function git() {
-  if $(pwd -P | grep -q "^\/mnt\/c\/*"); then
-    git.exe "$@"
-  else
-    command git "$@"
-  fi
-}
-
-setopt +o nomatch
+eval "$(pyenv init --path)"
+eval "$(pyenv virtualenv-init -)"
+eval "$(pyenv init -)"
 
 export FZF_DEFAULT_COMMAND='fd --type f'
-
+export LDFLAGS="-L/opt/homebrew/opt/zlib/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/zlib/include"
+export CPATH=`xcrun --show-sdk-path`/usr/include
 eval "$(starship init zsh)"

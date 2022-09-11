@@ -68,7 +68,7 @@ set incsearch
 set ruler
 set noerrorbells
 
-" set cursorline
+set cursorline
 set expandtab
 set smarttab
 set shiftwidth=2
