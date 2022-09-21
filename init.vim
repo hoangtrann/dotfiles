@@ -31,7 +31,7 @@ Plug 'Vimjas/vim-python-pep8-indent'
 Plug 'nvim-treesitter/nvim-treesitter', { 'branch': 'master', 'do': ':TSUpdate'}
 
 Plug 'qpkorr/vim-bufkill'
-" Plug 'Yggdroot/indentLine'
+Plug 'Yggdroot/indentLine'
 
 Plug 'othree/xml.vim'
 Plug 'kyazdani42/nvim-tree.lua'
@@ -68,7 +68,7 @@ set incsearch
 set ruler
 set noerrorbells
 
-set cursorline
+" set cursorline
 set expandtab
 set smarttab
 set shiftwidth=2
@@ -502,7 +502,7 @@ require'toggle_lsp_diagnostics'.init()
 
 require("catppuccin").setup()
 
--- " vim.g.catppuccin_flavour = "frappe"
+vim.g.catppuccin_flavour = "mocha"
 vim.cmd('colorscheme catppuccin')
 EOF
 
