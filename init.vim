@@ -32,6 +32,7 @@ Plug 'nvim-treesitter/nvim-treesitter', { 'branch': 'master', 'do': ':TSUpdate'}
 
 Plug 'qpkorr/vim-bufkill'
 Plug 'Yggdroot/indentLine'
+Plug 'lukas-reineke/indent-blankline.nvim'
 
 Plug 'othree/xml.vim'
 Plug 'kyazdani42/nvim-tree.lua'
@@ -63,7 +64,7 @@ set nowrap
 set title         " Set terminal window
 
 set ai
-" set nohlsearch
+set nohlsearch
 set incsearch
 set ruler
 set noerrorbells
@@ -85,7 +86,7 @@ set noswapfile
 set clipboard=unnamed
 
 set showcmd
-set cmdheight=2
+set cmdheight=1
 set colorcolumn=80
 set scrolloff=8 " Keep 8 lines below and above the cursor
 set hidden
@@ -95,9 +96,11 @@ set signcolumn=number
 set updatetime=300
 set shortmess+=c
 set completeopt=menu,menuone,noselect
-" set listchars=eol:↵
-" set listchars=eol:↵
+
 " set list
+" set listchars=eol:↵
+" set listchars=eol:↵
+"set listchars=eol:↴
 
 " set splitbelow
 
@@ -111,19 +114,6 @@ endif
 " sane text files
 set encoding=utf-8
 set fileencoding=utf-8
-
-" Toggle between number and relativenumber
-" function! ToggleNumber()
-"   if(&relativenumber == 1)
-"       set norelativenumber
-"           set number
-"       else
-"           set relativenumber
-"   endif
-" endfunc
-"
-" map <Leader>tn :call ToggleNumber()<CR>
-
 
 " I can type :help on my own, thanks.
 noremap <F1> <Esc>
@@ -172,29 +162,10 @@ if (has("termguicolors"))
   set termguicolors
 endif
 
-" let g:everforest_background = 'hard'
-" let g:everforest_enable_italic = 0
-" let g:everforest_disable_italic_comment = 1
-
-" let g:gruvbox_material_enable_italic = 0
-" let g:gruvbox_material_background = 'hard'
-" let g:gruvbox_material_diagnostic_text_highlight = 1
-" let g:gruvbox_material_diagnostic_line_highlight = 1
-
-" let g:dracula_italic = 0
-
-" let g:tokyonight_style = "night"
-" let g:tokyonight_italic_functions = 0
-" let g:tokyonight_italic_comments = 0
-" let g:tokyonight_italic_keywords = 0
-" let g:tokyonight_italic_variables = 0
-"
-" let g:rose_pine_disable_italics = 1
-" let g:rose_pine_bold_vertical_split_line = 1
-" let g:catppuccin_flavour = "mocha"
+" let g:indentLine_char_list = ['▏', '|', '¦', '┆', '┊']
+let g:indentLine_char_list = ['▏']
 
 set background=dark
-" colorscheme rose-pine
 
 if executable('rg')
     let g:rg_derive_root = 'true'
@@ -213,29 +184,34 @@ require'nvim-treesitter.configs'.setup {
 require('lualine').setup({
   options = {
     theme = 'catppuccin',
-    -- section_separators = {left = '', right = ''},
+    -- section_separators = {left = '', right = '# '},
+    section_separators = {left = '', right = ''},
     -- component_separators = {left = '', right = ''}
-    section_separators = {left = '', right = ''},
+    -- section_separators = {left = '', right = ''},
     component_separators = {left = '', right = ''}
   },
   sections = {
     lualine_a = {"mode"},
-    lualine_b = {"branch"},
+    lualine_b = {"diff", "diagnostics"},
     lualine_c = {
-      {"filetype", icon_only = true},
-      "filename"
-      },
+      { "filetype", icon_only = true },
+      {"filename", file_status = true,}
+    },
     lualine_x = {
+      "branch",
       "encoding",
       "fileformat"
     },
     lualine_y = {"progress"},
     lualine_z = {"location"}
-  }
+  },
+  tabline = {},
+  winbar = {}
 })
+
 require('telescope').setup({
   defaults = {
-    layout_strategy = 'horizontal',
+    layout_strategy = 'vertical',
     layout_config = {
       horizontal = { width = 0.95 },
     },
@@ -248,10 +224,8 @@ require('telescope').setup({
 -- require('nvim-autopairs').setup()
 
 require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
-  auto_close = false,
   auto_reload_on_write = true,
   disable_netrw = false,
-  hide_root_folder = false,
   hijack_cursor = true,
   hijack_netrw = true,
   hijack_unnamed_buffer_when_opening = false,
@@ -261,8 +235,7 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
   sort_by = "name",
   update_cwd = false,
   view = {
-    width = 30,
-    height = 30,
+    width = 35,
     side = "left",
     preserve_window_proportions = false,
     number = false,
@@ -342,16 +315,12 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
   },
 } -- END_DEFAULT_OPTS
 
--- require('github-theme').setup({
---   comment_style = 'NONE'
--- })
--- require("bufferline").setup({})
-
--- require('rose-pine').setup({
---   dark_variant = 'moon'
--- })
-
--- require('rose-pine.functions').select_variant('moon')
+require("indent_blankline").setup {
+    -- for example, context is off by default, use this to turn it on
+    -- show_current_context = true,
+    -- show_current_context_start = true,
+    -- show_end_of_line = true,
+}
 
 -- require('formatting')
 require'lspconfig'.pyright.setup{}
@@ -471,16 +440,40 @@ require('formatter').setup({
   }
 })
 
+local has_words_before = function()
+  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+  return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+end
+
 -- Setup nvim-cmp.
   local cmp = require'cmp'
   cmp.setup({
     snippet = {
       -- REQUIRED - you must specify a snippet engine
-      expand = function(args)
-        vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
-      end,
+    },
+    window = {
+      completion = cmp.config.window.bordered(),
+      documentation = cmp.config.window.bordered(),
     },
     mapping = {
+      ["<Tab>"] = cmp.mapping(function(fallback)
+        if cmp.visible() then
+          cmp.select_next_item()
+        elseif has_words_before() then
+          cmp.complete()
+        else
+          fallback()
+        end
+      end, { "i", "s" }),
+      ["<S-Tab>"] = cmp.mapping(function(fallback)
+        if cmp.visible() then
+          cmp.select_prev_item()
+        elseif luasnip.jumpable(-1) then
+          luasnip.jump(-1)
+        else
+          fallback()
+        end
+      end, { "i", "s" }),
       ['<C-d>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
       ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
       ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
@@ -513,7 +506,6 @@ set splitbelow splitright
 let mapleader = ","
 
 nmap <leader>tt  <Plug>(toggle-lsp-diag)
-" nnoremap <silent> <leader>F :Format<CR>
 
 nnoremap <leader>h :wincmd h<CR>
 nnoremap <leader>j :wincmd j<CR>
@@ -549,54 +541,16 @@ let g:is_mouse_enabled = 1
 set foldmethod=indent
 set foldlevel=99
 
-" tag list
-" map <leader>t :TagbarToggle<CR>
-
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
 nnoremap <leader>fs <cmd>Telescope grep_string<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
-
-" Fzf
-" nnoremap <leader><leader> :Files<CR>
-" nnoremap <C-T> :Files<cr>
-" nnoremap <leader>fi :Files <C-R>=expand('%:h')<CR><CR>
-" nnoremap <leader>G :GFiles?<CR>
-" nnoremap <Leader>B :Buffers<cr>
-" nnoremap <Leader>s :BLines<cr>
-" nnoremap <leader>C :Colors<CR>
-
-" nnoremap <leader>ag :Ag! <C-R><C-W><CR>
-" nnoremap <leader>m :History<CR>
 nnoremap \ :Rg<CR>
 
-" let g:fzf_layout = { 'down':  '40%'}
-
-" Call flake8 on save buffer
-" autocmd BufWritePost *.py call flake8#Flake8()
-" autocmd FileType python cnoreabbrev <expr> q winnr("$") > 1 && getcmdtype() == ":" && getcmdline() == 'q' ? 'ccl <BAR> q' : 'q'
-"
-" let g:syntastic_python_flake8_config_file='.flake8'
-" nnoremap <C-K> :call flake8#Flake8ShowError()<cr>
-
 " let g:python_host_prog = '/home/ryan/.pyenv/versions/neovim2/bin/python'
-let g:python3_host_prog = '/Users/ryan/.pyenv/versions/neovim3/bin/python'
-
-" Configure NerdTree
-" file browser
-" let g:netrw_browse_split = 2
-" let g:netrw_banner = 0
-" let g:netrw_winsize = 40
-
-" let NERDTreeIgnore = ['\.pyc$', '__pycache__']
-" let NERDTreeMinimalUI = 1
-" let g:nerdtree_open = 0
-
-" silent! nmap <C-p> :NERDTreeToggle<CR>
-" silent! nmap <F3> :NERDTreeFind<cr>
-" let g:NERDTreeMapActivateNode="<F3>"
-" let g:NERDTreeMapPreview="<F4>"
+" let g:python3_host_prog = '/Users/ryan/.pyenv/versions/neovim3/bin/python'
+let g:python3_host_prog = '/opt/homebrew/bin/python3'
 
 nnoremap <C-n> :NvimTreeToggle<CR>
 nnoremap <leader>r :NvimTreeRefresh<CR>
@@ -607,153 +561,5 @@ noremap <Leader>p "*p
 noremap <Leader>Y "+y
 noremap <Leader>P "+p
 
-" let g:airline#extensions#branch#enabled=1
-" let g:airline#parts#ffenc#skip_expected_string='utf-8[unix]'
-" let g:airline#extensions#branch#displayed_head_limit = 12
-" let g:airline#extensions#tabline#enabled = 0
-" let g:airline_powerline_fonts = 1
-
-" Append the character code to airline_section_z
-" let g:airline_section_z = airline#section#create(['windowswap', '%3p%%', 'linenr', ':%3v', ' | 0x%2B'])
-" let g:airline#extensions#coc#enabled = 1
-
-" if !exists('g:airline_symbols')
-"   let g:airline_symbols = {}
-" endif
-
-" unicode symbols
-" let g:airline_symbols.crypt = '🔒'
-" let g:airline_symbols.linenr = '␊'
-" let g:airline_symbols.linenr = '␤'
-" let g:airline_symbols.linenr = '¶'
-" let g:airline_symbols.maxlinenr = '☰'
-" let g:airline_symbols.maxlinenr = ''
-" let g:airline_symbols.branch = '⎇'
-" let g:airline_symbols.paste = 'ρ'
-" let g:airline_symbols.paste = 'Þ'
-" let g:airline_symbols.paste = '∥'
-" let g:airline_symbols.spell = 'Ꞩ'
-" let g:airline_symbols.notexists = '∄'
-" let g:airline_symbols.whitespace = 'Ξ'
-
-" powerline symbols
-" let g:airline_left_sep = ''
-" let g:airline_left_alt_sep = ''
-" let g:airline_right_sep = ''
-" let g:airline_right_alt_sep = ''
-" let g:airline_left_sep = ''
-" let g:airline_left_alt_sep = ''
-" let g:airline_right_sep = ''
-" let g:airline_right_alt_sep = ''
-" let g:airline_symbols.branch = ''
-" let g:airline_symbols.readonly = ''
-" let g:airline_symbols.linenr = ''
-
-
-" let g:coc_global_extensions = [
-"   \'coc-pyright',
-"   \'coc-eslint',
-"   \'coc-snippets',
-"   \'coc-emoji',
-"   \'coc-json',
-"   \'coc-css',
-"   \'coc-html',
-"   \'coc-yaml',
-"   \'coc-prettier'
-"   \]
-
-" Use `[g` and `]g` to navigate diagnostics
-" " Use `:CocDiagnostics` to get all diagnostics of current buffer in location
-" list.
-" nmap <silent> [g <Plug>(coc-diagnostic-prev)
-" nmap <silent> ]g <Plug>(coc-diagnostic-next)
-
-" GoTo code navigation.
-" nmap <silent> gd <Plug>(coc-definition)
-" nmap <silent> gy <Plug>(coc-type-definition)
-" nmap <silent> gi <Plug>(coc-implementation)
-" nmap <silent> gr <Plug>(coc-references)
-
-" Use K to show documentation in preview window.
-" nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-" autocmd CursorHold * silent call CocActionAsync('highlight')
-
-" function! s:show_documentation()
-"   if (index(['vim','help'], &filetype) >= 0)
-"     execute 'h '.expand('<cword>')
-"   elseif (coc#rpc#ready())
-"     call CocActionAsync('doHover')
-"   else
-"     execute '!' . &keywordprg . " " . expand('<cword>')
-"   endif
-" endfunction
-
-" Symbol renaming.
-" nmap <Leader>rn <Plug>(coc-rename)
-
-" Formatting selected code.
-" xmap <leader>f <Plug>(coc-format-selected)
-" nmap <leader>f <Plug>(coc-format-selected)
-
-" Add `:Format` command to format current buffer.
-" Add `:Fold` command to fold current buffer.
-" command! -nargs=? Fold :call     CocAction('fold', <f-args>)
-" Add `:OR` command for organize imports of the current buffer.
-" command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
-
-" nmap <silent> <F9> :call CocAction('format')<CR>
-
-" inoremap <silent><expr> <TAB>
-"       \ pumvisible() ? "\<C-n>" :
-"       \ <SID>check_back_space() ? "\<TAB>" :
-"       \ coc#refresh()
-" inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-"
-" function! s:check_back_space() abort
-"     let col = col('.') - 1
-"       return !col || getline('.')[col - 1]  =~# '\s'
-" endfunction
-
-" Add (Neo)Vim's native statusline support.
-" NOTE: Please see `:h coc-status` for integrations with external plugins that
-" provide custom statusline: lightline.vim, vim-airline.
-
-" <TAB>: completion.
-" inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-
-" Use <c-space> to trigger completion.
-" if has('nvim')
-"   inoremap <silent><expr> <c-space> coc#refresh()
-" else
-"   inoremap <silent><expr> <c-@> coc#refresh()
-" endif
-"
-" inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-"                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-"
-" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
-" if has('nvim-0.4.0') || has('patch-8.2.0750')
-"   nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-"   nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-"   inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-"   inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-"   vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-"   vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-" endif
-
-" Mappings for CoCList
-" nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
-" nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
-" nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
-" nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
-" nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
-" nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
-" nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
-" nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
-
 nnoremap n nzz
 nnoremap N Nzz
-
