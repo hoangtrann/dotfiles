@@ -1,17 +1,15 @@
 call plug#begin('~/.config/nvim/plugged')
 
 " Colorschemes and icons
-Plug 'drewtempelmeyer/palenight.vim'
 Plug 'arcticicestudio/nord-vim'
-Plug 'joshdick/onedark.vim'
-Plug 'sainnhe/everforest'
-Plug 'sainnhe/gruvbox-material'
-Plug 'hoob3rt/lualine.nvim', {'branch': 'master'}
 Plug 'rose-pine/neovim', { 'branch': 'main' }
+Plug 'catppuccin/nvim', { 'as': 'catppuccin', 'branch': 'main' }
+
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'ryanoasis/vim-devicons'
+
 Plug 'editorconfig/editorconfig-vim'
-Plug 'catppuccin/nvim', { 'as': 'catppuccin', 'branch': 'main' }
+Plug 'hoob3rt/lualine.nvim', {'branch': 'master'}
 
 Plug 'airblade/vim-rooter'
 Plug 'tomtom/tcomment_vim'
@@ -31,8 +29,8 @@ Plug 'Vimjas/vim-python-pep8-indent'
 Plug 'nvim-treesitter/nvim-treesitter', { 'branch': 'master', 'do': ':TSUpdate'}
 
 Plug 'qpkorr/vim-bufkill'
-Plug 'Yggdroot/indentLine'
-Plug 'lukas-reineke/indent-blankline.nvim'
+" Plug 'Yggdroot/indentLine'
+" Plug 'lukas-reineke/indent-blankline.nvim'
 
 Plug 'othree/xml.vim'
 Plug 'kyazdani42/nvim-tree.lua'
@@ -58,8 +56,8 @@ set backupcopy=yes " Fix file watchers
 
 set guicursor=
 set number
-" set relativenumber
-" set nu
+set relativenumber
+set nu
 set nowrap
 set title         " Set terminal window
 
@@ -86,7 +84,7 @@ set noswapfile
 set clipboard=unnamed
 
 set showcmd
-set cmdheight=1
+set cmdheight=2
 set colorcolumn=80
 set scrolloff=8 " Keep 8 lines below and above the cursor
 set hidden
@@ -185,9 +183,9 @@ require('lualine').setup({
   options = {
     theme = 'catppuccin',
     -- section_separators = {left = '', right = '# '},
-    section_separators = {left = '', right = ''},
+    -- section_separators = {left = '', right = ''},
     -- component_separators = {left = '', right = ''}
-    -- section_separators = {left = '', right = ''},
+    section_separators = {left = '', right = ''},
     component_separators = {left = '', right = ''}
   },
   sections = {
@@ -223,72 +221,25 @@ require('telescope').setup({
 -- require('neogit').setup({})
 -- require('nvim-autopairs').setup()
 
-require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
-  auto_reload_on_write = true,
-  disable_netrw = false,
+require'nvim-tree'.setup {
   hijack_cursor = true,
-  hijack_netrw = true,
-  hijack_unnamed_buffer_when_opening = false,
-  ignore_buffer_on_setup = false,
-  open_on_setup = false,
-  open_on_tab = false,
-  sort_by = "name",
-  update_cwd = false,
   view = {
-    width = 35,
-    side = "left",
-    preserve_window_proportions = false,
-    number = false,
-    relativenumber = false,
-    signcolumn = "yes",
-    mappings = {
-      custom_only = false,
-      list = {
-        -- user mappings go here
+    float = {
+      enable = false,
+      -- quit_on_focus_loss = true,
+      open_win_config = {
+        relative = "editor",
+        border = "rounded",
+        width = 30,
+        height = 30,
+        row = 1,
+        col = 1,
       },
     },
   },
-  hijack_directories = {
-    enable = true,
-    auto_open = true,
-  },
-  update_focused_file = {
-    enable = false,
-    update_cwd = false,
-    ignore_list = {},
-  },
-  ignore_ft_on_setup = {},
-  system_open = {
-    cmd = nil,
-    args = {},
-  },
-  diagnostics = {
-    enable = false,
-    show_on_dirs = false,
-    icons = {
-      hint = "",
-      info = "",
-      warning = "",
-      error = "",
-    },
-  },
-  filters = {
-    dotfiles = false,
-    custom = {},
-    exclude = {},
-  },
-  git = {
-    enable = true,
-    ignore = true,
-    timeout = 400,
-  },
   actions = {
-    change_dir = {
-      enable = true,
-      global = false,
-    },
     open_file = {
-      quit_on_open = false,
+      quit_on_open = true,
       resize_window = true,
       window_picker = {
         enable = true,
@@ -300,27 +251,14 @@ require'nvim-tree'.setup { -- BEGIN_DEFAULT_OPTS
       },
     },
   },
-  trash = {
-    cmd = "trash",
-    require_confirm = true,
-  },
-  log = {
-    enable = false,
-    truncate = false,
-    types = {
-      all = false,
-      config = false,
-      git = false,
-    },
-  },
-} -- END_DEFAULT_OPTS
+}
 
-require("indent_blankline").setup {
+-- require("indent_blankline").setup {
     -- for example, context is off by default, use this to turn it on
     -- show_current_context = true,
     -- show_current_context_start = true,
     -- show_end_of_line = true,
-}
+-- }
 
 -- require('formatting')
 require'lspconfig'.pyright.setup{}
@@ -493,10 +431,11 @@ end
   })
 require'toggle_lsp_diagnostics'.init()
 
-require("catppuccin").setup()
+require("catppuccin").setup({
+  flavour = "macchiato"
+})
 
-vim.g.catppuccin_flavour = "mocha"
-vim.cmd('colorscheme catppuccin')
+vim.cmd.colorscheme "catppuccin"
 EOF
 
 highlight link TSError Normal
