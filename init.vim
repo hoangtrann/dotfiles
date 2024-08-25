@@ -1,9 +1,10 @@
 call plug#begin('~/.config/nvim/plugged')
 
 " Colorschemes and icons
-Plug 'arcticicestudio/nord-vim'
-Plug 'rose-pine/neovim', { 'branch': 'main' }
+Plug 'arcticicestudio/nord-vim', { 'as': 'nord' }
 Plug 'catppuccin/nvim', { 'as': 'catppuccin', 'branch': 'main' }
+Plug 'rose-pine/neovim', { 'as': 'rose-pine', 'branch': 'main'}
+Plug 'EdenEast/nightfox.nvim'
 
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'ryanoasis/vim-devicons'
@@ -20,7 +21,6 @@ Plug 'mbbill/undotree'
 Plug 'prettier/vim-prettier', { 'do': 'npm install', 'branch': 'release/0.x' }
 Plug 'mechatroner/rainbow_csv'
 
-Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'akretion/vim-odoo-snippets'
 
@@ -29,8 +29,8 @@ Plug 'Vimjas/vim-python-pep8-indent'
 Plug 'nvim-treesitter/nvim-treesitter', { 'branch': 'master', 'do': ':TSUpdate'}
 
 Plug 'qpkorr/vim-bufkill'
-" Plug 'Yggdroot/indentLine'
-" Plug 'lukas-reineke/indent-blankline.nvim'
+Plug 'Yggdroot/indentLine'
+Plug 'lukas-reineke/indent-blankline.nvim'
 
 Plug 'othree/xml.vim'
 Plug 'kyazdani42/nvim-tree.lua'
@@ -40,13 +40,20 @@ Plug 'mhartington/formatter.nvim'
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-path'
-Plug 'quangnguyen30192/cmp-nvim-ultisnips'
 Plug 'WhoIsSethDaniel/toggle-lsp-diagnostics.nvim'
+Plug 'SirVer/ultisnips'
 
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 
 Plug 'windwp/nvim-autopairs'
+
+Plug 'SmiteshP/nvim-navic'
+Plug 'MunifTanjim/nui.nvim'
+Plug 'SmiteshP/nvim-navbuddy'
+
+Plug 'fgheng/winbar.nvim'
+
 
 call plug#end()
 
@@ -67,7 +74,7 @@ set incsearch
 set ruler
 set noerrorbells
 
-" set cursorline
+set cursorline
 set expandtab
 set smarttab
 set shiftwidth=2
@@ -85,7 +92,7 @@ set clipboard=unnamed
 
 set showcmd
 set cmdheight=2
-set colorcolumn=80
+" set colorcolumn=88
 set scrolloff=8 " Keep 8 lines below and above the cursor
 set hidden
 
@@ -98,7 +105,7 @@ set completeopt=menu,menuone,noselect
 " set list
 " set listchars=eol:↵
 " set listchars=eol:↵
-"set listchars=eol:↴
+" set listchars=eol:↴
 
 " set splitbelow
 
@@ -160,9 +167,6 @@ if (has("termguicolors"))
   set termguicolors
 endif
 
-" let g:indentLine_char_list = ['▏', '|', '¦', '┆', '┊']
-let g:indentLine_char_list = ['▏']
-
 set background=dark
 
 if executable('rg')
@@ -176,16 +180,16 @@ require'nvim-treesitter.configs'.setup {
   ensure_installed = "all",
   ignore_install = {"phpdoc"},
   highlight = {
-          enable = true,
+      enable = true,
   },
 }
 require('lualine').setup({
   options = {
-    theme = 'catppuccin',
-    -- section_separators = {left = '', right = '# '},
-    -- section_separators = {left = '', right = ''},
+    theme = 'rose-pine',
+    -- section_separators = {left = '', right = ''},
+    section_separators = {left = '', right = ''},
     -- component_separators = {left = '', right = ''}
-    section_separators = {left = '', right = ''},
+    -- section_separators = {left = '', right = ''},
     component_separators = {left = '', right = ''}
   },
   sections = {
@@ -193,7 +197,7 @@ require('lualine').setup({
     lualine_b = {"diff", "diagnostics"},
     lualine_c = {
       { "filetype", icon_only = true },
-      {"filename", file_status = true,}
+      { "filename", file_status = true, path = 1 }
     },
     lualine_x = {
       "branch",
@@ -204,36 +208,66 @@ require('lualine').setup({
     lualine_z = {"location"}
   },
   tabline = {},
-  winbar = {}
+  winbar = {
+        lualine_c = {
+            {
+                "navic",
+                color_correction = nil,
+                navic_opts = nil
+            }
+        }
+    }
 })
 
 require('telescope').setup({
   defaults = {
-    layout_strategy = 'vertical',
+    -- layout_strategy = 'vertical',
+    layout_strategy = 'bottom_pane',
+    sorting_strategy = 'ascending',
+    scroll_strategy = 'limit',
     layout_config = {
-      horizontal = { width = 0.95 },
+      vertical = {
+        height = 0.9,
+        preview_cutoff = 40,
+        prompt_position = "top",
+        width = 0.9
+      }
     },
-    scroll_strategy = 'cycle',
     winblend = 0,
     file_ignore_patterns = { 'tags', 'i18n', 'log' },
   },
 })
--- require('neogit').setup({})
--- require('nvim-autopairs').setup()
+
+
+
+require('nvim-autopairs').setup()
+
+require('ibl').setup({
+  scope = {
+      enabled = false,
+    },
+})
+
+local navic = require("nvim-navic")
 
 require'nvim-tree'.setup {
   hijack_cursor = true,
   view = {
-    float = {
-      enable = false,
-      -- quit_on_focus_loss = true,
-      open_win_config = {
-        relative = "editor",
-        border = "rounded",
-        width = 30,
-        height = 30,
-        row = 1,
-        col = 1,
+    side = "left",
+    signcolumn = "yes",
+    width = 40,
+  },
+  renderer = {
+    indent_width = 2,
+    indent_markers = {
+      enable = true,
+      inline_arrows = true,
+      icons = {
+        corner = "└",
+        edge = "│",
+        item = "│",
+        bottom = "─",
+        none = " ",
       },
     },
   },
@@ -253,15 +287,24 @@ require'nvim-tree'.setup {
   },
 }
 
--- require("indent_blankline").setup {
-    -- for example, context is off by default, use this to turn it on
-    -- show_current_context = true,
-    -- show_current_context_start = true,
-    -- show_end_of_line = true,
--- }
 
 -- require('formatting')
-require'lspconfig'.pyright.setup{}
+require'lspconfig'.pyright.setup{
+  on_attach = on_attach,
+  settings = {
+    pyright = {
+      autoImportCompletion = true,
+    },
+    python = {
+      analysis = {
+        autoSearchPaths = true,
+        diagnosticMode = 'openFilesOnly',
+        useLibraryCodeForTypes = true,
+        typeCheckingMode = 'off',
+      }
+    }
+  }
+}
 local nvim_lsp = require('lspconfig')
 
 -- Use an on_attach function to only map the following keys
@@ -272,6 +315,11 @@ local on_attach = function(client, bufnr)
 
   -- Enable completion triggered by <c-x><c-o>
   buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+
+  if client.server_capabilities.documentSymbolProvider then
+      navic.attach(client, bufnr)
+  end
 
   -- Mappings.
   local opts = { noremap=true, silent=true }
@@ -384,58 +432,67 @@ local has_words_before = function()
 end
 
 -- Setup nvim-cmp.
-  local cmp = require'cmp'
-  cmp.setup({
-    snippet = {
-      -- REQUIRED - you must specify a snippet engine
-    },
-    window = {
-      completion = cmp.config.window.bordered(),
-      documentation = cmp.config.window.bordered(),
-    },
-    mapping = {
-      ["<Tab>"] = cmp.mapping(function(fallback)
-        if cmp.visible() then
-          cmp.select_next_item()
-        elseif has_words_before() then
-          cmp.complete()
-        else
-          fallback()
-        end
-      end, { "i", "s" }),
-      ["<S-Tab>"] = cmp.mapping(function(fallback)
-        if cmp.visible() then
-          cmp.select_prev_item()
-        elseif luasnip.jumpable(-1) then
-          luasnip.jump(-1)
-        else
-          fallback()
-        end
-      end, { "i", "s" }),
-      ['<C-d>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
-      ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
-      ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
-      ['<C-y>'] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
-      ['<C-e>'] = cmp.mapping({
-        i = cmp.mapping.abort(),
-        c = cmp.mapping.close(),
-      }),
-      ['<CR>'] = cmp.mapping.confirm({ select = true }),
-    },
-    sources = cmp.config.sources({
-      { name = 'nvim_lsp', keyword_length = 2 },
-      { name = 'ultisnips' },
-      { name = 'path', keyword_length = 2 },
-      { name = 'buffer', keyword_length = 2 },
-    })
+local cmp = require'cmp'
+cmp.setup({
+  snippet = {
+    -- REQUIRED - you must specify a snippet engine
+  },
+  window = {
+    completion = cmp.config.window.bordered(),
+    documentation = cmp.config.window.bordered(),
+  },
+  mapping = {
+    ["<Tab>"] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      elseif has_words_before() then
+        cmp.complete()
+      else
+        fallback()
+      end
+    end, { "i", "s" }),
+    ["<S-Tab>"] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_prev_item()
+      elseif luasnip.jumpable(-1) then
+        luasnip.jump(-1)
+      else
+        fallback()
+      end
+    end, { "i", "s" }),
+    ['<C-d>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
+    ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+    ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
+    ['<C-y>'] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
+    ['<C-e>'] = cmp.mapping({
+      i = cmp.mapping.abort(),
+      c = cmp.mapping.close(),
+    }),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+  },
+  sources = cmp.config.sources({
+    { name = 'ultisnips', keyword_length = 6, group_index = 1, max_item_count = 30 },
+    { name = 'nvim_lsp', keyword_length = 6, group_index = 1, max_item_count = 30 },
+    { name = 'path', keyword_length = 6, group_index = 1, max_item_count = 30 },
+    { name = 'buffer', keyword_length = 6, group_index = 1, max_item_count = 30 },
   })
+})
 require'toggle_lsp_diagnostics'.init()
 
-require("catppuccin").setup({
-  flavour = "macchiato"
-})
+-- require("catppuccin").setup({
+--  flavour = "macchiato"
+--})
 
-vim.cmd.colorscheme "catppuccin"
+-- require('rose-pine').setup({
+--   dark_variant = 'main',
+--   dim_inactive_windows = true,
+--   highlight_groups = {
+--       -- Comment = { fg = "foam" },
+--       -- VertSplit = { fg = "muted", bg = "muted" },
+--   },
+-- })
+
+vim.cmd.colorscheme "rose-pine"
 EOF
 
 highlight link TSError Normal
@@ -472,6 +529,15 @@ nmap <leader>x :BD<CR>
 " imap <S-Tab> <Esc><<i
 " nmap <S-tab> <<
 
+nnoremap <leader>ff :lua require('telescope.builtin').find_files()<cr>
+nnoremap <leader>fg :lua require('telescope.builtin').live_grep()<cr>
+nnoremap <leader>fs :lua require('telescope.builtin').grep_string()<cr>
+nnoremap <leader>fb :lua require('telescope.builtin').buffers()<cr>
+nnoremap <leader>fh :lua require('telescope.builtin').help_tags()<cr>
+nnoremap <leader>ft :lua require('telescope.builtin').lsp_document_symbols({ignore_symbols = variable})<cr>
+
+nnoremap \ :Rg<CR>
+
 " mouse
 set mouse=a
 let g:is_mouse_enabled = 1
@@ -480,16 +546,10 @@ let g:is_mouse_enabled = 1
 set foldmethod=indent
 set foldlevel=99
 
-nnoremap <leader>ff <cmd>Telescope find_files<cr>
-nnoremap <leader>fg <cmd>Telescope live_grep<cr>
-nnoremap <leader>fs <cmd>Telescope grep_string<cr>
-nnoremap <leader>fb <cmd>Telescope buffers<cr>
-nnoremap <leader>fh <cmd>Telescope help_tags<cr>
-nnoremap \ :Rg<CR>
 
 " let g:python_host_prog = '/home/ryan/.pyenv/versions/neovim2/bin/python'
 " let g:python3_host_prog = '/Users/ryan/.pyenv/versions/neovim3/bin/python'
-let g:python3_host_prog = '/opt/homebrew/bin/python3'
+let g:python3_host_prog = '/opt/homebrew/bin/python3.10'
 
 nnoremap <C-n> :NvimTreeToggle<CR>
 nnoremap <leader>r :NvimTreeRefresh<CR>
@@ -500,5 +560,7 @@ noremap <Leader>p "*p
 noremap <Leader>Y "+y
 noremap <Leader>P "+p
 
+nnoremap <C-u> <C-u>zz
+nnoremap <C-d> <C-d>zz
 nnoremap n nzz
 nnoremap N Nzz
